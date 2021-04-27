@@ -3,9 +3,11 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class Prospect extends Model
 {
+    use SoftDeletes;
+    
     public function projects()
     {
         return $this->hasMany('App\Project');

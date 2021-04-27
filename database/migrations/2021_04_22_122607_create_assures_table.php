@@ -26,6 +26,7 @@ class CreateAssuresTable extends Migration
             $table->string('wishes');// soins or hospitalisation or optique or dentaire
             $table->bigInteger('project_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

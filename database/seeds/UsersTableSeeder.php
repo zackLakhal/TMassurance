@@ -17,6 +17,8 @@ class UsersTableSeeder extends Seeder
             'name' => 'admin_tsassurance',
             'email' => 'admin@demo.com',
             'password' => Hash::make('123456'),
+            'role_id' => 1,
+            'group_id' => 1
         ]);
     }
 }

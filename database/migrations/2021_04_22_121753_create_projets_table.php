@@ -19,6 +19,7 @@ class CreateProjetsTable extends Migration
             $table->bigInteger('statut_id');
             $table->bigInteger('prospect_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

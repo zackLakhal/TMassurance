@@ -22,6 +22,7 @@ class CreateContratsTable extends Migration
             $table->bigInteger('project_id');
             $table->bigInteger('souscription_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

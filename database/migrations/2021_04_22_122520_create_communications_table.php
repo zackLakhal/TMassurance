@@ -15,12 +15,13 @@ class CreateCommunicationsTable extends Migration
     {
         Schema::create('communications', function (Blueprint $table) {
             $table->bigIncrements('id');
-            //user_id,project_id,doc_id:foreign key
+            
             $table->bigInteger('user_id');
             $table->bigInteger('project_id');
             $table->string('titre');
             $table->text('content')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -16,8 +16,8 @@ class CreateRolesTable extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('value');//salarie or TNS or alsace-moselle or exploitantAgricole or salarieAgricole or retraiteSalarie or retraiteTNS or retraiteAlsaceMoselle or fonctionPublique or etudiants
-            $table->string('adresse');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

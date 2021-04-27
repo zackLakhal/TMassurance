@@ -19,6 +19,7 @@ class CreateDocumentsTable extends Migration
             $table->string('nature');
             $table->bigInteger('project_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

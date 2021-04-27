@@ -16,11 +16,12 @@ class CreateProduitsTable extends Migration
         Schema::create('produits', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nom');
-            //$table->int('prix'); elle n'a pas indiqué cet attribut mais je le vois logique ici !
+            $table->integer('prix');
             $table->string('logo');
             $table->text('description');
             $table->bigInteger('compagnie_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

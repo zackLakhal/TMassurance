@@ -21,8 +21,9 @@ class CreateTachesTable extends Migration
             $table->bigInteger('user_id');
             $table->bigInteger('project_id');
             $table->dateTime('dateEcheance');
-            //foreign key : dateEcheance ,user_id,project_id
+           
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

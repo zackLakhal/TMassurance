@@ -17,6 +17,7 @@ class CreateStatutsTable extends Migration
             $table->bigIncrements('id'); 
             $table->string('crmStatut');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

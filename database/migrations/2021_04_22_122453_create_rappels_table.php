@@ -18,8 +18,9 @@ class CreateRappelsTable extends Migration
             $table->datetime('dateRappel');
             $table->bigInteger('user_id');
             $table->bigInteger('project_id');
-            // foreign key : user_id , project_id
+            
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

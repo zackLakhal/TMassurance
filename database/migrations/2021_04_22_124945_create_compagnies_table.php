@@ -21,6 +21,7 @@ class CreateCompagniesTable extends Migration
             $table->string('adresse')->nullable();
             $table->string('logo');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

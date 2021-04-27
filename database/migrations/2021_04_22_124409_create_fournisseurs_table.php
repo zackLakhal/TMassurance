@@ -21,6 +21,7 @@ class CreateFournisseursTable extends Migration
             $table->string('email');
             $table->text('description');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

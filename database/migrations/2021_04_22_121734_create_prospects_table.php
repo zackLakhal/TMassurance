@@ -23,6 +23,7 @@ class CreateProspectsTable extends Migration
             $table->string('tel');
             $table->string('codePostale')->nullable();
             $table->string('ville');
+            $table->string('adress')->nullable();
             $table->string('activite')->nullable();
             $table->string('tel2')->nullable();
             $table->string('sexe');
@@ -37,6 +38,7 @@ class CreateProspectsTable extends Migration
             $table->bigInteger('user_id');
             $table->bigInteger('provenance_id');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

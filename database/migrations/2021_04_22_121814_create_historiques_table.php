@@ -18,8 +18,8 @@ class CreateHistoriquesTable extends Migration
             $table->string('action');
             $table->bigInteger('user_id');
             $table->bigInteger('project_id');
-            //user_id,prospect_id:foreign key
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

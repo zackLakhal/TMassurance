@@ -45,8 +45,9 @@ class CreateSouscriptionsTable extends Migration
             $table->string('contratAide');
             $table->string('loiMadelin');
             $table->string('paiementCb');
-            //prospect_id:foreign key 
+             
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

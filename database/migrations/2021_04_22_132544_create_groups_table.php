@@ -16,8 +16,8 @@ class CreateGroupsTable extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nom');
-            //user_id,role_id:foreign key (ce n'est pas indiqué dans les tables jcp hhh)
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

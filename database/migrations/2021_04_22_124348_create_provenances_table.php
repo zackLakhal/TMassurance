@@ -19,8 +19,8 @@ class CreateProvenancesTable extends Migration
             $table->string('cle');
             $table->string('prix');//enfaite c'est le prix des données de prospect fournies par le fournisseur
             $table->text('description');
-            //fournisseur_id:foreign key
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
