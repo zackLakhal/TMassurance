@@ -20,30 +20,12 @@ class GroupController extends Controller
         return response()->json($groups);
     }
 
-    // public function active_index()
-    // {
-    //     Auth::guard('nst')->check() ? $auth = Nstuser::find(Auth::guard('nst')->user()->id) : $auth = Clientuser::find(Auth::guard('client')->user()->id);
-    //     $groups = null;
-    //     switch ($auth->Group_id) {
+    public function active_index()
+    {
+        $groups = Group::all();
+        return response()->json($groups);
+    }
 
-    //         case 1:
-    //             $groups = Group::where([['id', '<>', 6], ['id', '<>', 1]])->get();
-    //             break;
-    //         case 2:
-    //             $groups = Group::where('id', '=', 2)->get();
-
-    //             break;
-    //         case 4:
-    //             $groups = Group::where('id', '=', 5)->get();
-
-    //             break;
-    //         default:
-    //             $groups = Group::where('id', '<>', 6)->get();
-    //             break;
-    //     }
-
-    //     return response()->json($groups);
-    // }
 
     public function deleted()
     {

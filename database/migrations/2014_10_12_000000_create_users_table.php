@@ -27,8 +27,7 @@ class CreateUsersTable extends Migration
             $table->string('adresse')->nullable();
             $table->bigInteger('role_id');
             $table->bigInteger('group_id');
-          
-            $table->string('photo')->nullable();
+            $table->string('photo')->default('avatars/av_ph.png');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

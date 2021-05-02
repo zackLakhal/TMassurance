@@ -10,7 +10,7 @@
                                 <div class="col-7">
                                     <div class="text-primary p-4">
                                         <h5 class="text-primary">Welcome Back !</h5>
-                                        <p>Sign in to continue to Skote.</p>
+                                        <p>Sign in to continue to TM Assurance.</p>
                                     </div>
                                 </div>
                                 <div class="col-5 align-self-end">
@@ -116,7 +116,7 @@
                             <p>Don't have an account ? <a href="auth-register.html" class="fw-medium text-primary"> Signup now </a> </p>
                             <p>© <script>
                                     document.write(new Date().getFullYear())
-                                </script> Skote. Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand</p>
+                                </script> TM Assurance. Crafted with <i class="mdi mdi-heart text-danger"></i> by Nourane</p>
                         </div>
                     </div>
 

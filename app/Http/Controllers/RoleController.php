@@ -21,30 +21,11 @@ class RoleController extends Controller
         return response()->json($roles);
     }
 
-    // public function active_index()
-    // {
-    //     Auth::guard('nst')->check() ? $auth = Nstuser::find(Auth::guard('nst')->user()->id) : $auth = Clientuser::find(Auth::guard('client')->user()->id);
-    //     $roles = null;
-    //     switch ($auth->role_id) {
-
-    //         case 1:
-    //             $roles = Role::where([['id', '<>', 6], ['id', '<>', 1]])->get();
-    //             break;
-    //         case 2:
-    //             $roles = Role::where('id', '=', 2)->get();
-
-    //             break;
-    //         case 4:
-    //             $roles = Role::where('id', '=', 5)->get();
-
-    //             break;
-    //         default:
-    //             $roles = Role::where('id', '<>', 6)->get();
-    //             break;
-    //     }
-
-    //     return response()->json($roles);
-    // }
+    public function active_index()
+    {
+        $roles = Role::all();
+        return response()->json($roles);
+    }
 
     public function deleted()
     {

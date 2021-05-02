@@ -13,12 +13,18 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
-            'name' => 'admin_tsassurance',
-            'email' => 'admin@demo.com',
-            'password' => Hash::make('123456'),
-            'role_id' => 1,
-            'group_id' => 1
-        ]);
+        for ($i=0; $i < 21; $i++) { 
+            DB::table('users')->insert([
+                'name' => 'user' . $i,
+                'email' => 'user' . $i . '@demo.com',
+                'password' => Hash::make('123456'),
+                'nom' => 'nom' . $i,
+                'prenom' => 'prenom' . $i,
+                'sexe' => 'Male',
+                'group_id' => rand(1, 5),
+                'tel' => rand(10000000, 99999999),
+                'role_id' => rand(1, 5),
+            ]);
+        }
     }
 }

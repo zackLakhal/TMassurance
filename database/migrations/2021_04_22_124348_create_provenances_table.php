@@ -17,7 +17,7 @@ class CreateProvenancesTable extends Migration
             $table->bigIncrements('id');
             $table->string('nom');
             $table->string('cle');
-            $table->string('prix');//enfaite c'est le prix des données de prospect fournies par le fournisseur
+            $table->double('prix');//enfaite c'est le prix des données de prospect fournies par le fournisseur
             $table->text('description');
             $table->timestamps();
             $table->softDeletes();

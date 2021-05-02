@@ -20,6 +20,7 @@ class CreateFournisseursTable extends Migration
             $table->string('prenom');
             $table->string('email');
             $table->text('description');
+            $table->bigInteger('provenance_id');
             $table->timestamps();
             $table->softDeletes();
         });

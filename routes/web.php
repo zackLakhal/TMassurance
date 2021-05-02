@@ -21,6 +21,7 @@ Route::prefix('/role')->group(function () {
           return view('system.role');
       })->middleware('auth');
      Route::get('/index', 'RoleController@index');
+     Route::get('/active_index', 'RoleController@active_index');
      Route::post('/{edit}/{id}', 'RoleController@edit');
      Route::post('/store', 'RoleController@store');
      
@@ -31,10 +32,36 @@ Route::prefix('/role')->group(function () {
           return view('system.group');
       })->middleware('auth');
      Route::get('/index', 'GroupController@index');
+     Route::get('/active_index', 'GroupController@active_index');
      Route::post('/{edit}/{id}', 'GroupController@edit');
      Route::post('/store', 'GroupController@store');
      
  });
+
+ Route::prefix('/user')->group(function () {
+    Route::get('/', function () {
+        return view('system.user');
+    })->middleware('auth');
+    Route::get('/index', 'UserController@index');
+    Route::post('/delete/{id}', 'UserController@edit');
+    Route::post('/restore/{id}', 'UserController@edit');
+    Route::post('/edit/{id}', 'UserController@edit');
+    Route::post('/detail/{id}', 'UserController@detail');
+    Route::post('/store', 'UserController@store');
+});
+
+Route::prefix('/prospect')->group(function () {
+    Route::get('/', function () {
+        return view('business.prospect');
+    })->middleware('auth');
+    Route::get('/index', 'ProspectController@index');
+    Route::post('/delete/{id}', 'ProspectController@edit');
+    Route::post('/restore/{id}', 'ProspectController@edit');
+    Route::post('/edit/{id}', 'ProspectController@edit');
+    Route::post('/detail/{id}', 'ProspectController@detail');
+    Route::post('/store', 'ProspectController@store');
+});
+
 
  Route::prefix('/statut')->group(function () {
     Route::get('/', function () {
@@ -43,6 +70,17 @@ Route::prefix('/role')->group(function () {
     Route::get('/index', 'StatutController@index');
     Route::post('/{edit}/{id}', 'StatutController@edit');
     Route::post('/store', 'StatutController@store');
+    
+});
+
+Route::prefix('/provenance')->group(function () {
+    Route::get('/', function () {
+         return view('tools.provenance');
+     })->middleware('auth');
+    Route::get('/index', 'ProvenanceController@index');
+    Route::post('/delete/{id}', 'ProvenanceController@edit');
+    Route::post('/restore/{id}', 'ProvenanceController@edit');
+
     
 });
 

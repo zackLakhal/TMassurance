@@ -461,6 +461,24 @@
                                 <span key="t-calendar">gérer les compagnies </span>
                             </a>
                         </li>
+                        <li>
+                            <a href="/provenance" class="waves-effect">
+                                <i class="bx bx-calendar"></i>
+                                <span key="t-calendar">gérer les provenances </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/user" class="waves-effect">
+                                <i class="bx bx-calendar"></i>
+                                <span key="t-calendar">gérer les utilisateurs </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/prospect" class="waves-effect">
+                                <i class="bx bx-calendar"></i>
+                                <span key="t-calendar">gérer les prospects </span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <!-- Sidebar -->

@@ -123,7 +123,7 @@
             async: false,
         }).responseText;
         jsonData = JSON.parse(StringData);
-
+        
         $('#bodytab').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {
@@ -164,7 +164,7 @@
         }).responseText;
 
         jsonData = JSON.parse(StringData);
-
+        console.log(jsonData)
         message("compagnie", "activé", jsonData.check);
         if (jsonData.compagnie.deleted_at != null) {
             buttonacive = "<button  class=\"btn btn-success\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ")\">restorer</button>"
@@ -202,7 +202,7 @@
         }).responseText;
 
         jsonData = JSON.parse(StringData);
-
+        console.log(jsonData)
         message("compagnie", "désactivé", jsonData.check);
         if (jsonData.compagnie.deleted_at != null) {
             buttonacive = "<button  class=\"btn btn-success\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ")\">restorer</button>"

@@ -15,6 +15,6 @@ class Provenance extends Model
 
     public function fournisseurs()
     {
-        return $this->belongsToMany('App\Fournisseur');
+        return $this->hasMany('App\Fournisseur');
     }
 }

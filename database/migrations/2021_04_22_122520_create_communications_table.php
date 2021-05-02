@@ -15,7 +15,6 @@ class CreateCommunicationsTable extends Migration
     {
         Schema::create('communications', function (Blueprint $table) {
             $table->bigIncrements('id');
-            
             $table->bigInteger('user_id');
             $table->bigInteger('project_id');
             $table->string('titre');

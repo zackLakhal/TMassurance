@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Compagnie;
-use App\Produit;
+use App\Provenance;
 use Illuminate\Http\Request;
 
-class CompagnieController extends Controller
+class ProvenanceController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,18 +14,8 @@ class CompagnieController extends Controller
      */
     public function index()
     {
-        $compagnies = Compagnie::withTrashed()->get();
-        return response()->json($compagnies);
-    }
-
-    public function index_product(Request $request)
-    {
-        $compagnie = Compagnie::withTrashed()
-            ->where('id', $request->compagnie_id)
-            ->first();
-
-        $produits =  $produits = Produit::withTrashed()->where('compagnie_id',$compagnie->id)->get();
-        return response()->json(['compagnie' => $compagnie, 'produits' => $produits]);
+        $provenances = Provenance::withTrashed()->get();
+        return response()->json($provenances);
     }
 
     /**
@@ -53,10 +42,10 @@ class CompagnieController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Compagnie  $compagnie
+     * @param  \App\Provenance  $provenance
      * @return \Illuminate\Http\Response
      */
-    public function show(Compagnie $compagnie)
+    public function show(Provenance $provenance)
     {
         //
     }
@@ -64,33 +53,27 @@ class CompagnieController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Compagnie  $compagnie
+     * @param  \App\Provenance  $provenance
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, $edit, $id)
+    public function edit(Request $request,$id)
     {
         $done = false;
-        if ($edit == "delete") {
-            $compagnie = Compagnie::find($id);
-            foreach ($compagnie->produits as  $produit) {
-                $produit->delete();
-            }
-            $compagnie->delete();
+        if ($request->is('provenance/delete/*')) {
+            
+            $provenance = Provenance::find($id);
+            $provenance->delete();
             $done = true;
         }
-        if ($edit == "restore") {
-            $compagnie = Compagnie::onlyTrashed()
+        if ($request->is('provenance/restore/*')) {
+            $provenance = Provenance::onlyTrashed()
                 ->where('id', $id)
                 ->first();
-            $produits = Produit::onlyTrashed()->where('compagnie_id',$compagnie->id)->get();
-            foreach ($produits as  $produit) {
-                $produit->restore();
-            }
-            $compagnie->restore();
+            $provenance->restore();
             $done = true;
         }
 
-        $compagnie = Compagnie::withTrashed()
+        $provenance = Provenance::withTrashed()
             ->where('id', $id)
             ->first();
 
@@ -103,7 +86,7 @@ class CompagnieController extends Controller
 
         $objet =  [
             'check' => $check,
-            'compagnie' => $compagnie,
+            'provenance' => $provenance,
             'inputs' => $request->all()
         ];
         return response()->json($objet);
@@ -113,10 +96,10 @@ class CompagnieController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Compagnie  $compagnie
+     * @param  \App\Provenance  $provenance
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Compagnie $compagnie)
+    public function update(Request $request, Provenance $provenance)
     {
         //
     }
@@ -124,10 +107,10 @@ class CompagnieController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Compagnie  $compagnie
+     * @param  \App\Provenance  $provenance
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Compagnie $compagnie)
+    public function destroy(Provenance $provenance)
     {
         //
     }
