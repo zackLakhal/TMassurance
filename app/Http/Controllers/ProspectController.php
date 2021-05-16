@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Prospect;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Projet;
 
 class ProspectController extends Controller
 {
@@ -24,6 +26,40 @@ class ProspectController extends Controller
         $prospect = Prospect::withTrashed()->where('id', $id)->with('provenance')->with('user')->first();
 
         return response()->json($prospect);
+    }
+
+
+    public function confirmer(Request $request,$id)
+    {
+        $done = false;
+        $prospect = Prospect::find($id);
+        $prospect->is_confirmed = true;
+        $prospect->dateConfirmation = Carbon::now();
+
+        $prospect->save();
+
+        $projet = new Projet();
+        $projet->type = $request->project_type;
+        $projet->statut_id = 1;
+        $projet->prospect_id = $id;
+
+        $projet->save();
+
+        $prospect = Prospect::withTrashed()->where('id', $id)->with('provenance')->with('user')->first();
+        $done = true;
+        $check = "";
+        if (!$done) {
+            $check = "faile";
+        } else {
+            $check = "done";
+        }
+
+        $objet =  [
+            'check' => $check,
+            'prospect' => $prospect,
+            'inputs' => $request->all()
+        ];
+        return response()->json($objet);
     }
 
     /**
@@ -64,9 +100,40 @@ class ProspectController extends Controller
      * @param  \App\Prospect  $prospect
      * @return \Illuminate\Http\Response
      */
-    public function edit(Prospect $prospect)
+    public function edit(Request $request,$id)
     {
-        //
+        $done = false;
+        if ($request->is('prospect/delete/*')) {
+            
+            $prospect = Prospect::find($id);
+            $prospect->delete();
+            $done = true;
+        }
+        if ($request->is('prospect/restore/*')) {
+            $prospect = Prospect::onlyTrashed()
+                ->where('id', $id)
+                ->first();
+            $prospect->restore();
+            $done = true;
+        }
+
+        $prospect = Prospect::withTrashed()
+            ->where('id', $id)->where('id', $id)->with('provenance')->with('user')
+            ->first();
+
+        $check = "";
+        if (!$done) {
+            $check = "faile";
+        } else {
+            $check = "done";
+        }
+
+        $objet =  [
+            'check' => $check,
+            'prospect' => $prospect,
+            'inputs' => $request->all()
+        ];
+        return response()->json($objet);
     }
 
     /**

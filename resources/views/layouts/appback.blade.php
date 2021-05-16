@@ -479,6 +479,12 @@
                                 <span key="t-calendar">gérer les prospects </span>
                             </a>
                         </li>
+                        <li>
+                            <a href="/projet" class="waves-effect">
+                                <i class="bx bx-calendar"></i>
+                                <span key="t-calendar">gérer les projets </span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <!-- Sidebar -->

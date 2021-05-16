@@ -19,7 +19,7 @@ class ProspectsTableSeeder extends Seeder
                 'tel' => '3455454135' . $i,
                 'provenance_id' => rand(1, 5),
                 'user_id' => rand(1, 20),
-                'is_confirmed' => rand(true, false),
+                'is_confirmed' => false,
             ]);
         }
     }

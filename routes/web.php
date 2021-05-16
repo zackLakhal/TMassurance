@@ -59,7 +59,23 @@ Route::prefix('/prospect')->group(function () {
     Route::post('/restore/{id}', 'ProspectController@edit');
     Route::post('/edit/{id}', 'ProspectController@edit');
     Route::post('/detail/{id}', 'ProspectController@detail');
+    Route::get('/projet/{id}', function () {
+        return view('business.projet_detail');
+    })->middleware('auth');
+    Route::post('/confirmer/{id}', 'ProspectController@confirmer');
     Route::post('/store', 'ProspectController@store');
+});
+
+Route::prefix('/projet')->group(function () {
+    Route::get('/', function () {
+        return view('business.projet');
+    })->middleware('auth');
+    Route::get('/index', 'ProjetController@index');
+    Route::post('/delete/{id}', 'ProjetController@edit');
+    Route::post('/restore/{id}', 'ProjetController@edit');
+    Route::post('/edit/{id}', 'ProjetController@edit');
+    Route::post('/detail/{id}', 'ProjetController@detail');
+    
 });
 
 
@@ -70,6 +86,13 @@ Route::prefix('/prospect')->group(function () {
     Route::get('/index', 'StatutController@index');
     Route::post('/{edit}/{id}', 'StatutController@edit');
     Route::post('/store', 'StatutController@store');
+    
+});
+
+Route::prefix('/tach')->group(function () {
+    Route::post('/index', 'TachController@index');
+    Route::post('/{edit}/{id}', 'TachController@edit');
+    Route::post('/store', 'TachController@store');
     
 });
 

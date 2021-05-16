@@ -16,7 +16,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="mySmallModalLabel">Message</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body" id="content"> content will be here </div>
         </div>
@@ -110,7 +110,7 @@
                                                 </table>                   
                                             </div>
                                         </div>
-                                        ${active_compagnie}
+                                       
                                     </div>
                                 </div>
 
@@ -153,7 +153,7 @@
                                         <td>${jsonData.produits[ind].prix}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button  class="btn btn-primary" style="margin: 10px"  ">détail</button>
+                                            <button  class="btn btn-primary" style="margin: 10px">détail</button>
                                                 ${buttonactive}
                                             </div>
                                         </td>

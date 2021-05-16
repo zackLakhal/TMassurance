@@ -6,19 +6,21 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">List des Prospects</h4>
-                <button type="button" class="btn btn-primary pull-right" id="newmodal">+ nouveau prospect</button>
+                <h4 class="card-title">List des Projets</h4>
+                <button type="button" class="btn btn-primary pull-right" id="newmodal">+ nouveau projet</button>
 
                 <table id="datatable" class="table text-center table-bordered dt-responsive  nowrap w-100">
 
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
-                            <th>Nom Complet</th>
-                            <th>Email</th>
-                            <th>Telephone</th>
+                            <th>type</th>
+                            <th>nom complet</th>
+                            <th>tel</th>
+                            <th>inséré le</th>
+                            <th>Confirmé le</th>
+                            <th>attribué à</th>
                             <th>Provenance</th>
-                            <th>état de Confirmation</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -120,7 +122,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header" id="detail_head">
-                <h4 class="modal-title">Details Prospect</h4>
+                <h4 class="modal-title">Details projet</h4>
             </div>
             <div class="modal-body card" id="detail_body">
 
@@ -143,6 +145,7 @@
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
+
                 <div class="form-group">
                     <label for="project_type" class="control-label"><b>type de projet:</b></label>
                     <select class="form-control custom-select selectpicker " name="project_type" id="project_type">
@@ -198,7 +201,7 @@
         var buttonacive;
         var buttonconfirm;
         var StringData = $.ajax({
-            url: "prospect/index",
+            url: "projet/index",
             dataType: "json",
             type: "GET",
             async: false,
@@ -206,32 +209,28 @@
         jsonData = JSON.parse(StringData);
         console.log(jsonData)
         $('#bodytab').html("");
-        for (let ind = 0; ind < jsonData.length; ind++) {
-            if (jsonData[ind].deleted_at != null) {
-                buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData[ind].id + "," + ind + ")\">restorer</button>"
+        for (let ind = 0; ind < jsonData.projets.length; ind++) {
+            if (jsonData.projets[ind].deleted_at != null) {
+                buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.projets[ind].id + "," + ind + ")\">restorer</button>"
             } else {
-                buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData[ind].id + "," + ind + ")\">supprimer</button>"
+                buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.projets[ind].id + "," + ind + ")\">supprimer</button>"
             }
-            if (jsonData[ind].is_confirmed == 0) {
-                buttonconfirm = "<button  class=\"btn btn-dark\" style=\"margin: 10px\"  onclick=\"confirm(" + jsonData[ind].id + "," + ind + ")\">Confirmer</button>"
-            } else {
-                buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
-            }
+           
             $('#bodytab').append(`<tr id="row${ind}">
                                         <td id="id${ind}">
-                                        ${jsonData[ind].id}
+                                        ${jsonData.projets[ind].id}
                                         </td>
-                                        <td id="nom_prenom${ind}">${jsonData[ind].nom}  ${jsonData[ind].prenom}</td>
-                                        
-                                        <td id="email${ind}">${jsonData[ind].email}</td>
-                                        <td id="tel${ind}">${jsonData[ind].tel}</td>
-                                        <td id="provenance${ind}">${jsonData[ind].provenance.nom}</td>
-                                        <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
+                                        <td id="type${ind}">${jsonData.projets[ind].type}</td>
+                                        <td id="nom_prenom${ind}">${jsonData.prospects[ind].nom}  ${jsonData.prospects[ind].prenom}</td>
+                                        <td id="tel${ind}">${jsonData.prospects[ind].tel}</td>
+                                        <td id="created_at${ind}">${jsonData.projets[ind].email}</td>
+                                        <td  id="confirmed_at${ind}"> ${jsonData.prospects[ind].dateConfirmation}</td>
+                                        <td  id="confirmed_at${ind}"> ${jsonData.prospects[ind].user.nom}</td>
+                                        <td id="provenance${ind}">${jsonData.prospects[ind].provenance.nom}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            
-                                            <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData[ind].id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData[ind].id},${ind})">modifier</button>
+                                            <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.projets[ind].id}" >Parcourir</a>
+                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.projets[ind].id},${ind})">modifier</button>
                                                 ${buttonacive}
                                             </div>
                                         </td>
@@ -330,8 +329,8 @@
     //                                     <td id="group${jsonData.count}">${jsonData.user.group.nom}</td>
     //                                     <td>
     //                                         <div class="btn-group" role="group" aria-label="Basic example">
-    //                                         
-    //                                         <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.user.id}" >Parcourir</a>
+    //                                         <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})" ">détails</button>
+    //                                         <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData.user.id}" >Parcourir</a>
     //                                         <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.user.id},${jsonData.count})">modifier</button>
     //                                             ${buttonacive}
     //                                         </div>
@@ -347,7 +346,7 @@
 
     function restor(id, ind) {
         var StringData = $.ajax({
-            url: "prospect/restore/" + id,
+            url: "projet/restore/" + id,
             type: "POST",
             async: false,
             headers: {
@@ -357,32 +356,32 @@
 
         jsonData = JSON.parse(StringData);
 
-        message("prospect", "activé", jsonData.check);
+        message("projet", "activé", jsonData.check);
 
-        if (jsonData.prospect.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.prospect.id + "," + ind + ")\">restorer</button>"
+        if (jsonData.projet.deleted_at != null) {
+            buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.projet.id + "," + ind + ")\">restorer</button>"
         } else {
-            buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.prospect.id + "," + ind + ")\">supprimer</button>"
+            buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.projet.id + "," + ind + ")\">supprimer</button>"
         }
-        if (jsonData.prospect.is_confirmed == 0) {
-            buttonconfirm = "<button  class=\"btn btn-dark\" style=\"margin: 10px\"  onclick=\"confirm(" + jsonData.prospect.id + "," + ind + ")\">Confirmer</button>"
+        if (jsonData.projet.is_confirmed == 0) {
+            buttonconfirm = "<button  class=\"btn btn-dark\" style=\"margin: 10px\"  onclick=\"confirm(" + jsonData.projet.id + "," + ind + ")\">Confirmer</button>"
         } else {
             buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
         }
         $('#row' + ind).html(`<td id="id${ind}">
-                                        ${jsonData.prospect.id}
+                                        ${jsonData.projet.id}
                                         </td>
-                                        <td id="nom_prenom${ind}">${jsonData.prospect.nom}  ${jsonData.prospect.prenom}</td>
+                                        <td id="nom_prenom${ind}">${jsonData.projet.nom}  ${jsonData.projet.prenom}</td>
                                         
-                                        <td id="email${ind}">${jsonData.prospect.email}</td>
-                                        <td id="tel${ind}">${jsonData.prospect.tel}</td>
-                                        <td id="provenance${ind}">${jsonData.prospect.provenance.nom}</td>
+                                        <td id="email${ind}">${jsonData.projet.email}</td>
+                                        <td id="tel${ind}">${jsonData.projet.tel}</td>
+                                        <td id="provenance${ind}">${jsonData.projet.provenance.nom}</td>
                                         <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            
-                                            <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.prospect.id},${ind})">modifier</button>
+                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.projet.id},${ind})" ">détails</button>
+                                            <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData.projet.id}" >Parcourir</a>
+                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.projet.id},${ind})">modifier</button>
                                                 ${buttonacive}
                                             </div>
                                         </td>`);
@@ -391,7 +390,7 @@
 
     function delet(id, ind) {
         var StringData = $.ajax({
-            url: "prospect/delete/" + id,
+            url: "projet/delete/" + id,
             type: "POST",
             async: false,
             headers: {
@@ -401,31 +400,31 @@
 
         jsonData = JSON.parse(StringData);
         console.log(jsonData)
-        message("prospect", "désactivé", jsonData.check);
-        if (jsonData.prospect.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.prospect.id + "," + ind + ")\">restorer</button>"
+        message("projet", "désactivé", jsonData.check);
+        if (jsonData.projet.deleted_at != null) {
+            buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.projet.id + "," + ind + ")\">restorer</button>"
         } else {
-            buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.prospect.id + "," + ind + ")\">supprimer</button>"
+            buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.projet.id + "," + ind + ")\">supprimer</button>"
         }
-        if (jsonData.prospect.is_confirmed == 0) {
-            buttonconfirm = "<button  class=\"btn btn-dark\" style=\"margin: 10px\"  onclick=\"confirm(" + jsonData.prospect.id + "," + ind + ")\">Confirmer</button>"
+        if (jsonData.projet.is_confirmed == 0) {
+            buttonconfirm = "<button  class=\"btn btn-dark\" style=\"margin: 10px\"  onclick=\"confirm(" + jsonData.projet.id + "," + ind + ")\">Confirmer</button>"
         } else {
             buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
         }
         $('#row' + ind).html(`<td id="id${ind}">
-                                        ${jsonData.prospect.id}
+                                        ${jsonData.projet.id}
                                         </td>
-                                        <td id="nom_prenom${ind}">${jsonData.prospect.nom}  ${jsonData.prospect.prenom}</td>
+                                        <td id="nom_prenom${ind}">${jsonData.projet.nom}  ${jsonData.projet.prenom}</td>
                                         
-                                        <td id="email${ind}">${jsonData.prospect.email}</td>
-                                        <td id="tel${ind}">${jsonData.prospect.tel}</td>
-                                        <td id="provenance${ind}">${jsonData.prospect.provenance.nom}</td>
+                                        <td id="email${ind}">${jsonData.projet.email}</td>
+                                        <td id="tel${ind}">${jsonData.projet.tel}</td>
+                                        <td id="provenance${ind}">${jsonData.projet.provenance.nom}</td>
                                         <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            
-                                            <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.prospect.id},${ind})">modifier</button>
+                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.projet.id},${ind})" ">détails</button>
+                                            <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData.projet.id}" >Parcourir</a>
+                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.projet.id},${ind})">modifier</button>
                                                 ${buttonacive}
                                             </div>
                                         </td>`);
@@ -643,7 +642,8 @@
                                         <td id="group${ind}">${jsonData3.user.group.nom}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>
+                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData3.user.id},${ind})" ">détails</button>
+                                            <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData3.projet.id}" >Parcourir</a>
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData3.user.id},${ind})">modifier</button>
                                                 ${buttonacive}
                                             </div>
@@ -659,7 +659,7 @@
 
     function detail(id, ind) {
         var StringData = $.ajax({
-            url: "prospect/detail/" + id,
+            url: "projet/detail/" + id,
             type: "POST",
             async: false,
             headers: {
@@ -718,59 +718,7 @@
         $('#userdetails').modal('show');
     }
 
-    function confirm(id, ind) {
-
-        $('#confirmationModal').modal('show');
-
-        $('#confirm').click(function() {
-            $('#confirmationModal').modal('hide');
-            var StringData = $.ajax({
-                url: "prospect/confirmer/" + id,
-                type: "POST",
-                async: false,
-                data : {project_type : $('#project_type').val() },
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-            }).responseText;
-
-            jsonData = JSON.parse(StringData);
-            
-            console.log(jsonData)
-            message("prospect", "confirmé", jsonData.check);
-
-            if (jsonData.prospect.deleted_at != null) {
-                buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.prospect.id + "," + ind + ")\">restorer</button>"
-            } else {
-                buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.prospect.id + "," + ind + ")\">supprimer</button>"
-            }
-            if (jsonData.prospect.is_confirmed == 0) {
-                buttonconfirm = "<button  class=\"btn btn-dark\" style=\"margin: 10px\"  onclick=\"confirm(" + jsonData.prospect.id + "," + ind + ")\">Confirmer</button>"
-            } else {
-                buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
-            }
-            $('#row' + ind).html(`<td id="id${ind}">
-                                        ${jsonData.prospect.id}
-                                        </td>
-                                        <td id="nom_prenom${ind}">${jsonData.prospect.nom}  ${jsonData.prospect.prenom}</td>
-                                        <td id="email${ind}">${jsonData.prospect.email}</td>
-                                        <td id="tel${ind}">${jsonData.prospect.tel}</td>
-                                        <td id="provenance${ind}">${jsonData.prospect.provenance.nom}</td>
-                                        <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
-                                        <td>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                            
-                                            <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.prospect.id},${ind})">modifier</button>
-                                                ${buttonacive}
-                                            </div>
-                                        </td>`);
-            $("#datatable").DataTable();
-
-        });
-
-    }
-
+   
     function printErrorMsg(msg) {
 
 

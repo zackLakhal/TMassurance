@@ -104,7 +104,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title" id="mySmallModalLabel">Message</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body" id="content"> content will be here </div>
         </div>
@@ -197,7 +197,7 @@
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData[ind].id},${ind})" ">détails</button>
-                                            <button  class="btn btn-primary" style="margin: 10px"  >Parcourir</button>
+                                            
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData[ind].id},${ind})">modifier</button>
                                                 ${buttonacive}
                                             </div>
@@ -298,7 +298,7 @@
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})" ">détails</button>
-                                            <button  class="btn btn-primary" style="margin: 10px"  >Parcourir</button>
+                                            
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.user.id},${jsonData.count})">modifier</button>
                                                 ${buttonacive}
                                             </div>
@@ -345,7 +345,7 @@
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})" ">détails</button>
-                                            <button  class="btn btn-primary" style="margin: 10px" >Parcourir</button>
+                                            
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.user.id},${ind})">modifier</button>
                                                 ${buttonacive}
                                             </div>
@@ -385,7 +385,7 @@
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})" ">détails</button>
-                                            <button  class="btn btn-primary" style="margin: 10px"  ">Parcourir</button>
+                                            
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.user.id},${ind})">modifier</button>
                                                 ${buttonacive}
                                             </div>
@@ -605,7 +605,7 @@
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData3.user.id},${ind})" ">détails</button>
-                                            <button  class="btn btn-primary" style="margin: 10px"  >Parcourir</button>
+                                            
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData3.user.id},${ind})">modifier</button>
                                                 ${buttonacive}
                                             </div>
