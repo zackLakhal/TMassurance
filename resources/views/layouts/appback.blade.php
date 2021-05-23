@@ -25,6 +25,7 @@
     <link href="{{ asset('css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- App Css-->
     <link href="{{ asset('css/app.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('libs/dropzone/min/dropzone.min.css') }}" rel="stylesheet" type="text/css" />
 </head>
 
 <body data-sidebar="dark">

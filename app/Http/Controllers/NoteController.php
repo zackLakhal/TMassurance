@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Historique;
-use App\Tache;
+use App\Note;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-
-
-class TachController extends Controller
+use Illuminate\Support\Facades\Auth;
+class NoteController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,8 +16,9 @@ class TachController extends Controller
      */
     public function index(Request $request)
     {
-        $taches = Tache::withTrashed()->where('project_id','=',$request->projet_link)->with('user')->get();
-        return response()->json($taches);
+        $notes = Note::withTrashed()->where('project_id', '=', $request->projet_link)->with('user')->get();
+
+        return response()->json($notes);
     }
 
     /**
@@ -42,11 +41,10 @@ class TachController extends Controller
     {
         $validator = Validator::make($request->all(), [
 
-            'tach_titre' => 'required',
-            'tach_description' => 'required',
-            'tach_echeance' => 'required',
-            'tach_project_id' => 'required',
-           
+            'note_titre' => 'required',
+            'note_description' => 'required',
+            'note_project_id' => 'required',
+
         ]);
 
 
@@ -55,19 +53,18 @@ class TachController extends Controller
             return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
         }
 
-        $temp = new Tache();
-        $temp->titre = $request->tach_titre;
-        $temp->statut = "En cours";
-        $temp->description = $request->tach_description;
+        $temp = new Note();
+        $temp->titre = $request->note_titre;
+        $temp->note = $request->note_description;
         $temp->user_id = Auth::user()->id;
-        $temp->project_id = $request->tach_project_id;
-        $temp->dateEcheance = $request->tach_echeance;
+        $temp->project_id = $request->note_project_id;
         $temp->save();
-        $this->store_histo("ajouté","tache",$temp->project_id);
-        $tache = Tache::withTrashed()->where('id','=',$temp->id)->with('user')->first();
+        $this->store_histo("ajouté","note",$temp->project_id);
+
+        $note = Note::withTrashed()->where('id', '=', $temp->id)->with('user')->first();
         $check = "";
-        $count = Tache::all()->count();
-        if (is_null($tache)) {
+        $count = Note::all()->count();
+        if (is_null($note)) {
             $check = "faile";
         } else {
             $check = "done";
@@ -76,7 +73,7 @@ class TachController extends Controller
         $objet =  [
             'check' => $check,
             'count' => $count - 1,
-            'tache' => $tache,
+            'note' => $note,
             'inputs' => $request->all()
         ];
         return response()->json($objet);
@@ -85,10 +82,10 @@ class TachController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Tache  $tache
+     * @param  \App\Note  $note
      * @return \Illuminate\Http\Response
      */
-    public function show(Tache $tache)
+    public function show(Note $note)
     {
         //
     }
@@ -96,34 +93,16 @@ class TachController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Tache  $tache
+     * @param  \App\Note  $note
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request, $edit, $id)
     {
-
-        if ($edit == "delete") {
-            $tache = Tache::find($id);
-            $this->store_histo("supprimé","tache",$tache->project_id);
-            $tache->delete();
-           
-            $done = true;
-        }
-        if ($edit == "restore") {
-            $tache = Tache::onlyTrashed()
-                ->where('id', $id)
-                ->first();
-                $this->store_histo("restoré","tache",$tache->project_id);
-            $tache->restore();
-            $done = true;
-        }
-
         if ($edit == "edit") {
             $validator = Validator::make($request->all(), [
 
-                'tach_titre' => 'required',
-                'tach_status' => 'required',
-                'tach_description' => 'required',
+                'note_titre' => 'required',
+                'note_description' => 'required',
                
             ]);
 
@@ -133,24 +112,17 @@ class TachController extends Controller
                 return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
             }
 
-            $temp = Tache::withTrashed()
+            $temp = Note::withTrashed()
                 ->where('id', $id)
                 ->first();
-                $temp->titre = $request->tach_titre;
-                $temp->statut = $request->tach_status;
-                $temp->description = $request->tach_description;
-                
+                $temp->titre = $request->note_titre;
+                $temp->note = $request->note_description;
+                $this->store_histo("modifié","note",$temp->project_id);
                 $temp->save();
-
-                if ($request->filled('tach_echeance')) {
-                    $temp->dateEcheance = $request->tach_echeance;
-                    $temp->save();
-                }
-                $this->store_histo("modifié","tache",$tache->project_id);
             $done = true;
         }
 
-        $tache = Tache::withTrashed()
+        $note = Note::withTrashed()
             ->where('id', $id)->with('user')
             ->first();
 
@@ -163,7 +135,7 @@ class TachController extends Controller
 
         $objet =  [
             'check' => $check,
-            'tache' => $tache,
+            'note' => $note,
             'inputs' => $request->all()
         ];
         return response()->json($objet);
@@ -179,25 +151,27 @@ class TachController extends Controller
         $histo->save();
     }
 
+    
+
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Tache  $tache
+     * @param  \App\Note  $note
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tache $tache)
+    public function update(Request $request, Note $note)
     {
-        //
+        
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Tache  $tache
+     * @param  \App\Note  $note
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tache $tache)
+    public function destroy(Note $note)
     {
         //
     }

@@ -16,7 +16,10 @@ class CreateDocumentsTable extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nom');
-            $table->string('nature');
+            $table->string('size');
+            $table->string('ext');
+            $table->string('path');
+            $table->string('type');
             $table->bigInteger('project_id');
             $table->timestamps();
             $table->softDeletes();

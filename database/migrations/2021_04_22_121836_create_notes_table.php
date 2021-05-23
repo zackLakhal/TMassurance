@@ -19,7 +19,6 @@ class CreateNotesTable extends Migration
             $table->text('note');
             $table->bigInteger('user_id');
             $table->bigInteger('project_id');
-           
             $table->timestamps();
             $table->softDeletes();
         });

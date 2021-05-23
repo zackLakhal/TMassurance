@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Historique;
-use App\Tache;
+use App\Rappel;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-
-
-class TachController extends Controller
+use Illuminate\Support\Facades\Auth;
+class RappelController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,8 +16,9 @@ class TachController extends Controller
      */
     public function index(Request $request)
     {
-        $taches = Tache::withTrashed()->where('project_id','=',$request->projet_link)->with('user')->get();
-        return response()->json($taches);
+        $rappels = Rappel::withTrashed()->where('project_id', '=', $request->projet_link)->with('user')->get();
+
+        return response()->json($rappels);
     }
 
     /**
@@ -42,32 +41,30 @@ class TachController extends Controller
     {
         $validator = Validator::make($request->all(), [
 
-            'tach_titre' => 'required',
-            'tach_description' => 'required',
-            'tach_echeance' => 'required',
-            'tach_project_id' => 'required',
-           
-        ]);
+            'rappel_titre' => 'required',
+            'rappel_sujet' => 'required',
+            'rappel_date_rappel' => 'required',
 
+        ]);
 
         if ($validator->fails()) {
 
             return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
         }
 
-        $temp = new Tache();
-        $temp->titre = $request->tach_titre;
-        $temp->statut = "En cours";
-        $temp->description = $request->tach_description;
+        $temp = new Rappel();
+        $temp->titre = $request->rappel_titre;
+        $temp->sujet = $request->rappel_sujet;
+        $temp->dateRappel = $request->rappel_date_rappel;
+        $temp->project_id = $request->rappel_project_id;
         $temp->user_id = Auth::user()->id;
-        $temp->project_id = $request->tach_project_id;
-        $temp->dateEcheance = $request->tach_echeance;
+        
         $temp->save();
-        $this->store_histo("ajouté","tache",$temp->project_id);
-        $tache = Tache::withTrashed()->where('id','=',$temp->id)->with('user')->first();
+        $this->store_histo("ajouté","rappel",$temp->project_id);
+        $rappel = Rappel::withTrashed()->where('id', '=', $temp->id)->with('user')->first();
         $check = "";
-        $count = Tache::all()->count();
-        if (is_null($tache)) {
+        $count = Rappel::all()->count();
+        if (is_null($rappel)) {
             $check = "faile";
         } else {
             $check = "done";
@@ -76,7 +73,7 @@ class TachController extends Controller
         $objet =  [
             'check' => $check,
             'count' => $count - 1,
-            'tache' => $tache,
+            'rappel' => $rappel,
             'inputs' => $request->all()
         ];
         return response()->json($objet);
@@ -85,10 +82,10 @@ class TachController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Tache  $tache
+     * @param  \App\Rappel  $rappel
      * @return \Illuminate\Http\Response
      */
-    public function show(Tache $tache)
+    public function show(Rappel $rappel)
     {
         //
     }
@@ -96,34 +93,34 @@ class TachController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Tache  $tache
+     * @param  \App\Rappel  $rappel
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request, $edit, $id)
     {
 
+
+        $done = false;
         if ($edit == "delete") {
-            $tache = Tache::find($id);
-            $this->store_histo("supprimé","tache",$tache->project_id);
-            $tache->delete();
-           
+            $rappel = Rappel::find($id);
+            $this->store_histo("supprimé","rappel",$rappel->project_id);
+            $rappel->delete();
             $done = true;
         }
         if ($edit == "restore") {
-            $tache = Tache::onlyTrashed()
+            $rappel = Rappel::onlyTrashed()
                 ->where('id', $id)
                 ->first();
-                $this->store_histo("restoré","tache",$tache->project_id);
-            $tache->restore();
+            $this->store_histo("restoré","rappel",$rappel->project_id);
+            $rappel->restore();
             $done = true;
         }
-
         if ($edit == "edit") {
             $validator = Validator::make($request->all(), [
 
-                'tach_titre' => 'required',
-                'tach_status' => 'required',
-                'tach_description' => 'required',
+                'rappel_titre' => 'required',
+                'rappel_sujet' => 'required',
+                'rappel_date_rappel' => 'required',
                
             ]);
 
@@ -133,24 +130,22 @@ class TachController extends Controller
                 return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
             }
 
-            $temp = Tache::withTrashed()
+            $temp = Rappel::withTrashed()
                 ->where('id', $id)
                 ->first();
-                $temp->titre = $request->tach_titre;
-                $temp->statut = $request->tach_status;
-                $temp->description = $request->tach_description;
+                $temp->titre = $request->rappel_titre;
+                $temp->sujet = $request->rappel_sujet;
                 
                 $temp->save();
-
-                if ($request->filled('tach_echeance')) {
-                    $temp->dateEcheance = $request->tach_echeance;
+                $this->store_histo("modifié","rappel",$temp->project_id);
+                if ($request->filled('rappel_date_rappel')) {
+                    $temp->dateRappel = $request->rappel_date_rappel;
                     $temp->save();
                 }
-                $this->store_histo("modifié","tache",$tache->project_id);
             $done = true;
         }
 
-        $tache = Tache::withTrashed()
+        $rappel = Rappel::withTrashed()
             ->where('id', $id)->with('user')
             ->first();
 
@@ -163,7 +158,7 @@ class TachController extends Controller
 
         $objet =  [
             'check' => $check,
-            'tache' => $tache,
+            'rappel' => $rappel,
             'inputs' => $request->all()
         ];
         return response()->json($objet);
@@ -183,10 +178,10 @@ class TachController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Tache  $tache
+     * @param  \App\Rappel  $rappel
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tache $tache)
+    public function update(Request $request, Rappel $rappel)
     {
         //
     }
@@ -194,10 +189,10 @@ class TachController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Tache  $tache
+     * @param  \App\Rappel  $rappel
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Tache $tache)
+    public function destroy(Rappel $rappel)
     {
         //
     }

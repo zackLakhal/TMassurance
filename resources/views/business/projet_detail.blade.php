@@ -8,10 +8,10 @@
 
                 <div class="position-relative m-4">
                     <div class="btn-group btn-group-example d-flex mb-3" role="group">
-                        <button type="button" class="btn btn-primary w-100">step 1</button>
-                        <button type="button" class="btn btn-outline-primary w-100">Step 2</button>
-                        <button type="button" class="btn btn-outline-primary w-100">Step 3</button>
-                        <button type="button" class="btn btn-outline-primary w-100">Step 4</button>
+                        <button type="button" class="btn btn-primary w-100">Initation</button>
+                        <button type="button" class="btn btn-outline-primary w-100">Prospection</button>
+                        <button type="button" class="btn btn-outline-primary w-100">Souscription</button>
+                        <button type="button" class="btn btn-outline-primary w-100">Contrat</button>
                     </div>
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 25%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
@@ -100,6 +100,21 @@
         </div>
     </div>
 </div>
+<!-- /.modal 2-->
+<div class="modal fade bs-example-modal-sm" id="messagebox" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="mySmallModalLabel">Message</h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body" id="content"> content will be here </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /.modal 2 -->
 
 @endsection
 @section('script')
@@ -116,9 +131,14 @@
 <script src="{{ asset('libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}"></script>
 
 <!-- Datatable init js -->
+<script src="{{ asset('libs/dropzone/min/dropzone.min.js') }}"></script>
 <script>
     $(document).ready(function() {
         init_tach()
+        init_note()
+        init_rappel()
+        init_histo()
+        init_doc()
     });
 
     function message(objet, action, statut) {
@@ -132,13 +152,135 @@
         $('#messagebox').modal('show');
 
     }
+</script>
+<script>
+    function init_histo() {
 
+        let projet_link = window.location.href.split('/')[5];
+        
+        var StringData = $.ajax({
+            url: '/historique/index',
+            dataType: "json",
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            async: false,
+            data: {
+                projet_link: projet_link
+            }
+        }).responseText;
+        jsonData = JSON.parse(StringData);
+       
+        $('#histo_body').html("");
+        for (let ind = 0; ind < jsonData.length; ind++) {
+            $('#histo_body').append(`<tr id="row${ind}">
+                                        <td id="date_histo${ind}">${jsonData[ind].created_at}</td>
+                                        <td id="action_histo${ind}">${jsonData[ind].action}</td>
+                                        <td id="composante_histo${ind}">${jsonData[ind].composante}</td>
+                                        <td id="responsable_histo${ind}">${jsonData[ind].user.prenom}  ${jsonData[ind].user.enom}</td>
+                                    </tr>`);
+        }
+
+        $("#histo_dataTable").DataTable();
+
+    }
+</script>
+<script>
+    function init_doc() {
+
+        let projet_link = window.location.href.split('/')[5];
+        
+        var StringData = $.ajax({
+            url: '/document/index',
+            dataType: "json",
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            async: false,
+            data: {
+                projet_link: projet_link
+            }
+        }).responseText;
+        jsonData = JSON.parse(StringData);
+        console.log(jsonData);
+        $('#doc_bodytab').html("");
+        for (let ind = 0; ind < jsonData.length; ind++) {
+            $('#doc_bodytab').append(`<tr id="row${ind}">
+                                        <td><a href="{{asset('storage/${jsonData[ind].path}')}}" target="_blank" class="text-dark fw-medium"><i class="bx bxs-file-${jsonData[ind].ext} font-size-16 align-middle text-primary me-2"></i> <span id="nom_doc${ind}">${jsonData[ind].nom}</span></a></td>
+                                        <td id="type_doc${ind}">${jsonData[ind].type}</td>
+                                        <td id="size_doc${ind}">${jsonData[ind].size}</td>
+                                        <td id="created_at_doc${ind}">${jsonData[ind].created_at}</td>
+                                        <td>
+                                        <button class="btn btn-danger"> delete</button>
+                                        </td>
+                                    </tr>`);
+        }
+
+        $("#doc_datatable").DataTable();
+
+        $('#creat_doc').click(function() {
+        $('#docmodale').modal('show');
+
+        $('#doc_file').val("");
+        $('#doc_type').val("");
+        
+        $('#doc_save').click(function() {
+            form_data = new FormData();
+            form_data.append("doc_type", $("#doc_type").val());
+            form_data.append("doc_project_id", projet_link);
+            form_data.append("doc_file", $("#doc_file")[0].files[0]);
+           
+
+            
+            var StringData = $.ajax({
+                url: "/document/store",
+                dataType: "json",
+                type: "POST",
+                async: false,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: form_data,
+                processData: false,
+                contentType: false,
+            }).responseText;
+            jsonData = JSON.parse(StringData);
+            console.log(jsonData)
+            if ($.isEmptyObject(jsonData.error)) {
+               
+                clearInputs(jsonData.inputs);
+                $('#docmodale').modal('hide');
+                message("document", "ajouté", jsonData.check);
+
+
+                $('#doc_bodytab').append(`<tr id="row${jsonData.count}">
+                                        <td><a href="{{asset('storage/${jsonData.document.path}')}}"  target="_blank" class="text-dark fw-medium"><i class="bx bxs-file-${jsonData.document.ext} font-size-16 align-middle text-primary me-2"></i> <span id="nom_doc${jsonData.count}">${jsonData.document.nom}</span></a></td>
+                                        <td id="type_doc${jsonData.count}">${jsonData.document.type}</td>
+                                        <td id="size_doc${jsonData.count}">${jsonData.document.size}</td>
+                                        <td id="created_at_doc${jsonData.count}">${jsonData.document.created_at}</td>
+                                        <td>
+                                        <button class="btn btn-danger"> delete</button>
+                                        </td>
+                                    </tr>`);
+            } else {
+                clearInputs(jsonData.inputs);
+                printErrorMsg(jsonData.error);
+            }
+        });
+
+    });
+
+    }
+</script>
+<script>
     function init_tach() {
 
         var buttonacive;
         var buttonconfirm;
         let projet_link = window.location.href.split('/')[5];
-        console.log(projet_link)
+        
         var StringData = $.ajax({
             url: '/tach/index',
             dataType: "json",
@@ -152,403 +294,185 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        
         $('#tach_body').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {
-                buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData[ind].id + "," + ind + ")\">restorer</button>"
+                buttonacive = "<button  class=\"btn btn-success\"  onclick=\"tach_renouvler(" + jsonData[ind].id + "," + ind + ")\">renouvler</button>"
             } else {
-                buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData[ind].id + "," + ind + ")\">supprimer</button>"
+                buttonacive = "<button  class=\"btn btn-danger\" onclick=\"tach_terminer(" + jsonData[ind].id + "," + ind + ")\">terminer</button>"
             }
-            $('#tach_body').append(`<tr id="row${ind}">
-                                <td id="id${ind}">
-                                ${jsonData[ind].id}
-                                </td>
-                                <td id="titre${ind}">${jsonData[ind].titre}</td>
-                                
-                                <td id="user${ind}">${jsonData[ind].user.nom} ${jsonData[ind].user.prenom}</td>
-                                <td id="dateEcheance${ind}">${jsonData[ind].dateEcheance}</td>
-                                <td id="statut${ind}">${jsonData[ind].statut}</td>
-                                <td  id="description${ind}">${jsonData[ind].description}</td>
-                                <td>
-                                    <div class="btn-group" role="group" aria-label="Basic example">
-                                    <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData[ind].id},${ind})">modifier</button>
-                                        ${buttonacive}
-                                    </div>
-                                </td>
-                            </tr>`);
 
-        }
+            $('#tach_body').append(`<div class="col-xl-4" id="tach${ind}">
+                                        <div class="card border border-info">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="text-muted">
+                                                            <h4 id="tach_edit_title${ind}">${jsonData[ind].titre}</h4>
+                                                            <h5 id="tach_edit_user${ind}">${jsonData[ind].user.prenom} ${jsonData[ind].user.nom}</h5>
+                                                            <br><p class="mb-0" id="rappel_edit_description${ind}">${jsonData[ind].description}</p>
+                                                        </div>
 
-
-
-        $("#tach_dataTable").DataTable();
-        // $('#role').html("")
-        // var StringData2 = $.ajax({
-        //     url: "role/active_index",
-        //     dataType: "json",
-        //     type: "GET",
-        //     async: false,
-        // }).responseText;
-        // jsonData2 = JSON.parse(StringData2);
-
-        // for (let ind = 0; ind < jsonData2.length; ind++) {
-        //     $('#role').append("<option value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].value + "</option>");
-        // }
-
-        // $('#group').html("")
-        // var StringData3 = $.ajax({
-        //     url: "group/active_index",
-        //     dataType: "json",
-        //     type: "GET",
-        //     async: false,
-        // }).responseText;
-        // jsonData3 = JSON.parse(StringData3);
-
-        // for (let ind = 0; ind < jsonData3.length; ind++) {
-        //     $('#group').append("<option value=\"" + jsonData3[ind].id + "\">" + jsonData3[ind].nom + "</option>");
-        // }
-
-    }
-    // $('#newmodal').click(function() {
-    //     $('#modalhead').html("<h4 class=\"modal-title\" >Nouvelle Utilisateur</h4>" +
-    //         "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
-    //     $('#modalfooter').html("<button type=\"button\" class=\"btn btn-info\" id=\"save\">Enregistrer</button>");
-    //     $('#exampleModal').modal('show');
-
-    //     $('#sexe').val("");
-    //     $('#nom').val("");
-    //     $('#prenom').val("");
-    //     $('#email').val("");
-    //     $('#tel').val("");
-    //     $('#password').val("");
-    //     $('#role').val("");
-    //     $('#group').val("");
-    //     $('#save').click(function() {
-    //         var inputs = {
-    //             "sexe": $("#sexe").val(),
-    //             "nom": $("#nom").val(),
-    //             "prenom": $("#prenom").val(),
-    //             "email": $("#email").val(),
-    //             "tel": $("#tel").val(),
-    //             "group": $("#group").val(),
-    //             "password": $("#password").val(),
-    //             "role": $("#role").val(),
-    //         };
-
-    //         var StringData = $.ajax({
-    //             url: "user/store",
-    //             type: "POST",
-    //             async: false,
-    //             headers: {
-    //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-    //             },
-    //             data: inputs
-    //         }).responseText;
-    //         jsonData = JSON.parse(StringData);
-
-    //         if ($.isEmptyObject(jsonData.error)) {
-
-    //             clearInputs(jsonData.inputs);
-    //             $('#exampleModal').modal('hide');
-    //             message("utilisateur", "ajouté", jsonData.check);
-
-    //             if (jsonData.user.deleted_at != null) {
-    //                 buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.user.id + "," + jsonData.count + ")\">restorer</button>"
-    //             } else {
-    //                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.user.id + "," + jsonData.count + ")\">supprimer</button>"
-    //             }
-    //             $('#bodytab').append(`<tr id="row${jsonData.count}">
-    //                                     <td id="photo${jsonData.count}">
-    //                                         <div>
-    //                                             <img class="rounded-circle avatar-xs" src="{{ asset('storage/${jsonData.user.photo}') }}" alt="">
-    //                                         </div>
-    //                                     </td>
-    //                                     <td id="nom_prenom${jsonData.count}">${jsonData.user.nom}  ${jsonData.user.prenom}</td>
-
-    //                                     <td id="email${jsonData.count}">${jsonData.user.email}</td>
-    //                                     <td id="role${jsonData.count}">${jsonData.user.role.value}</td>
-    //                                     <td id="group${jsonData.count}">${jsonData.user.group.nom}</td>
-    //                                     <td>
-    //                                         <div class="btn-group" role="group" aria-label="Basic example">
-    //                                         
-    //                                         <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.user.id}" >Parcourir</a>
-    //                                         <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.user.id},${jsonData.count})">modifier</button>
-    //                                             ${buttonacive}
-    //                                         </div>
-    //                                     </td>
-    //                                 </tr>`);
-    //         } else {
-    //             clearInputs(jsonData.inputs);
-    //             printErrorMsg(jsonData.error);
-    //         }
-    //     });
-    //     $("#datatable").DataTable();
-    // });
-
-    function restor(id, ind) {
-        var StringData = $.ajax({
-            url: "prospect/restore/" + id,
-            type: "POST",
-            async: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-        }).responseText;
-
-        jsonData = JSON.parse(StringData);
-
-        message("prospect", "activé", jsonData.check);
-
-        if (jsonData.prospect.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.prospect.id + "," + ind + ")\">restorer</button>"
-        } else {
-            buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.prospect.id + "," + ind + ")\">supprimer</button>"
-        }
-        if (jsonData.prospect.is_confirmed == 0) {
-            buttonconfirm = "<button  class=\"btn btn-dark\" style=\"margin: 10px\"  onclick=\"confirm(" + jsonData.prospect.id + "," + ind + ")\">Confirmer</button>"
-        } else {
-            buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
-        }
-        $('#row' + ind).html(`<td id="id${ind}">
-                                        ${jsonData.prospect.id}
-                                        </td>
-                                        <td id="nom_prenom${ind}">${jsonData.prospect.nom}  ${jsonData.prospect.prenom}</td>
-                                        
-                                        <td id="email${ind}">${jsonData.prospect.email}</td>
-                                        <td id="tel${ind}">${jsonData.prospect.tel}</td>
-                                        <td id="provenance${ind}">${jsonData.prospect.provenance.nom}</td>
-                                        <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
-                                        <td>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                            
-                                            <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.prospect.id},${ind})">modifier</button>
-                                                ${buttonacive}
+                                                    </div>
+                                                    <div class="dropdown ml-2 text-center">
+                                                       <h5>Expir : <span style="color: green;" id="tach_edit_dateEcheance${ind}">${jsonData[ind].dateEcheance.split(' ')[0]}</span></h5>
+                                                       <h5>Statut : <span style="color: green;" id="tach_edit_statut${ind}">${jsonData[ind].statut}</span></h5>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </td>`);
-        $("#datatable").DataTable();
-    }
-
-    function delet(id, ind) {
-        var StringData = $.ajax({
-            url: "prospect/delete/" + id,
-            type: "POST",
-            async: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-        }).responseText;
-
-        jsonData = JSON.parse(StringData);
-        console.log(jsonData)
-        message("prospect", "désactivé", jsonData.check);
-        if (jsonData.prospect.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.prospect.id + "," + ind + ")\">restorer</button>"
-        } else {
-            buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.prospect.id + "," + ind + ")\">supprimer</button>"
-        }
-        if (jsonData.prospect.is_confirmed == 0) {
-            buttonconfirm = "<button  class=\"btn btn-dark\" style=\"margin: 10px\"  onclick=\"confirm(" + jsonData.prospect.id + "," + ind + ")\">Confirmer</button>"
-        } else {
-            buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
-        }
-        $('#row' + ind).html(`<td id="id${ind}">
-                                        ${jsonData.prospect.id}
-                                        </td>
-                                        <td id="nom_prenom${ind}">${jsonData.prospect.nom}  ${jsonData.prospect.prenom}</td>
-                                        
-                                        <td id="email${ind}">${jsonData.prospect.email}</td>
-                                        <td id="tel${ind}">${jsonData.prospect.tel}</td>
-                                        <td id="provenance${ind}">${jsonData.prospect.provenance.nom}</td>
-                                        <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
-                                        <td>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
                                             
-                                            <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.prospect.id},${ind})">modifier</button>
-                                                ${buttonacive}
+                                            <div class="card-body border-top">
+                                                <p class="text-muted mb-4"></p>
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                <button  class="btn btn-primary" onclick="edit_tach(${jsonData[ind].id},${ind})">Modifier</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                ${buttonacive}
+                                                                </div>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </td>`);
-        $("#datatable").DataTable();
+                                        </div>
+                                    </div>`);
+
+        }
+
+
+
     }
+    $('#creat_tache').click(function() {
+        $('#tach_head').html(`<h5 class="modal-title" id="exampleModalLabel">Ajouter une tâche</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>`);
+        $('#tach_footer').html(`<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button class="btn btn-success" id="tach_save">Enregistrer</button>`);
+        $('#statut_tach').hide();
+        $('#tachmodale').modal('show');
 
-    function edit(id, ind) {
+        $('#tach_titre').val("");
+        $('#tach_echeance').val("");
+        $('#tach_description').val("");
+        $('#tach_save').click(function() {
+            var inputs = {
+                "tach_titre": $("#tach_titre").val(),
+                "tach_echeance": $("#tach_echeance").val(),
+                "tach_description": $("#tach_description").val(),
+                "tach_project_id": window.location.href.split('/')[5]
+            };
 
-        $('#detail_head').html("<h4 class=\"modal-title\" >Modifier Utilisateur</h4>" +
-            "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
-        $('#detail_footer').html("<button type=\"button\" class=\"btn btn-info\" id=\"edit\">Enregistrer</button>");
+            var StringData = $.ajax({
+                url: "/tach/store",
+                type: "POST",
+                async: false,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: inputs
+            }).responseText;
+            jsonData = JSON.parse(StringData);
+            
+            if ($.isEmptyObject(jsonData.error)) {
+                if (jsonData.tache.deleted_at != null) {
+                    buttonacive = "<button  class=\"btn btn-success\"  onclick=\"tach_renouvler(" + jsonData.tache.id + "," + ind + ")\">renouvler</button>"
+                } else {
+                    buttonacive = "<button  class=\"btn btn-danger\" onclick=\"tach_terminer(" + jsonData.tache.id + "," + ind + ")\">terminer</button>"
+                }
+                clearInputs(jsonData.inputs);
+                $('#tachmodale').modal('hide');
+                message("tache", "ajouté", jsonData.check);
 
-        var StringData1 = $.ajax({
-            url: "user/detail/" + id,
-            type: "POST",
-            async: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-        }).responseText;
 
-        jsonData1 = JSON.parse(StringData1);
-
-        $('#detail_body').html(`<div class="mx-auto d-block" style="width: 14rem;">
-                                    <img class="card-img-top" id="avatar_display" src="{{ asset('storage/${jsonData1.photo}') }}" alt="">
-                                    <div class="form-group" id="err-edit-photo">
-                                        <input type="file" class="form-control" id="edit-photo" name="edit-photo">
-                                        <small class="invalid-feedback"> </small>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-nowrap mb-0">
-                                            <tbody>
-                                                <tr>
-                                                    <th scope="row">nom:</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-nom">
-                                                            <input type="text" class="form-control" id="edit-nom" name="edit-nom" value="${jsonData1.nom}">
-                                                            <small class="invalid-feedback"> </small>
+                $('#tach_body').append(`<div class="col-xl-4" id="tach${jsonData.count}">
+                                        <div class="card border border-info">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="text-muted">
+                                                            <h4 id="tach_edit_title${jsonData.count}">${jsonData.tache.titre}</h4>
+                                                            <h5 id="tach_edit_user${jsonData.count}">${jsonData.tache.user.prenom} ${jsonData.tache.user.nom}</h5>
+                                                            <br><p class="mb-0" id="rappel_edit_description${jsonData.count}">${jsonData.tache.description}</p>
                                                         </div>
 
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">prénom:</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-prenom">
-                                                            <input type="text" class="form-control" id="edit-prenom" name="edit-prenom" value="${jsonData1.prenom}">
-                                                            <small class="invalid-feedback"> </small>
+                                                    </div>
+                                                    <div class="dropdown ml-2 text-center">
+                                                       <h5>Expir : <span style="color: green;" id="tach_edit_dateEcheance${jsonData.count}">${jsonData.tache.dateEcheance.split(' ')[0]}</span></h5>
+                                                       <h5>Statut : <span style="color: green;" id="tach_edit_statut${jsonData.count}">${jsonData.tache.statut}</span></h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card-body border-top">
+                                                <p class="text-muted mb-4"></p>
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                <button  class="btn btn-primary" onclick="edit_tach(${jsonData.tache.id},${jsonData.count})">Modifier</button>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Sexe :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-sexe">
-                                                            <select class="form-control custom-select selectpicker " name="edit-sexe" id="edit-sexe" value="${jsonData1.sexe}">
-                                                                <option>Male</option>
-                                                                <option>Femlle</option>
-                                                            </select>
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Role :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-role">
-                                                            <select class="form-control custom-select selectpicker " name="edit-role" id="edit-role">
-
-                                                            </select>
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Role :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-group">
-                                                            <select class="form-control custom-select selectpicker " name="edit-group" id="edit-group">
-
-                                                            </select>
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Email :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-email">
-                                                            <input type="text" class="form-control" id="edit-email" name="edit-email" value="${jsonData1.email}">
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Tel :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-tel">
-                                                            <input type="text" class="form-control" id="edit-tel" name="edit-tel" value="${jsonData1.tel}">
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Adresse :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-adresse">
-                                                            <input type="text" class="form-control" id="edit-adresse" name="edit-adresse" value="${jsonData1.adresse}">
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Date de naissance :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-dateNaissance">
-                                                            <input type="date" class="form-control" id="edit-dateNaissance" name="edit-dateNaissance" value="${jsonData1.dateNaissance}">
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>`);
-
-        $('#edit-role').html("")
-        var StringData2 = $.ajax({
-            url: "role/active_index",
-            dataType: "json",
-            type: "GET",
-            async: false,
-        }).responseText;
-        jsonData2 = JSON.parse(StringData2);
-        for (let ind = 0; ind < jsonData2.length; ind++) {
-            if (jsonData2[ind].id == jsonData1.role.id) {
-                $('#edit-role').append("<option selected value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].value + "</option>");
-
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                ${buttonacive}
+                                                                </div>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`);
             } else {
-                $('#edit-role').append("<option value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].value + "</option>");
-
+                clearInputs(jsonData.inputs);
+                printErrorMsg(jsonData.error);
             }
-        }
+        });
 
-        $('#edit-group').html("")
-        var StringData2 = $.ajax({
-            url: "group/active_index",
-            dataType: "json",
-            type: "GET",
-            async: false,
-        }).responseText;
-        jsonData2 = JSON.parse(StringData2);
-        for (let ind = 0; ind < jsonData2.length; ind++) {
-            if (jsonData2[ind].id == jsonData1.group.id) {
-                $('#edit-group').append("<option selected value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].nom + "</option>");
+    });
 
-            } else {
-                $('#edit-group').append("<option value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].nom + "</option>");
 
-            }
-        }
-        $('#userdetails').modal('show');
 
-        $('#edit').click(function() {
+    function edit_tach(id, ind) {
+        var buttonacive;
+        $('#tach_head').html(`<h5 class="modal-title" id="exampleModalLabel">Modifier une tâche</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>`);
+        $('#tach_footer').html(`<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button class="btn btn-success" id="tach_edit">Enregistrer</button>`);
+        $('#statut_tach').show();
+        $('#tachmodale').modal('show');
+
+        $('#tach_titre').val($('#tach_edit_title' + ind).html());
+        $('#tach_echeance').val($('#tach_edit_dateEcheance' + ind).html());
+        $('#tach_description').val($('#rappel_edit_description' + ind).html());
+        $('#tach_status').val($('#tach_edit_statut' + ind).html());
+
+
+        $('#tach_edit').click(function() {
             form_data = new FormData();
-            form_data.append("sexe", $("#edit-sexe").val());
-            form_data.append("nom", $("#edit-nom").val());
-            form_data.append("prenom", $("#edit-prenom").val());
-            form_data.append("email", $("#edit-email").val());
-            form_data.append("tel", $("#edit-tel").val());
-            form_data.append("group", $("#edit-group").val());
-            form_data.append("adresse", $("#edit-adresse").val());
-            form_data.append("role", $("#edit-role").val());
-            form_data.append("dateNaissance", $("#edit-dateNaissance").val());
-            form_data.append("photo", $("#edit-photo")[0].files[0]);
+            form_data.append("tach_titre", $("#tach_titre").val());
+            form_data.append("tach_echeance", $("#tach_echeance").val());
+            form_data.append("tach_description", $("#tach_description").val());
+            form_data.append("tach_status", $("#tach_status").val());
 
             console.log(form_data)
-            var StringData3 = $.ajax({
-                url: "user/edit/" + id,
+            var StringData = $.ajax({
+                url: "/tach/edit/" + id,
                 dataType: "json",
                 type: "POST",
                 async: false,
@@ -559,159 +483,63 @@
                 processData: false,
                 contentType: false,
             }).responseText;
-            jsonData3 = JSON.parse(StringData3);
-            console.log(jsonData3)
-            if ($.isEmptyObject(jsonData3.error)) {
-
-                clearEditInputs(jsonData3.inputs);
-                $('#userdetails').modal('hide');
-                message("utilisateur", "modifié", jsonData3.check);
-                if (jsonData3.user.deleted_at != null) {
-                    buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData3.user.id + "," + ind + ")\">restorer</button>"
+            jsonData = JSON.parse(StringData);
+            
+            if ($.isEmptyObject(jsonData.error)) {
+                if (jsonData.tache.deleted_at != null) {
+                    buttonacive = "<button  class=\"btn btn-success\"  onclick=\"tach_renouvler(" + jsonData.tache.id + "," + ind + ")\">renouvler</button>"
                 } else {
-                    buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData3.user.id + "," + ind + ")\">supprimer</button>"
+                    buttonacive = "<button  class=\"btn btn-danger\" onclick=\"tach_terminer(" + jsonData.tache.id + "," + ind + ")\">terminer</button>"
                 }
-                $('#row' + ind).html(`
-                                        <td id="photo${ind}">
-                                            <div>
-                                                <img class="rounded-circle avatar-xs" src="{{ asset('storage/${jsonData3.user.photo}') }}" alt="">
-                                            </div>
-                                        </td>
-                                        <td id="nom_prenom${ind}">${jsonData3.user.nom}  ${jsonData3.user.prenom}</td>
-                                        
-                                        <td id="email${ind}">${jsonData3.user.email}</td>
-                                        <td id="role${ind}">${jsonData3.user.role.value}</td>
-                                        <td id="group${ind}">${jsonData3.user.group.nom}</td>
-                                        <td>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                            <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData3.user.id},${ind})">modifier</button>
-                                                ${buttonacive}
-                                            </div>
-                                        </td>`);
-                $("#datatable").DataTable();
-            } else {
-                clearEditInputs(jsonData3.inputs);
-                printEditErrorMsg(jsonData3.error);
-            }
-        });
-        $("#datatable").DataTable();
-    }
+                clearInputs(jsonData.inputs);
+                $('#tachmodale').modal('hide');
+                message("tache", "modifié", jsonData.check);
 
-    function detail(id, ind) {
-        var StringData = $.ajax({
-            url: "prospect/detail/" + id,
-            type: "POST",
-            async: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-        }).responseText;
+                $('#tach' + ind).html(` <div class="card border border-info">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="text-muted">
+                                                            <h4 id="tach_edit_title${ind}">${jsonData.tache.titre}</h4>
+                                                            <h5 id="tach_edit_user${ind}">${jsonData.tache.user.prenom} ${jsonData.tache.user.nom}</h5>
+                                                            <br><p class="mb-0" id="rappel_edit_description${ind}">${jsonData.tache.description}</p>
+                                                        </div>
 
-        jsonData = JSON.parse(StringData);
-
-        $('#detail_body').html(`
-                                         <div class="mx-auto d-block" style="width: 14rem;">
-                                                <img class="card-img-top" src="{{ asset('storage/${jsonData.photo}') }}" alt="">
+                                                    </div>
+                                                    <div class="dropdown ml-2 text-center">
+                                                       <h5>Expir : <span style="color: green;" id="tach_edit_dateEcheance${ind}">${jsonData.tache.dateEcheance.split(' ')[0]}</span></h5>
+                                                       <h5>Statut : <span style="color: green;" id="tach_edit_statut${ind}">${jsonData.tache.statut}</span></h5>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table class="table table-nowrap mb-0">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">nom et prénom:</th>
-                                                            <td>${jsonData.nom} ${jsonData.prenom}</td>
-                                                        </tr>
-                                                        
-                                                        <tr>
-                                                            <th scope="row">Sexe :</th>
-                                                            <td>${jsonData.sexe}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Role :</th>
-                                                            <td>${jsonData.role.value}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Group :</th>
-                                                            <td>${jsonData.group.nom}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Email :</th>
-                                                            <td>${jsonData.email}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Tel :</th>
-                                                            <td>${jsonData.tel}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Adresse :</th>
-                                                            <td>${jsonData.adresse}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Date de naissance :</th>
-                                                            <td>${jsonData.dateNaissance}</td>
-                                                        </tr>
-                                                                  
-                                                    </tbody>
-                                                </table>                   
+                                            
+                                            <div class="card-body border-top">
+                                                <p class="text-muted mb-4"></p>
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                <button  class="btn btn-primary" onclick="edit_tach(${jsonData.tache.id},${ind})">Modifier</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                ${buttonacive}
+                                                                </div>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>`);
-        $('#userdetails').modal('show');
-    }
-
-    function confirm(id, ind) {
-
-        $('#confirmationModal').modal('show');
-
-        $('#confirm').click(function() {
-            $('#confirmationModal').modal('hide');
-            var StringData = $.ajax({
-                url: "prospect/confirmer/" + id,
-                type: "POST",
-                async: false,
-                data: {
-                    project_type: $('#project_type').val()
-                },
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-            }).responseText;
-
-            jsonData = JSON.parse(StringData);
-
-            console.log(jsonData)
-            message("prospect", "confirmé", jsonData.check);
-
-            if (jsonData.prospect.deleted_at != null) {
-                buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.prospect.id + "," + ind + ")\">restorer</button>"
             } else {
-                buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.prospect.id + "," + ind + ")\">supprimer</button>"
+                clearEditInputs(jsonData.inputs);
+                printEditErrorMsg(jsonData.error);
             }
-            if (jsonData.prospect.is_confirmed == 0) {
-                buttonconfirm = "<button  class=\"btn btn-dark\" style=\"margin: 10px\"  onclick=\"confirm(" + jsonData.prospect.id + "," + ind + ")\">Confirmer</button>"
-            } else {
-                buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
-            }
-            $('#row' + ind).html(`<td id="id${ind}">
-                                        ${jsonData.prospect.id}
-                                        </td>
-                                        <td id="nom_prenom${ind}">${jsonData.prospect.nom}  ${jsonData.prospect.prenom}</td>
-                                        <td id="email${ind}">${jsonData.prospect.email}</td>
-                                        <td id="tel${ind}">${jsonData.prospect.tel}</td>
-                                        <td id="provenance${ind}">${jsonData.prospect.provenance.nom}</td>
-                                        <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
-                                        <td>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                            
-                                            <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.prospect.id},${ind})">modifier</button>
-                                                ${buttonacive}
-                                            </div>
-                                        </td>`);
-            $("#datatable").DataTable();
-
         });
-
     }
 
     function printErrorMsg(msg) {
@@ -737,29 +565,717 @@
 
     }
 
-    function printEditErrorMsg(msg) {
+    function tach_terminer(id, ind) {
+        var buttonactive;
+        var StringData = $.ajax({
+            url: "/tach/delete/" + id,
+            type: "POST",
+            async: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+        }).responseText;
+
+        jsonData = JSON.parse(StringData);
+
+        message("rappel", "terminé", jsonData.check);
+        if (jsonData.tache.deleted_at != null) {
+            buttonacive = "<button  class=\"btn btn-success\"  onclick=\"tach_renouvler(" + jsonData.tache.id + "," + ind + ")\">renouvler</button>"
+        } else {
+            buttonacive = "<button  class=\"btn btn-danger\" onclick=\"tach_terminer(" + jsonData.tache.id + "," + ind + ")\">terminer</button>"
+        }
+
+        $('#tach' + ind).html(` <div class="card border border-info">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="text-muted">
+                                                            <h4 id="tach_edit_title${ind}">${jsonData.tache.titre}</h4>
+                                                            <h5 id="tach_edit_user${ind}">${jsonData.tache.user.prenom} ${jsonData.tache.user.nom}</h5>
+                                                            <br><p class="mb-0" id="rappel_edit_description${ind}">${jsonData.tache.description}</p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="dropdown ml-2 text-center">
+                                                       <h5>Expir : <span style="color: green;" id="tach_edit_dateEcheance${ind}">${jsonData.tache.dateEcheance.split(' ')[0]}</span></h5>
+                                                       <h5>Statut : <span style="color: green;" id="tach_edit_statut${ind}">${jsonData.tache.statut}</span></h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card-body border-top">
+                                                <p class="text-muted mb-4"></p>
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                <button  class="btn btn-primary" onclick="edit_tach(${jsonData.tache.id},${ind})">Modifier</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                ${buttonacive}
+                                                                </div>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`);
+    }
+
+    function tach_renouvler(id, ind) {
+        var buttonactive;
+        var StringData = $.ajax({
+            url: "/tach/restore/" + id,
+            type: "POST",
+            async: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+        }).responseText;
+
+        jsonData = JSON.parse(StringData);
+
+        message("rappel", "renouvlé", jsonData.check);
+        if (jsonData.tache.deleted_at != null) {
+            buttonacive = "<button  class=\"btn btn-success\"  onclick=\"tach_renouvler(" + jsonData.tache.id + "," + ind + ")\">renouvler</button>"
+        } else {
+            buttonacive = "<button  class=\"btn btn-danger\" onclick=\"tach_terminer(" + jsonData.tache.id + "," + ind + ")\">terminer</button>"
+        }
+
+        $('#tach' + ind).html(` <div class="card border border-info">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="text-muted">
+                                                            <h4 id="tach_edit_title${ind}">${jsonData.tache.titre}</h4>
+                                                            <h5 id="tach_edit_user${ind}">${jsonData.tache.user.prenom} ${jsonData.tache.user.nom}</h5>
+                                                            <br><p class="mb-0" id="rappel_edit_description${ind}">${jsonData.tache.description}</p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="dropdown ml-2 text-center">
+                                                       <h5>Expir : <span style="color: green;" id="tach_edit_dateEcheance${ind}">${jsonData.tache.dateEcheance.split(' ')[0]}</span></h5>
+                                                       <h5>Statut : <span style="color: green;" id="tach_edit_statut${ind}">${jsonData.tache.statut}</span></h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="card-body border-top">
+                                                <p class="text-muted mb-4"></p>
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                <button  class="btn btn-primary" onclick="edit_tach(${jsonData.tache.id},${ind})">Modifier</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                ${buttonacive}
+                                                                </div>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`);
+    }
+</script>
+
+<script>
+    function init_note() {
+
+        var buttonacive;
+        var buttonconfirm;
+        let projet_link = window.location.href.split('/')[5];
+        
+        var StringData = $.ajax({
+            url: '/note/index',
+            dataType: "json",
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            async: false,
+            data: {
+                projet_link: projet_link
+            }
+        }).responseText;
+        jsonData = JSON.parse(StringData);
+        
+        $('#note_body').html("");
+        for (let ind = 0; ind < jsonData.length; ind++) {
+
+            $('#note_body').append(`<div class="col-lg-4" id="note${ind}">
+                                        <div class="card border border-success">
+                                            <div class="card-header bg-transparent border-success">
+                                                <h5 class="my-0 text-success"><i class="mdi mdi-check-all me-3"></i><span id="note_edit_title${ind}">${jsonData[ind].titre}</span> </h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title mt-0"id="note_edit_user${ind}">${jsonData[ind].user.prenom} ${jsonData[ind].user.nom}</h5>
+                                                <p class="card-text" id="note_edit_description${ind}">${jsonData[ind].note}</p>
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                <button  class="btn btn-primary" style="margin: 10px" onclick="edit_note(${jsonData[ind].id},${ind})">Modifier</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`);
+
+        }
+
+    }
+    $('#creat_note').click(function() {
+        $('#note_head').html(`<h5 class="modal-title" id="exampleModalLabel">Ajouter une note</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>`);
+        $('#note_footer').html(`<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button class="btn btn-success" id="note_save">Enregistrer</button>`);
+        $('#notemodale').modal('show');
+
+        $('#note_titre').val("");
+        $('#note_description').val("");
+        $('#note_save').click(function() {
+            var inputs = {
+                "note_titre": $("#note_titre").val(),
+                "note_description": $("#note_description").val(),
+                "note_project_id": window.location.href.split('/')[5]
+            };
+
+            var StringData = $.ajax({
+                url: "/note/store",
+                type: "POST",
+                async: false,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: inputs
+            }).responseText;
+            jsonData = JSON.parse(StringData);
+            
+            if ($.isEmptyObject(jsonData.error)) {
+
+                clearInputs(jsonData.inputs);
+                $('#notemodale').modal('hide');
+                message("note", "ajouté", jsonData.check);
+
+
+                $('#note_body').append(`<div class="col-lg-4" id="note${jsonData.count}">
+                                        <div class="card border border-success">
+                                            <div class="card-header bg-transparent border-success">
+                                                <h5 class="my-0 text-success"><i class="mdi mdi-check-all me-3"></i><span id="note_edit_title${jsonData.count}">${jsonData.note.titre}</span> </h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title mt-0"id="note_edit_user${jsonData.count}">${jsonData.note.user.prenom} ${jsonData.note.user.nom}</h5>
+                                                <p class="card-text" id="note_edit_description${jsonData.count}">${jsonData.note.note}</p>
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                <button  class="btn btn-primary" style="margin: 10px" onclick="edit_note(${jsonData.note.id},${ind})">Modifier</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`);
+            } else {
+                clearInputs(jsonData.inputs);
+                printErrorMsg(jsonData.error);
+            }
+        });
+
+    });
+
+
+
+    function edit_note(id, ind) {
+
+        $('#note_head').html(`<h5 class="modal-title" id="exampleModalLabel">Modifier une note</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>`);
+        $('#note_footer').html(`<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button class="btn btn-success" id="note_edit">Enregistrer</button>`);
+        $('#notemodale').modal('show');
+
+        $('#note_titre').val($('#note_edit_title' + ind).html());
+        $('#note_description').val($('#note_edit_description' + ind).html());
+
+
+        $('#note_edit').click(function() {
+            form_data = new FormData();
+            form_data.append("note_titre", $("#note_titre").val());
+            form_data.append("note_description", $("#note_description").val());
+
+            console.log(form_data)
+            var StringData3 = $.ajax({
+                url: "/note/edit/" + id,
+                dataType: "json",
+                type: "POST",
+                async: false,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: form_data,
+                processData: false,
+                contentType: false,
+            }).responseText;
+            jsonData = JSON.parse(StringData3);
+            
+            if ($.isEmptyObject(jsonData.error)) {
+
+                clearInputs(jsonData.inputs);
+                $('#notemodale').modal('hide');
+                message("note", "modifié", jsonData.check);
+
+                $('#note' + ind).html(`<div class="card border border-success">
+                                            <div class="card-header bg-transparent border-success">
+                                                <h5 class="my-0 text-success"><i class="mdi mdi-check-all me-3"></i><span id="note_edit_title${ind}">${jsonData.note.titre}</span> </h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title mt-0"id="note_edit_user${ind}">${jsonData.note.user.prenom} ${jsonData.note.user.nom}</h5>
+                                                <p class="card-text" id="note_edit_description${ind}">${jsonData.note.note}</p>
+                                                <div class="btn-group" role="group" aria-label="Basic example">
+                                                <button  class="btn btn-primary" style="margin: 10px" onclick="edit_note(${jsonData.note.id},${ind})">Modifier</button>
+                                                </div>
+                                            </div>
+                                        </div>`);
+
+            } else {
+                clearEditInputs(jsonData.inputs);
+                printEditErrorMsg(jsonData.error);
+            }
+        });
+    }
+
+    function printErrorMsg(msg) {
 
 
         $.each(msg, function(key, value) {
-            $("#err-edit-" + key).find("input").addClass('is-invalid');
-            $("#err-edit-" + key).find("small").html(value);
+            $("#err-" + key).find("input").addClass('is-invalid');
+            $("#err-" + key).find("small").html(value);
 
         });
 
     }
 
-    function clearEditInputs(msg) {
+    function clearInputs(msg) {
 
 
         $.each(msg, function(key, value) {
 
-            $("#err-edit-" + key).find("input").removeClass('is-invalid');
-            $("#err-edit-" + key).find("small").html("");
+            $("#err-" + key).find("input").removeClass('is-invalid');
+            $("#err-" + key).find("small").html("");
 
         });
 
     }
 </script>
+
+<script>
+    function init_rappel() {
+
+        var buttonacive;
+        var buttonconfirm;
+        let projet_link = window.location.href.split('/')[5];
+        
+        var StringData = $.ajax({
+            url: '/rappel/index',
+            dataType: "json",
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            async: false,
+            data: {
+                projet_link: projet_link
+            }
+        }).responseText;
+        jsonData = JSON.parse(StringData);
+        
+        $('#rappel_body').html("");
+        for (let ind = 0; ind < jsonData.length; ind++) {
+            if (jsonData[ind].deleted_at != null) {
+                buttonacive = "<button  class=\"btn btn-success\"  onclick=\"rappel_renouvler(" + jsonData[ind].id + "," + ind + ")\">renouvler</button>"
+            } else {
+                buttonacive = "<button  class=\"btn btn-danger\" onclick=\"rappel_terminer(" + jsonData[ind].id + "," + ind + ")\">terminer</button>"
+            }
+
+            $('#rappel_body').append(`<div class="col-xl-4" id="rappel${ind}">
+                                        <div class="card border border-primary">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="text-muted">
+                                                            <h4 id="rappel_edit_title${ind}">${jsonData[ind].titre}</h4>
+                                                            <h5 id="rappel_edit_user${ind}">${jsonData[ind].user.prenom} ${jsonData[ind].user.nom}</h5>
+                                                            <p class="mb-0" id="rappel_edit_sujet${ind}">${jsonData[ind].sujet}</p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="dropdown ml-2">
+                                                        Rappel :<h5 style="color: green;" id="rappel_edit_dateRappel${ind}">${jsonData[ind].dateRappel}</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body border-top">
+                                                <p class="text-muted mb-4"></p>
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                <button  class="btn btn-secondary" onclick="edit_rappel(${jsonData[ind].id},${ind})">Modifier</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                    ${buttonacive}
+                                                                </div>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`);
+
+        }
+
+    }
+    $('#creat_rappel').click(function() {
+        $('#rappel_head').html(`<h5 class="modal-title" id="exampleModalLabel">Ajouter un rappel</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>`);
+        $('#rappel_footer').html(`<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button class="btn btn-success" id="rappel_save">Enregistrer</button>`);
+        $('#rappelmodale').modal('show');
+
+        $('#rappel_titre').val("");
+        $('#rappel_sujet').val("");
+        $('#rappel_date_rappel').val("");
+        $('#rappel_save').click(function() {
+            var inputs = {
+                "rappel_titre": $("#rappel_titre").val(),
+                "rappel_sujet": $("#rappel_sujet").val(),
+                "rappel_date_rappel": $("#rappel_date_rappel").val(),
+                "rappel_project_id": window.location.href.split('/')[5]
+            };
+
+            var StringData = $.ajax({
+                url: "/rappel/store",
+                type: "POST",
+                async: false,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: inputs
+            }).responseText;
+            jsonData = JSON.parse(StringData);
+            if (jsonData.rappel.deleted_at != null) {
+                buttonacive = "<button  class=\"btn btn-success\"  onclick=\"rappel_renouvler(" + jsonData.rappel.id + "," + ind + ")\">renouvler</button>"
+            } else {
+                buttonacive = "<button  class=\"btn btn-danger\" onclick=\"rappel_terminer(" + jsonData.rappel.id + "," + ind + ")\">terminer</button>"
+            }
+
+            if ($.isEmptyObject(jsonData.error)) {
+
+                clearInputs(jsonData.inputs);
+                $('#rappelmodale').modal('hide');
+                message("rappel", "ajouté", jsonData.check);
+                $('#rappel_body').append(`<div class="col-xl-4" id="rappel${jsonData.count}">
+                                        <div class="card border border-primary">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="text-muted">
+                                                            <h4 id="rappel_edit_title${jsonData.count}">${jsonData.rappel.titre}</h4>
+                                                            <h5 id="rappel_edit_user${jsonData.count}">${jsonData.rappel.user.prenom} ${jsonData.rappel.user.nom}</h5>
+                                                            <p class="mb-0" id="rappel_edit_sujet${jsonData.count}">${jsonData.rappel.sujet}</p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="dropdown ml-2">
+                                                        Rappel :<h5 style="color: green;" id="rappel_edit_dateRappel${jsonData.count}">${jsonData.rappel.dateRappel}</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body border-top">
+                                                <p class="text-muted mb-4"></p>
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                <button  class="btn btn-secondary" onclick="edit_rappel(${jsonData.rappel.id},${ind})">Modifier</button>                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                ${buttonacive}
+                                                                </div>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>`);
+            } else {
+                clearInputs(jsonData.inputs);
+                printErrorMsg(jsonData.error);
+            }
+        });
+
+    });
+
+
+
+    function edit_rappel(id, ind) {
+
+        $('#rappel_head').html(`<h5 class="modal-title" id="exampleModalLabel">Modifier un rappel</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>`);
+        $('#rappel_footer').html(`<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button class="btn btn-success" id="rappel_edit">Enregistrer</button>`);
+        $('#rappelmodale').modal('show');
+
+        $('#rappel_titre').val($('#rappel_edit_title' + ind).html());
+        $('#rappel_sujet').val($('#rappel_edit_sujet' + ind).html());
+        $('#rappel_date_rappel').val($('#rappel_edit_dateRappel' + ind).html());
+
+
+        $('#rappel_edit').click(function() {
+            form_data = new FormData();
+            form_data.append("rappel_titre", $("#rappel_titre").val());
+            form_data.append("rappel_sujet", $("#rappel_sujet").val());
+            form_data.append("rappel_date_rappel", $("#rappel_date_rappel").val());
+
+
+
+            var StringData = $.ajax({
+                url: "/rappel/edit/" + id,
+                dataType: "json",
+                type: "POST",
+                async: false,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                data: form_data,
+                processData: false,
+                contentType: false,
+            }).responseText;
+            jsonData = JSON.parse(StringData);
+            if (jsonData.rappel.deleted_at != null) {
+                buttonacive = "<button  class=\"btn btn-success\"  onclick=\"rappel_renouvler(" + jsonData.rappel.id + "," + ind + ")\">renouvler</button>"
+            } else {
+                buttonacive = "<button  class=\"btn btn-danger\" onclick=\"rappel_terminer(" + jsonData.rappel.id + "," + ind + ")\">terminer</button>"
+            }
+
+            if ($.isEmptyObject(jsonData.error)) {
+
+                clearInputs(jsonData.inputs);
+                $('#rappelmodale').modal('hide');
+                message("rappel", "modifié", jsonData.check);
+
+                $('#rappel' + ind).html(` <div class="card border border-primary">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="text-muted">
+                                                            <h4 id="rappel_edit_title${ind}">${jsonData.rappel.titre}</h4>
+                                                            <h5 id="rappel_edit_user${ind}">${jsonData.rappel.user.prenom} ${jsonData.rappel.user.nom}</h5>
+                                                            <p class="mb-0" id="rappel_edit_sujet${ind}">${jsonData.rappel.sujet}</p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="dropdown ml-2">
+                                                        Rappel :<h5 style="color: green;" id="rappel_edit_dateRappel${ind}">${jsonData.rappel.dateRappel}</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body border-top">
+                                                <p class="text-muted mb-4"></p>
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                <button  class="btn btn-secondary" onclick="edit_rappel(${jsonData.rappel.id},${ind})">Modifier</button>                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                    ${buttonacive}
+                                                                </div>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`);
+
+            } else {
+                clearEditInputs(jsonData.inputs);
+                printEditErrorMsg(jsonData.error);
+            }
+        });
+    }
+
+
+
+    function rappel_terminer(id, ind) {
+        var buttonactive;
+        var StringData = $.ajax({
+            url: "/rappel/delete/" + id,
+            type: "POST",
+            async: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+        }).responseText;
+
+        jsonData = JSON.parse(StringData);
+
+        message("rappel", "terminé", jsonData.check);
+        if (jsonData.rappel.deleted_at != null) {
+            buttonacive = "<button  class=\"btn btn-success\"  onclick=\"rappel_renouvler(" + jsonData.rappel.id + "," + ind + ")\">renouvler</button>"
+        } else {
+            buttonacive = "<button  class=\"btn btn-danger\" onclick=\"rappel_terminer(" + jsonData.rappel.id + "," + ind + ")\">terminer</button>"
+        }
+
+        $('#rappel' + ind).html(` <div class="card border border-primary">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="text-muted">
+                                                            <h4 id="rappel_edit_title${ind}">${jsonData.rappel.titre}</h4>
+                                                            <h5 id="rappel_edit_user${ind}">${jsonData.rappel.user.prenom} ${jsonData.rappel.user.nom}</h5>
+                                                            <p class="mb-0" id="rappel_edit_sujet${ind}">${jsonData.rappel.sujet}</p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="dropdown ml-2">
+                                                        Rappel :<h5 style="color: green;" id="rappel_edit_dateRappel${ind}">${jsonData.rappel.dateRappel}</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body border-top">
+                                                <p class="text-muted mb-4"></p>
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                <button  class="btn btn-secondary" onclick="edit_rappel(${jsonData.rappel.id},${ind})">Modifier</button>                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                    ${buttonacive}
+                                                                </div>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`);
+    }
+
+    function rappel_renouvler(id, ind) {
+        var buttonactive;
+        var StringData = $.ajax({
+            url: "/rappel/restore/" + id,
+            type: "POST",
+            async: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+        }).responseText;
+
+        jsonData = JSON.parse(StringData);
+
+        message("rappel", "renouvlé", jsonData.check);
+        if (jsonData.rappel.deleted_at != null) {
+            buttonacive = "<button  class=\"btn btn-success\"  onclick=\"rappel_renouvler(" + jsonData.rappel.id + "," + ind + ")\">renouvler</button>"
+        } else {
+            buttonacive = "<button  class=\"btn btn-danger\" onclick=\"rappel_terminer(" + jsonData.rappel.id + "," + ind + ")\">terminer</button>"
+        }
+
+        $('#rappel' + ind).html(` <div class="card border border-primary">
+                                            <div class="card-body">
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="text-muted">
+                                                            <h4 id="rappel_edit_title${ind}">${jsonData.rappel.titre}</h4>
+                                                            <h5 id="rappel_edit_user${ind}">${jsonData.rappel.user.prenom} ${jsonData.rappel.user.nom}</h5>
+                                                            <p class="mb-0" id="rappel_edit_sujet${ind}">${jsonData.rappel.sujet}</p>
+                                                        </div>
+
+                                                    </div>
+                                                    <div class="dropdown ml-2">
+                                                        Rappel :<h5 style="color: green;" id="rappel_edit_dateRappel${ind}">${jsonData.rappel.dateRappel}</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body border-top">
+                                                <p class="text-muted mb-4"></p>
+                                                <div class="text-center">
+                                                    <div class="row">
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                <button  class="btn btn-secondary" onclick="edit_rappel(${jsonData.rappel.id},${ind})">Modifier</button>                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div>
+                                                                <div >
+                                                                    ${buttonacive}
+                                                                </div>
+                                                            </div>
+                                                        </div> 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>`);
+    }
+
+    function printErrorMsg(msg) {
+
+
+        $.each(msg, function(key, value) {
+            $("#err-" + key).find("input").addClass('is-invalid');
+            $("#err-" + key).find("small").html(value);
+
+        });
+
+    }
+
+    function clearInputs(msg) {
+
+
+        $.each(msg, function(key, value) {
+
+            $("#err-" + key).find("input").removeClass('is-invalid');
+            $("#err-" + key).find("small").html("");
+
+        });
+
+    }
+</script>
+
 @endsection
 
 @yield('tabs_script')

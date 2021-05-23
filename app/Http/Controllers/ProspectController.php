@@ -118,7 +118,7 @@ class ProspectController extends Controller
         }
 
         $prospect = Prospect::withTrashed()
-            ->where('id', $id)->where('id', $id)->with('provenance')->with('user')
+            ->where('id', $id)->with('provenance')->with('user')
             ->first();
 
         $check = "";

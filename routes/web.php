@@ -96,6 +96,30 @@ Route::prefix('/tach')->group(function () {
     
 });
 
+Route::prefix('/document')->group(function () {
+    Route::post('/index', 'DocumentController@index');
+    Route::post('/store', 'DocumentController@store');
+    
+});
+
+Route::prefix('/historique')->group(function () {
+    Route::post('/index', 'ProjetController@histo_idex');
+    
+});
+
+Route::prefix('/note')->group(function () {
+    Route::post('/index', 'NoteController@index');
+    Route::post('/{edit}/{id}', 'NoteController@edit');
+    Route::post('/store', 'NoteController@store');
+});
+
+Route::prefix('/rappel')->group(function () {
+    Route::post('/index', 'RappelController@index');
+    Route::post('/{edit}/{id}', 'RappelController@edit');
+    Route::post('/store', 'RappelController@store');
+    
+});
+
 Route::prefix('/provenance')->group(function () {
     Route::get('/', function () {
          return view('tools.provenance');

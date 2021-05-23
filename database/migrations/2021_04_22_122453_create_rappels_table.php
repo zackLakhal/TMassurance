@@ -15,10 +15,11 @@ class CreateRappelsTable extends Migration
     {
         Schema::create('rappels', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->datetime('dateRappel');
+            $table->string('titre');
+            $table->text('sujet');
+            $table->date('dateRappel');
             $table->bigInteger('user_id');
             $table->bigInteger('project_id');
-            
             $table->timestamps();
             $table->softDeletes();
         });

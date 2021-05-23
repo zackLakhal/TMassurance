@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Projet;
 use App\Prospect;
+use App\Historique;
 use Illuminate\Http\Request;
 
 class ProjetController extends Controller
@@ -24,6 +25,12 @@ class ProjetController extends Controller
         }
 
         return response()->json(['prospects' => $prospects ,'projets' => $projets]);
+    }
+
+    public function histo_idex(Request $request)
+    {
+        $historique = Historique::withTrashed()->where('project_id', '=', $request->projet_link)->with('user')->get();
+        return response()->json($historique);
     }
 
     /**

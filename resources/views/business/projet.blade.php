@@ -329,7 +329,7 @@
     //                                     <td id="group${jsonData.count}">${jsonData.user.group.nom}</td>
     //                                     <td>
     //                                         <div class="btn-group" role="group" aria-label="Basic example">
-    //                                         <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})" ">détails</button>
+    //                                         <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})">détails</button>
     //                                         <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData.user.id}" >Parcourir</a>
     //                                         <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.user.id},${jsonData.count})">modifier</button>
     //                                             ${buttonacive}
@@ -379,7 +379,7 @@
                                         <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.projet.id},${ind})" ">détails</button>
+                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.projet.id},${ind})">détails</button>
                                             <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData.projet.id}" >Parcourir</a>
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.projet.id},${ind})">modifier</button>
                                                 ${buttonacive}
@@ -422,7 +422,7 @@
                                         <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.projet.id},${ind})" ">détails</button>
+                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.projet.id},${ind})">détails</button>
                                             <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData.projet.id}" >Parcourir</a>
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.projet.id},${ind})">modifier</button>
                                                 ${buttonacive}
@@ -642,7 +642,7 @@
                                         <td id="group${ind}">${jsonData3.user.group.nom}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData3.user.id},${ind})" ">détails</button>
+                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData3.user.id},${ind})">détails</button>
                                             <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData3.projet.id}" >Parcourir</a>
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData3.user.id},${ind})">modifier</button>
                                                 ${buttonacive}

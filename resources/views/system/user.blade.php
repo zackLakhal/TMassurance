@@ -196,7 +196,7 @@
                                         <td id="group${ind}">${jsonData[ind].group.nom}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData[ind].id},${ind})" ">détails</button>
+                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData[ind].id},${ind})">détails</button>
                                             
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData[ind].id},${ind})">modifier</button>
                                                 ${buttonacive}
@@ -297,7 +297,7 @@
                                         <td id="group${jsonData.count}">${jsonData.user.group.nom}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})" ">détails</button>
+                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})">détails</button>
                                             
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.user.id},${jsonData.count})">modifier</button>
                                                 ${buttonacive}
@@ -344,7 +344,7 @@
                                         <td id="group${ind}">${jsonData.user.group.nom}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})" ">détails</button>
+                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})">détails</button>
                                             
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.user.id},${ind})">modifier</button>
                                                 ${buttonacive}
@@ -384,7 +384,7 @@
                                         <td id="group${ind}">${jsonData.user.group.nom}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})" ">détails</button>
+                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})">détails</button>
                                             
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.user.id},${ind})">modifier</button>
                                                 ${buttonacive}
@@ -604,7 +604,7 @@
                                         <td id="group${ind}">${jsonData3.user.group.nom}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData3.user.id},${ind})" ">détails</button>
+                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData3.user.id},${ind})">détails</button>
                                             
                                             <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData3.user.id},${ind})">modifier</button>
                                                 ${buttonacive}
