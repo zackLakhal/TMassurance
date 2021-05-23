@@ -113,8 +113,14 @@
 
         </div>
         <div class="col-lg-2">
-            <input type="text" class="form-control" style="height:30px" id="tpa1" name="tpa1" value="">
-
+           {{-- <input type="text" class="form-control" style="height:30px" id="tpa1" name="tpa1" value="">--}}
+            <select class="form-control" style="height:30px" name="tpa1" id="tpa1">
+            <option value="">---</option>
+            <option value="Assurance 1">Assurance 1</option>
+                  <option value="Assurance 2">Assurance 2</option>
+                  <option value="Assurance 3">Assurance 3</option>
+                  <option value="Assurance 4">Assurance 4</option> 
+                  </select> 
 
         </div>
         <div class="col-lg-2" style="padding-top:10px;">
@@ -229,7 +235,7 @@
                                     <option value="marié(e)">marié(e)</option>
                                     <option value="veuf(ve)">veuf(ve)</option>
                                     <option value="divorcé(e)">divorcé(e)</option>
-                                    <option value="celibataire">celibataire</option>
+                                    <option value="celibataire">célibataire</option>
 
                                 </select>
 
@@ -241,14 +247,14 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="basicpill-phoneno-input">Regime</label>
-                                <input type="text" class="form-control" name="regime1" value=""> id="regime1">
+                                <input type="text" class="form-control" name="regime1" value="" id="regime1">
 
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="basicpill-email-input">Date Naissance</label>
-                                <input type="date" class="form-control" name="datenais1" value=""> id="datenais1">
+                                <input type="date" class="form-control" name="datenais1" value="" id="datenais1">
                             </div>
                         </div>
                     </div>
@@ -315,8 +321,26 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="basicpill-email-input">Categorie prof</label>
-                                <input type="text" name="categorieprof1" value="" id="categorieprof1" class="form-control" id="basicpill-email-input">
+                                <label for="basicpill-email-input">Categorie professionelle</label>
+                               {{-- <input type="text" name="categorieprof1" value="" id="categorieprof1" class="form-control" id="basicpill-email-input">--}}
+                               <select class="custom-select" id="categorieprof1" name="categorieprof1">
+
+                                <option value=""></option>
+                                <option value="Salarié(e) non cadre">Salarié(e) non cadre</option>
+                                <option value="Salarié(e) cadre">Salarié(e) cadre</option>
+                                <option value="Commerçant(e)">Commerçant(e)</option>
+                                <option value="Artisan">Artisan</option>
+                                <option value="Chef d'entreprise">Chef d'entreprise</option>
+                                <option value="Exploitant agricole">Exploitant agricole</option>
+                                <option value="fonctionnaire classe A">Fonctionnaire classe A</option>
+                                <option value="Fonctionnaire hors calsse A">Fonctionnaire hors calsse A</option>
+                                <option value="Profession libérale">Profession libérale</option>
+                                <option value="Retraité(e) non cadre">Retraité(e) non cadre</option>
+                                <option value="Retraité(e) cadre">Retraité(e) cadre</option>
+                                <option value="Sans profession">Sans profession</option>
+
+                                 </select>
+
                             </div>
                         </div>
 
@@ -422,8 +446,16 @@
                                 <div class="form-group col-lg-2">
                                     <label for="message">Régime</label>
                                     <select class="form-control select2-search-disable">
-                                        <option value="">Selectionner</option>
-                                        <option value=""></option>
+                                        <option value="">---</option>
+                                        <option value="Salarié(e)">Salarié(e)</option>
+                                        <option value="TNS">TNS</option>
+                                        <option value="Alsace-moselle">Alsace-moselle</option>
+                                        <option value="Salarié(e) agricole">Salarié(e) agricole</option>
+                                        <option value="Retraité(e)salarié(e)">Retraité(e)salarié(e)</option>
+                                        <option value="Retraité(e) TNS">Retraité(e) TNS</option>
+                                        <option value="Retraité(e) Alsace Moselle">Retraité(e) Alsace Moselle</option>
+                                        <option value="Fonction publique">Fonction publique</option>
+                                        <option value="Etudiant(e)">Etudiant(e)</option>
 
                                     </select>
                                 </div>
