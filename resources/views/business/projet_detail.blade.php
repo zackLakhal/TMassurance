@@ -280,7 +280,7 @@
                 data: inputs
             }).responseText;
             jsonData1 = JSON.parse(StringData1);
-            console.log(jsonData1);
+            message("fiche", "modifié", jsonData.check);
             $('#projet_fiche').val(jsonData1.projet.id);
             $('#projet_commercial').val(jsonData1.prospet.user.email);
             $('#projet_provenance').val(jsonData1.prospet.provenance.nom);
