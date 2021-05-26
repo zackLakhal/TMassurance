@@ -149,10 +149,10 @@
                 <div class="form-group">
                     <label for="project_type" class="control-label"><b>type de projet:</b></label>
                     <select class="form-control custom-select selectpicker " name="project_type" id="project_type">
-                        <option selected>type 1</option>
-                        <option>type 2</option>
-                        <option>type 3</option>
-                        <option>type 4</option>
+                        <option selected>santé</option>
+                        <option>prévoyanace</option>
+                        <option>auto</option>
+                        <option>habitation</option>
                     </select>
                 </div>
             </div>

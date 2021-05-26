@@ -98,7 +98,10 @@
         <div class="col-lg-2">
 
             <select class="form-control" style="height:30px" name="projet_typeAssurance" id="projet_typeAssurance">
-                <option value="assurance maladie" selected>assurance maladie</option>
+                <option value="santé" selected>santé</option>
+                <option value="prévoyanace">prévoyanace</option>
+                <option value="auto">auto</option>
+                <option value="habitation">habitation</option>
             </select>
 
         </div>
@@ -322,7 +325,7 @@
 
     </div>
     <div>
-        <h4 class="mb-0 font-size-18" style="color:#85B4E4;margin-left:22px;margin-top:-20px" >Assurés</h4>
+        <h4 class="mb-0 font-size-18" style="color:#85B4E4;margin-left:22px;margin-top:-20px">Assurés</h4>
     </div>
 
     <!-- end row -->
@@ -353,7 +356,7 @@
 
 
                         <tbody id="assure_body">
-                            
+
                     </table>
                 </div>
             </div>
@@ -436,6 +439,7 @@
                         <select class="form-control select2" id="assure_type" name="assure_type" required>
                             <option>conjointe</option>
                             <option>enfant</option>
+                            <option>assuré principale</option>
                         </select>
                     </div>
 

@@ -1,4 +1,4 @@
-<button type="button" name="action" id="creat_tache" class="btn btn-warning btn-sm btn-rounded waves-effect waves-light mb-3" >Ajouter un Tâche</button>
+<button type="button" name="action" id="creat_tache" class="btn btn-warning btn-sm btn-rounded waves-effect waves-light mb-3" >Ajouter une Tâche</button>
 <div class="row" id="tach_body">
     
 </div>
@@ -31,8 +31,8 @@
                                 <label for="tach_status">Statut</label>
                                 <select id="tach_status" name="tach_status" class="form-control">
                                     <option selected>En cours</option>
-                                    <option>Terminé</option>
-                                    <option>Expiré</option>
+                                    <option>Terminée</option>
+                                    <option>Expirée</option>
                                 </select>
                             </div>
                         </div>
