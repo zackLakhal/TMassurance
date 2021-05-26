@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-class Projet extends Model
+class Project extends Model
 {
     use SoftDeletes;
     
@@ -52,9 +52,9 @@ class Projet extends Model
         return $this->hasMany('App\Communication');
     }
 
-    public function contrat()
+    public function contrats()
     {
-        return $this->hasOne('App\Contrat');
+        return $this->hasMany('App\Contrat');
     }
     
 

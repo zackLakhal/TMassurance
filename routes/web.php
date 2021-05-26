@@ -74,7 +74,14 @@ Route::prefix('/projet')->group(function () {
     Route::post('/delete/{id}', 'ProjetController@edit');
     Route::post('/restore/{id}', 'ProjetController@edit');
     Route::post('/edit/{id}', 'ProjetController@edit');
-    Route::post('/detail/{id}', 'ProjetController@detail');
+    Route::post('/detail', 'ProjetController@detail');
+    
+});
+Route::prefix('/assure')->group(function () {
+    Route::post('/store', 'ProjetController@store_assure');
+    Route::post('/delete/{id}', 'ProjetController@edit_assure');
+    Route::post('/restore/{id}', 'ProjetController@edit_assure');
+    Route::post('/edit/{id}', 'ProjetController@edit_assure');
     
 });
 

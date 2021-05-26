@@ -12,7 +12,7 @@
             <div class="table-responsive">
                 <table id="histo_dataTable" class="table text-center table-bordered dt-responsive  nowrap w-100">
 
-                    <thead>
+                    <thead class="table-light">
                         <tr>
                             <th scope="col">Date</th>
                             <th scope="col">L'action</th>

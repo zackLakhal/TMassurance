@@ -31,7 +31,7 @@ class CreateProspectsTable extends Migration
             $table->integer('nbreEnfant')->nullable();//je vois qu'on peut déduire ça par le statusMarital qui doit avoir lieu ici et on donnera l'accès de créer autant d'enfant qu'il veut et ça sera lié à un conjoint aussi !!
             $table->string('typeAssurance')->nullable();
             $table->string('statutMaterial')->nullable();//single or married or concubinage or pacs or veuf or separed or divorced
-            $table->boolean('disponibilite')->nullable();
+            $table->string('disponibilite')->nullable();
             $table->date('dateNaissance')->nullable();
             $table->string('wishes')->nullable();// soins or hospitalisation or optique or dentaire
             $table->boolean('is_confirmed')->default(false);

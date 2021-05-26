@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Prospect;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Projet;
+use App\Project;
 
 class ProspectController extends Controller
 {
@@ -38,7 +38,7 @@ class ProspectController extends Controller
 
         $prospect->save();
 
-        $projet = new Projet();
+        $projet = new Project();
         $projet->type = $request->project_type;
         $projet->statut_id = 1;
         $projet->prospect_id = $id;

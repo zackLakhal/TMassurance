@@ -7,11 +7,11 @@
                 <h5 class="card-title">Status Projet</h5>
 
                 <div class="position-relative m-4">
-                    <div class="btn-group btn-group-example d-flex mb-3" role="group">
-                        <button type="button" class="btn btn-primary w-100">Initation</button>
-                        <button type="button" class="btn btn-outline-primary w-100">Prospection</button>
-                        <button type="button" class="btn btn-outline-primary w-100">Souscription</button>
-                        <button type="button" class="btn btn-outline-primary w-100">Contrat</button>
+                    <div class="btn-group btn-group-example d-flex mb-3" id="state_gestion" role="group">
+                        <button type="button" class="btn btn-primary w-100" id="Initation">Initation</button>
+                        <button type="button" class="btn btn-outline-primary w-100" id="Prospection">Prospection</button>
+                        <button type="button" class="btn btn-outline-primary w-100" id="Souscription">Souscription</button>
+                        <button type="button" class="btn btn-outline-primary w-100" id="Contrat">Contrat</button>
                     </div>
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped bg-warning" role="progressbar" style="width: 25%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
@@ -139,6 +139,7 @@
         init_rappel()
         init_histo()
         init_doc()
+        init_projet()
     });
 
     function message(objet, action, statut) {
@@ -154,10 +155,322 @@
     }
 </script>
 <script>
+    function init_projet() {
+
+        let projet_link = window.location.href.split('/')[5];
+
+        var StringData = $.ajax({
+            url: '/projet/detail',
+            dataType: "json",
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            async: false,
+            data: {
+                projet_link: projet_link
+            }
+        }).responseText;
+        jsonData = JSON.parse(StringData);
+
+        console.log(jsonData)
+        //info general
+        $('#projet_fiche').val(jsonData.projet.id);
+        $('#projet_commercial').val(jsonData.prospet.user.email);
+        $('#projet_provenance').val(jsonData.prospet.provenance.nom);
+        $('#projet_statut_gestion').val(jsonData.projet.status_gestion);
+        $('#projet_statut_gestion_dup').val(jsonData.projet.status_gestion);
+
+        $('#state_gestion > button.btn-primary').addClass("btn-outline-primary").removeClass("btn-primary")
+        $('#' + jsonData.projet.status_gestion).addClass("btn-primary").removeClass("btn-outline-primary")
+
+        $('#projet_statut').html("<option></option>");
+        $('#projet_statut_dup').html("<option></option>");
+        for (let ind = 0; ind < jsonData.statuts.length; ind++) {
+            $('#projet_statut').append(`<option value="${jsonData.statuts[ind].id}">${jsonData.statuts[ind].crmStatut}</option>`);
+            $('#projet_statut_dup').append(`<option value="${jsonData.statuts[ind].id}">${jsonData.statuts[ind].crmStatut}</option>`);
+
+        }
+        $('#assure_body').html("");
+        var deletbutton
+        for (let ind = 0; ind < jsonData.projet.assures.length; ind++) {
+            if (jsonData.projet.assures[ind].deleted_at == null) {
+                deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.projet.assures[ind].id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
+            } else {
+                deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.projet.assures[ind].id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
+            }
+            $('#assure_body').append(`<tr id="assure${ind}">
+                                        <td id="assure_nomComplet${ind}">${jsonData.projet.assures[ind].nom} ${jsonData.projet.assures[ind].prenom}</td>
+                                        <td id="assure_affiliate${ind}">${jsonData.projet.assures[ind].affiliate}</td>
+                                        <td id="assure_civilite${ind}">${jsonData.projet.assures[ind].civilite}</td>
+                                        <td id="assure_codeOrd${ind}">${jsonData.projet.assures[ind].codeOrg}</td>
+                                        <td id="assure_securiteNbr${ind}">${jsonData.projet.assures[ind].securityNumb}</td>
+                                        <td id="assure_dateNaissance${ind}">${jsonData.projet.assures[ind].dateNaissance}</td>
+                                        <td id="assure_rigime${ind}">${jsonData.projet.assures[ind].regime}</td>
+                                        <td><ul class="list-inline mb-0 font-size-16">
+                                                <li class="list-inline-item">
+                                                    <button class="btn btn-link text-success p-1" onclick="edit_assure(${ind},${jsonData.projet.assures[ind].id})"><i class="bx bxs-edit-alt"></i></button>
+                                                </li>
+                                                <li class="list-inline-item">
+                                                    ${deletbutton}
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>`)
+        }
+        $("#assure_datatable").DataTable();
+
+
+        $('#prospect_name').html(`Prospect: ${jsonData.prospet.nom} ${jsonData.prospet.prenom}`)
+        $('#projet_statut').val(jsonData.projet.statut.id);
+        $('#projet_statut_dup').val(jsonData.projet.statut.id);
+        $('#projet_typeAssurance').val(jsonData.projet.type);
+        $('#projet_created_at').val(jsonData.projet.created_at.split(' ')[0]);
+        // rensegnement
+        $('#projet_intertcomp').val(jsonData.prospet.wishes);
+        $('#projet_dispo').val(jsonData.prospet.disponibilite);
+        $('#projet_nom').val(jsonData.prospet.nom);
+        $('#projet_prenom').val(jsonData.prospet.prenom);
+        $('#projet_sexe').val(jsonData.prospet.sexe);
+        $('#projet_situation').val(jsonData.prospet.situation);
+        $('#projet_regime').val(jsonData.prospet.regime);
+        $('#projet_datenaissance').val(jsonData.prospet.dateNaissance);
+        $('#projet_adress').val(jsonData.prospet.adress);
+        $('#projet_codepostale').val(jsonData.prospet.codePostale);
+        $('#projet_email').val(jsonData.prospet.email);
+        $('#projet_ville').val(jsonData.prospet.ville);
+        $('#projet_telport').val(jsonData.prospet.tel);
+        $('#projet_activite').val(jsonData.prospet.activite);
+        $('#projet_tel2').val(jsonData.prospet.tel2);
+        $('#projet_categorieprof').val(jsonData.prospet.categoryProf);
+        $('#projet_nbrEnfance').val(jsonData.prospet.nbreEnfant);
+
+        $('#save_projet').click(function() {
+            var inputs = {
+                'statut_dup': $('#projet_statut_dup').val(),
+                'statut_gestion_dup': $('#projet_statut_gestion_dup').val(),
+                'typeAssurance': $('#projet_typeAssurance').val(),
+                'intertcomp': $('#projet_intertcomp').val(),
+                'dispo': $('#projet_dispo').val(),
+                'nom': $('#projet_nom').val(),
+                'prenom': $('#projet_prenom').val(),
+                'sexe': $('#projet_sexe').val(),
+                'situation': $('#projet_situation').val(),
+                'regime': $('#projet_regime').val(),
+                'datenaissance': $('#projet_datenaissance').val(),
+                'adress': $('#projet_adress').val(),
+                'codepostale': $('#projet_codepostale').val(),
+                'email': $('#projet_email').val(),
+                'ville': $('#projet_ville').val(),
+                'telport': $('#projet_telport').val(),
+                'activite': $('#projet_activite').val(),
+                'tel2': $('#projet_tel2').val(),
+                'categorieprof': $('#projet_categorieprof').val(),
+                'nbrEnfant': $('#projet_nbrEnfance').val()
+            };
+
+            var StringData1 = $.ajax({
+                url: '/projet/edit/' + window.location.href.split('/')[5],
+                dataType: "json",
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                async: false,
+                data: inputs
+            }).responseText;
+            jsonData1 = JSON.parse(StringData1);
+            console.log(jsonData1);
+            $('#projet_fiche').val(jsonData1.projet.id);
+            $('#projet_commercial').val(jsonData1.prospet.user.email);
+            $('#projet_provenance').val(jsonData1.prospet.provenance.nom);
+            $('#projet_statut_gestion').val(jsonData1.projet.status_gestion);
+            $('#projet_statut_gestion_dup').val(jsonData1.projet.status_gestion);
+
+            $('#state_gestion > button.btn-primary').addClass("btn-outline-primary").removeClass("btn-primary")
+            $('#' + jsonData1.projet.status_gestion).addClass("btn-primary").removeClass("btn-outline-primary")
+
+            $('#projet_statut').html("<option></option>");
+            $('#projet_statut_dup').html("<option></option>");
+            for (let ind = 0; ind < jsonData1.statuts.length; ind++) {
+                $('#projet_statut').append(`<option value="${jsonData1.statuts[ind].id}">${jsonData1.statuts[ind].crmStatut}</option>`);
+                $('#projet_statut_dup').append(`<option value="${jsonData1.statuts[ind].id}">${jsonData1.statuts[ind].crmStatut}</option>`);
+
+            }
+            $('#prospect_name').html(`Prospect: ${jsonData1.prospet.nom} ${jsonData1.prospet.prenom}`)
+            $('#projet_statut').val(jsonData1.projet.statut.id);
+            $('#projet_statut_dup').val(jsonData1.projet.statut.id);
+            $('#projet_typeAssurance').val(jsonData1.projet.type);
+            $('#projet_created_at').val(jsonData1.projet.created_at.split(' ')[0]);
+            // rensegnement
+            $('#projet_intertcomp').val(jsonData1.prospet.wishes);
+            $('#projet_dispo').val(jsonData1.prospet.disponibilite);
+            $('#projet_nom').val(jsonData1.prospet.nom);
+            $('#projet_prenom').val(jsonData1.prospet.prenom);
+            $('#projet_sexe').val(jsonData1.prospet.sexe);
+            $('#projet_situation').val(jsonData1.prospet.situation);
+            $('#projet_regime').val(jsonData1.prospet.regime);
+            $('#projet_datenaissance').val(jsonData1.prospet.dateNaissance);
+            $('#projet_adress').val(jsonData1.prospet.adress);
+            $('#projet_codepostale').val(jsonData1.prospet.codePostale);
+            $('#projet_email').val(jsonData1.prospet.email);
+            $('#projet_ville').val(jsonData1.prospet.ville);
+            $('#projet_telport').val(jsonData1.prospet.tel);
+            $('#projet_activite').val(jsonData1.prospet.activite);
+            $('#projet_tel2').val(jsonData1.prospet.tel2);
+            $('#projet_categorieprof').val(jsonData1.prospet.categoryProf);
+            $('#projet_nbrEnfance').val(jsonData1.prospet.nbreEnfant);
+        })
+    }
+
+    $('#ajouter_assure').click(function() {
+
+        $('#assure_head').html(`<h5 class="modal-title" id="exampleModalLabel">Ajouter un assuré</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>`);
+        $('#assure_footer').html(`<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button class="btn btn-success" id="assure_save">Enregistrer</button>`);
+        $('#assuremodale').modal('show');
+
+        $('#assure_save').click(function() {
+            var inputs = {
+                'nom': $('#assure_nom').val(),
+                'prenom': $('#assure_prenom').val(),
+                'affiliate': $('#assure_type').val(),
+                'civilite': $('#assure_civilite').val(),
+                'regime': $('#assure_regime').val(),
+                'dateNaissance': $('#assure_dateNassance').val(),
+                'codeOrg': $('#assure_code_organisme').val(),
+                'securityNumb': $('#assure_NbSecurite').val(),
+                'project_id': window.location.href.split('/')[5]
+            };
+
+            var StringData = $.ajax({
+                url: '/assure/store',
+                dataType: "json",
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                async: false,
+                data: inputs
+            }).responseText;
+            jsonData = JSON.parse(StringData);
+            $('#assuremodale').modal('hide');
+            if (jsonData.assure.deleted_at == null) {
+                deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.assure.id + "," + jsonData.count + ")\"><i class=\"bx bx-trash\"></i></button>"
+            } else {
+                deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.assure.id + "," + jsonData.count + ")\"><i class=\"bx bx-revision\"></i></button>"
+            }
+            $('#assure_body').append(`<tr id="assure${jsonData.count}">
+                                        <td id="assure_nomComplet${jsonData.count}">${jsonData.assure.nom} ${jsonData.assure.prenom}</td>
+                                        <td id="assure_affiliate${jsonData.count}">${jsonData.assure.affiliate}</td>
+                                        <td id="assure_civilite${jsonData.count}">${jsonData.assure.civilite}</td>
+                                        <td id="assure_codeOrd${jsonData.count}">${jsonData.assure.codeOrg}</td>
+                                        <td id="assure_securiteNbr${jsonData.count}">${jsonData.assure.securityNumb}</td>
+                                        <td id="assure_dateNaissance${jsonData.count}">${jsonData.assure.dateNaissance}</td>
+                                        <td id="assure_rigime${jsonData.count}">${jsonData.assure.regime}</td>
+                                        <td>><ul class="list-inline mb-0 font-size-16">
+                                                <li class="list-inline-item">
+                                                    <button class="btn btn-link text-success p-1" onclick="edit_assure(${jsonData.count},${jsonData.assure.id})"><i class="bx bxs-edit-alt"></i></button>
+                                                </li>
+                                                <li class="list-inline-item">
+                                                    ${deletbutton}
+                                                </li>
+                                            </ul>
+                                        </td>
+                                    </tr>`)
+            $("#assure_datatable").DataTable();
+        })
+
+
+
+    });
+
+    function assure_delet(id, ind) {
+
+        var StringData = $.ajax({
+            url: '/assure/delete/' + id,
+            dataType: "json",
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            async: false
+        }).responseText;
+        jsonData = JSON.parse(StringData);
+        console.log(jsonData)
+        message("assuré", "désactivé", jsonData.check);
+        if (jsonData.assure.deleted_at == null) {
+            deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
+        } else {
+            deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
+        }
+        $('#assure' + ind).html(`   <td id="assure_nomComplet${ind}">${jsonData.assure.nom} ${jsonData.assure.prenom}</td>
+                                        <td id="assure_affiliate${ind}">${jsonData.assure.affiliate}</td>
+                                        <td id="assure_civilite${ind}">${jsonData.assure.civilite}</td>
+                                        <td id="assure_codeOrd${ind}">${jsonData.assure.codeOrg}</td>
+                                        <td id="assure_securiteNbr${ind}">${jsonData.assure.securityNumb}</td>
+                                        <td id="assure_dateNaissance${ind}">${jsonData.assure.dateNaissance}</td>
+                                        <td id="assure_rigime${ind}">${jsonData.assure.regime}</td>
+                                        <td><ul class="list-inline mb-0 font-size-16">
+                                                <li class="list-inline-item">
+                                                    <button class="btn btn-link text-success p-1" onclick="edit_assure(${ind},${jsonData.assure.id})"><i class="bx bxs-edit-alt"></i></button>
+                                                </li>
+                                                <li class="list-inline-item">
+                                                    ${deletbutton}
+                                                </li>
+                                            </ul>
+                                        </td>`)
+        $("#assure_datatable").DataTable();
+
+    }
+
+    function assure_restore(id, ind) {
+
+        var StringData = $.ajax({
+            url: '/assure/restore/' + id,
+            dataType: "json",
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            async: false
+        }).responseText;
+        jsonData = JSON.parse(StringData);
+
+        message("assuré", "restoré", jsonData.check);
+        if (jsonData.assure.deleted_at == null) {
+            deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
+        } else {
+            deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
+        }
+        $('#assure' + ind).html(`   <td id="assure_nomComplet${ind}">${jsonData.assure.nom} ${jsonData.assure.prenom}</td>
+                                <td id="assure_affiliate${ind}">${jsonData.assure.affiliate}</td>
+                                <td id="assure_civilite${ind}">${jsonData.assure.civilite}</td>
+                                <td id="assure_codeOrd${ind}">${jsonData.assure.codeOrg}</td>
+                                <td id="assure_securiteNbr${ind}">${jsonData.assure.securityNumb}</td>
+                                <td id="assure_dateNaissance${ind}">${jsonData.assure.dateNaissance}</td>
+                                <td id="assure_rigime${ind}">${jsonData.assure.regime}</td>
+                                <td><ul class="list-inline mb-0 font-size-16">
+                                        <li class="list-inline-item">
+                                            <button class="btn btn-link text-success p-1" onclick="edit_assure(${ind},${jsonData.assure.id})"><i class="bx bxs-edit-alt"></i></button>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            ${deletbutton}
+                                        </li>
+                                    </ul>
+                                </td>`)
+        $("#assure_datatable").DataTable();
+
+    }
+</script>
+<script>
     function init_histo() {
 
         let projet_link = window.location.href.split('/')[5];
-        
+
         var StringData = $.ajax({
             url: '/historique/index',
             dataType: "json",
@@ -171,14 +484,14 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-       
+
         $('#histo_body').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             $('#histo_body').append(`<tr id="row${ind}">
                                         <td id="date_histo${ind}">${jsonData[ind].created_at}</td>
                                         <td id="action_histo${ind}">${jsonData[ind].action}</td>
                                         <td id="composante_histo${ind}">${jsonData[ind].composante}</td>
-                                        <td id="responsable_histo${ind}">${jsonData[ind].user.prenom}  ${jsonData[ind].user.enom}</td>
+                                        <td id="responsable_histo${ind}">${jsonData[ind].user.prenom}  ${jsonData[ind].user.nom}</td>
                                     </tr>`);
         }
 
@@ -190,7 +503,7 @@
     function init_doc() {
 
         let projet_link = window.location.href.split('/')[5];
-        
+
         var StringData = $.ajax({
             url: '/document/index',
             dataType: "json",
@@ -221,41 +534,41 @@
         $("#doc_datatable").DataTable();
 
         $('#creat_doc').click(function() {
-        $('#docmodale').modal('show');
+            $('#docmodale').modal('show');
 
-        $('#doc_file').val("");
-        $('#doc_type').val("");
-        
-        $('#doc_save').click(function() {
-            form_data = new FormData();
-            form_data.append("doc_type", $("#doc_type").val());
-            form_data.append("doc_project_id", projet_link);
-            form_data.append("doc_file", $("#doc_file")[0].files[0]);
-           
+            $('#doc_file').val("");
+            $('#doc_type').val("");
 
-            
-            var StringData = $.ajax({
-                url: "/document/store",
-                dataType: "json",
-                type: "POST",
-                async: false,
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                data: form_data,
-                processData: false,
-                contentType: false,
-            }).responseText;
-            jsonData = JSON.parse(StringData);
-            console.log(jsonData)
-            if ($.isEmptyObject(jsonData.error)) {
-               
-                clearInputs(jsonData.inputs);
-                $('#docmodale').modal('hide');
-                message("document", "ajouté", jsonData.check);
+            $('#doc_save').click(function() {
+                form_data = new FormData();
+                form_data.append("doc_type", $("#doc_type").val());
+                form_data.append("doc_project_id", projet_link);
+                form_data.append("doc_file", $("#doc_file")[0].files[0]);
 
 
-                $('#doc_bodytab').append(`<tr id="row${jsonData.count}">
+
+                var StringData = $.ajax({
+                    url: "/document/store",
+                    dataType: "json",
+                    type: "POST",
+                    async: false,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    data: form_data,
+                    processData: false,
+                    contentType: false,
+                }).responseText;
+                jsonData = JSON.parse(StringData);
+                console.log(jsonData)
+                if ($.isEmptyObject(jsonData.error)) {
+
+                    clearInputs(jsonData.inputs);
+                    $('#docmodale').modal('hide');
+                    message("document", "ajouté", jsonData.check);
+
+
+                    $('#doc_bodytab').append(`<tr id="row${jsonData.count}">
                                         <td><a href="{{asset('storage/${jsonData.document.path}')}}"  target="_blank" class="text-dark fw-medium"><i class="bx bxs-file-${jsonData.document.ext} font-size-16 align-middle text-primary me-2"></i> <span id="nom_doc${jsonData.count}">${jsonData.document.nom}</span></a></td>
                                         <td id="type_doc${jsonData.count}">${jsonData.document.type}</td>
                                         <td id="size_doc${jsonData.count}">${jsonData.document.size}</td>
@@ -264,13 +577,14 @@
                                         <button class="btn btn-danger"> delete</button>
                                         </td>
                                     </tr>`);
-            } else {
-                clearInputs(jsonData.inputs);
-                printErrorMsg(jsonData.error);
-            }
-        });
+                    $("#doc_datatable").DataTable();
+                } else {
+                    clearInputs(jsonData.inputs);
+                    printErrorMsg(jsonData.error);
+                }
+            });
 
-    });
+        });
 
     }
 </script>
@@ -280,7 +594,7 @@
         var buttonacive;
         var buttonconfirm;
         let projet_link = window.location.href.split('/')[5];
-        
+
         var StringData = $.ajax({
             url: '/tach/index',
             dataType: "json",
@@ -294,7 +608,7 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-        
+
         $('#tach_body').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {
@@ -382,7 +696,7 @@
                 data: inputs
             }).responseText;
             jsonData = JSON.parse(StringData);
-            
+
             if ($.isEmptyObject(jsonData.error)) {
                 if (jsonData.tache.deleted_at != null) {
                     buttonacive = "<button  class=\"btn btn-success\"  onclick=\"tach_renouvler(" + jsonData.tache.id + "," + ind + ")\">renouvler</button>"
@@ -484,7 +798,7 @@
                 contentType: false,
             }).responseText;
             jsonData = JSON.parse(StringData);
-            
+
             if ($.isEmptyObject(jsonData.error)) {
                 if (jsonData.tache.deleted_at != null) {
                     buttonacive = "<button  class=\"btn btn-success\"  onclick=\"tach_renouvler(" + jsonData.tache.id + "," + ind + ")\">renouvler</button>"
@@ -696,7 +1010,7 @@
         var buttonacive;
         var buttonconfirm;
         let projet_link = window.location.href.split('/')[5];
-        
+
         var StringData = $.ajax({
             url: '/note/index',
             dataType: "json",
@@ -710,7 +1024,7 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-        
+
         $('#note_body').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
 
@@ -760,7 +1074,7 @@
                 data: inputs
             }).responseText;
             jsonData = JSON.parse(StringData);
-            
+
             if ($.isEmptyObject(jsonData.error)) {
 
                 clearInputs(jsonData.inputs);
@@ -825,7 +1139,7 @@
                 contentType: false,
             }).responseText;
             jsonData = JSON.parse(StringData3);
-            
+
             if ($.isEmptyObject(jsonData.error)) {
 
                 clearInputs(jsonData.inputs);
@@ -882,7 +1196,7 @@
         var buttonacive;
         var buttonconfirm;
         let projet_link = window.location.href.split('/')[5];
-        
+
         var StringData = $.ajax({
             url: '/rappel/index',
             dataType: "json",
@@ -896,7 +1210,7 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-        
+
         $('#rappel_body').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {

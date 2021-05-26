@@ -9,8 +9,8 @@ class Souscription extends Model
 
     use SoftDeletes;
     
-    public function contrats()
+    public function contrat()
     {
-        return $this->hasMany('App\Contrat');
+        return $this->hasOne('App\Contrat');
     }
 }
