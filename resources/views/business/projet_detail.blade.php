@@ -8,7 +8,7 @@
 
                 <div class="position-relative m-4">
                     <div class="btn-group btn-group-example d-flex mb-3" id="state_gestion" role="group">
-                        <button type="button" class="btn btn-primary w-100" id="Initation">Initation</button>
+                        <button type="button" class="btn btn-primary w-100" id="Initiation">Initiation</button>
                         <button type="button" class="btn btn-outline-primary w-100" id="Prospection">Prospection</button>
                         <button type="button" class="btn btn-outline-primary w-100" id="Souscription">Souscription</button>
                         <button type="button" class="btn btn-outline-primary w-100" id="Contrat">Contrat</button>
@@ -280,7 +280,8 @@
                 data: inputs
             }).responseText;
             jsonData1 = JSON.parse(StringData1);
-            message("fiche", "modifié", jsonData.check);
+            console.log(jsonData1)
+            message("fiche", "modifié", jsonData1.check);
             $('#projet_fiche').val(jsonData1.projet.id);
             $('#projet_commercial').val(jsonData1.prospet.user.email);
             $('#projet_provenance').val(jsonData1.prospet.provenance.nom);
