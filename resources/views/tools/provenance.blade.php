@@ -30,7 +30,37 @@
     </div>
 </div>
 
+<!-- /.modal 1-->
+<div class="modal fade bs-example-modal-xl" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>List des Fournisseurs</h5>
+            </div>
+            <div class="modal-body">
+                <table id="fournisseur_datatable" class="table text-center table-bordered dt-responsive  nowrap w-100">
 
+                    <thead class="table-light">
+                        <tr>
+                            <th>Username</th>
+                            <th>nom</th>
+                            <th>prénom</th>
+                            <th>email</th>
+                            <th>description</th>
+
+                        </tr>
+                    </thead>
+                    <tbody id='fournisseur_bodytab'>
+
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- /.modal 2-->
 <div class="modal fade bs-example-modal-sm" id="messagebox" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" style="display: none;">
@@ -106,8 +136,8 @@
                 " <td id=\"description" + ind + "\">" + jsonData[ind].description + "</td>" +
                 "<td>" +
 
-                
-                "<button class=\"btn btn-success\"style=\"margin: 10px\" >List des fournisseurs</button>" +
+
+                "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listfournisseur(" + jsonData[ind].id + "," + ind + ")\" >List des fournisseurs</button>" +
                 buttonacive +
                 "</td>" +
                 "</tr>");
@@ -142,8 +172,8 @@
             " <td id=\"description" + ind + "\">" + jsonData.provenance.description + "</td>" +
             "<td>" +
 
-            
-            "<button class=\"btn btn-success\"style=\"margin: 10px\" >List des fournisseurs</button>" +
+
+            "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listfournisseur(" + jsonData.provenance.id + "," + ind + ") \">List des fournisseurs</button>" +
             buttonacive +
             "</td>");
         $("#datatable").DataTable();
@@ -175,11 +205,40 @@
             " <td id=\"description" + ind + "\">" + jsonData.provenance.description + "</td>" +
             "<td>" +
 
-            
-            "<button class=\"btn btn-success\"style=\"margin: 10px\" >List des fournisseurs</button>" +
+
+            "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listfournisseur(" + jsonData.provenance.id + "," + ind + ") \">List des fournisseurs</button>" +
             buttonacive +
             "</td>");
         $("#datatable").DataTable();
+    }
+
+    function listfournisseur(id, ind) {
+        var StringData = $.ajax({
+            url: "provenance/list/" + id,
+            type: "POST",
+            async: false,
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+        }).responseText;
+
+        jsonData = JSON.parse(StringData);
+        console.log(jsonData)
+        $('#fournisseur_bodytab').html("")
+        for (let ind = 0; ind < jsonData.length; ind++) {
+
+            $('#fournisseur_bodytab').append("<tr>" +
+                "<th >" + jsonData[ind].username + "</th>" +
+                " <td >" + jsonData[ind].nom + "</td>" +
+                " <td >" + jsonData[ind].prenom + "</td>" +
+                " <td >" + jsonData[ind].email + "</td>" +
+                " <td >" + jsonData[ind].description + "</td>" +
+                "</tr>");
+        }
+
+        $("#fournisseur_datatable").DataTable();
+        $('#exampleModal').modal('show');
+
     }
 
 

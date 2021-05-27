@@ -19,6 +19,12 @@ class CompagnieController extends Controller
         return response()->json($compagnies);
     }
 
+    public function filtred_index(Request $request)
+    {
+        $produits = Produit::withTrashed()->where('compagnie_id',$request->compagnie_id)->get();
+        return response()->json($produits);
+    }
+
     public function index_product(Request $request)
     {
         $compagnie = Compagnie::withTrashed()
@@ -107,6 +113,45 @@ class CompagnieController extends Controller
             'inputs' => $request->all()
         ];
         return response()->json($objet);
+    }
+
+    public function edit_product(Request $request,$id_c,$id_p)
+    {
+        $done = false;
+        if ($request->is('*/products/delete/*')) {
+
+            $produit = Produit::find($id_p);
+            $produit->delete();
+            $done = true;
+
+            
+        }
+        if ($request->is('*/products/restore/*')) {
+            $produit = Produit::onlyTrashed()
+                ->where('id', $id_p)
+                ->first();
+            $produit->restore();
+            $done = true;
+            
+        }
+
+        $produit = Produit::withTrashed()
+            ->where('id', $id_p)
+            ->first();
+
+        $check = "";
+        if (!$done) {
+            $check = "faile";
+        } else {
+            $check = "done";
+        }
+
+        $objet =  [
+            'check' => $check,
+            'produit' => $produit
+        ];
+        return response()->json($objet);
+
     }
 
     /**

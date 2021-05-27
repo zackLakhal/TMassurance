@@ -4,7 +4,7 @@
 
 
 <div class="row" id="info_elements">
-  
+
 </div>
 <!-- end row -->
 
@@ -60,7 +60,7 @@
 
     function init() {
         let compagnie_link = window.location.href.split('/')[4];
-        
+
         var StringData = $.ajax({
             url: 'products/index',
             dataType: "json",
@@ -74,15 +74,15 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData);
-         $('#info_elements').html("");
+
+        $('#info_elements').html("");
         var active_compagnie;
         if (jsonData.compagnie.deleted_at != null) {
-                active_compagnie = "<button  class=\"btn btn-success\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ", -1)\">restorer</button>"
-            } else {
-                active_compagnie = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.compagnie.id + ", -1)\">supprimer</button>"
-            }
-            $('#info_elements').html(`<div class="col-xl-4">
+            active_compagnie = "<button  class=\"btn btn-success\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ", -1)\">restorer</button>"
+        } else {
+            active_compagnie = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.compagnie.id + ", -1)\">supprimer</button>"
+        }
+        $('#info_elements').html(`<div class="col-xl-4">
                                     <div class="card">
                                         <img class="card-img-top img-fluid" style="border-radius: 10px;" src="{{ asset('${jsonData.compagnie.logo}') }}" alt="Card image cap">
                                         <div class="card-body">
@@ -124,6 +124,7 @@
                                                         <th>#</th>
                                                         <th>Nom</th>
                                                         <th>prix</th>
+                                                        <th>description</th>
                                                         <th>Action</th>
 
                                                     </tr>
@@ -139,11 +140,12 @@
         var buttonactive;
         for (let ind = 0; ind < jsonData.produits.length; ind++) {
             if (jsonData.produits[ind].deleted_at != null) {
-                buttonactive = "<button  class=\"btn btn-success\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.produits[ind].id + "," + ind + ")\">restorer</button>"
+                buttonactive = "<button  class=\"btn btn-link text-success p-1\"  onclick=\"restor(" + jsonData.produits[ind].id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
             } else {
-                buttonactive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.produits[ind].id + "," + ind + ")\">supprimer</button>"
+                buttonactive = "<button  class=\"btn btn-link text-danger p-1\" onclick=\"delet(" + jsonData.produits[ind].id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
             }
-            $('#bodytable').append(`<tr>
+
+            $('#bodytable').append(`<tr id="row${ind}">
                                         <td>
                                             <div>
                                                 <img class="rounded-circle avatar-xs" src="{{ asset('${jsonData.produits[ind].logo}') }}" alt="">
@@ -151,9 +153,10 @@
                                         </td>
                                         <td>${jsonData.produits[ind].nom}</td>
                                         <td>${jsonData.produits[ind].prix}</td>
+                                        <td>${jsonData.produits[ind].description}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button  class="btn btn-primary" style="margin: 10px">détail</button>
+                                            
                                                 ${buttonactive}
                                             </div>
                                         </td>
@@ -166,7 +169,7 @@
 
     function restor(id, ind) {
         var StringData = $.ajax({
-            url: "role/restore/" + id,
+            url: "products/restore/" + id,
             type: "POST",
             async: false,
             headers: {
@@ -175,27 +178,33 @@
         }).responseText;
 
         jsonData = JSON.parse(StringData);
-
-        message("role", "activé", jsonData.check);
-        if (jsonData.role.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-secondary\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.role.id + "," + ind + ")\">restorer</button>"
+        console.log(jsonData)
+        message("produit", "activé", jsonData.check);
+        if (jsonData.produit.deleted_at != null) {
+            buttonactive = "<button  class=\"btn btn-link text-success p-1\"  onclick=\"restor(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
         } else {
-            buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.role.id + "," + ind + ")\">supprimer</button>"
+            buttonactive = "<button  class=\"btn btn-link text-danger p-1\" onclick=\"delet(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
         }
-        $('#row' + ind).html(
-            "<th >" + jsonData.role.id + "</th>" +
-            " <td id=\"value" + ind + "\">" + jsonData.role.value + "</td>" +
-            "<td>" +
 
-            "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.role.id + "," + ind + ")\">modifier</button>" +
-            buttonacive +
-            "</td>");
+        $('#row' + ind).html(`<td>
+                                     <div>
+                                        <img class="rounded-circle avatar-xs" src="{{ asset('${jsonData.produit.logo}') }}" alt="">
+                                    </div>
+                            </td>
+                            <td>${jsonData.produit.nom}</td>
+                            <td>${jsonData.produit.prix}</td>
+                            <td>${jsonData.produit.description}</td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic example">          
+                                ${buttonactive}
+                                </div>
+                            </td>`);
         $("#datatable").DataTable();
     }
 
     function delet(id, ind) {
         var StringData = $.ajax({
-            url: "role/delete/" + id,
+            url: "products/delete/" + id,
             type: "POST",
             async: false,
             headers: {
@@ -204,21 +213,26 @@
         }).responseText;
 
         jsonData = JSON.parse(StringData);
-
-        message("role", "désactivé", jsonData.check);
-        if (jsonData.role.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-secondary\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.role.id + "," + ind + ")\">restorer</button>"
+        console.log(jsonData)
+        message("produit", "désactivé", jsonData.check);
+        if (jsonData.produit.deleted_at != null) {
+            buttonactive = "<button  class=\"btn btn-link text-success p-1\"  onclick=\"restor(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
         } else {
-            buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.role.id + "," + ind + ")\">supprimer</button>"
+            buttonactive = "<button  class=\"btn btn-link text-danger p-1\" onclick=\"delet(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
         }
-        $('#row' + ind).html(
-            "<th >" + jsonData.role.id + "</th>" +
-            " <td id=\"value" + ind + "\">" + jsonData.role.value + "</td>" +
-            "<td>" +
-
-            "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.role.id + "," + ind + ")\">modifier</button>" +
-            buttonacive +
-            "</td>");
+        $('#row' + ind).html(`<td>
+                                     <div>
+                                        <img class="rounded-circle avatar-xs" src="{{ asset('${jsonData.produit.logo}') }}" alt="">
+                                    </div>
+                            </td>
+                            <td>${jsonData.produit.nom}</td>
+                            <td>${jsonData.produit.prix}</td>
+                            <td>${jsonData.produit.description}</td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="Basic example">          
+                                ${buttonactive}
+                                </div>
+                            </td>`);
         $("#datatable").DataTable();
     }
 </script>

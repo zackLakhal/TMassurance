@@ -415,11 +415,8 @@
 
         <div class="form-group mb-0">
             <div>
-                <button type="submit" id="save_projet" class="btn btn-warning waves-effect waves-light mr-1">
+                <button  id="save_projet" class="btn btn-warning waves-effect waves-light mr-1">
                     Modifier
-                </button>
-                <button type="reset" class="btn btn-secondary waves-effect">
-                    Annuler
                 </button>
 
 

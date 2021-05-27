@@ -7,8 +7,6 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">List des Projets</h4>
-                <button type="button" class="btn btn-primary pull-right" id="newmodal">+ nouveau projet</button>
-
                 <table id="datatable" class="table text-center table-bordered dt-responsive  nowrap w-100">
 
                     <thead class="table-light">
@@ -223,15 +221,15 @@
                                         <td id="type${ind}">${jsonData.projets[ind].type}</td>
                                         <td id="nom_prenom${ind}">${jsonData.prospects[ind].nom}  ${jsonData.prospects[ind].prenom}</td>
                                         <td id="tel${ind}">${jsonData.prospects[ind].tel}</td>
-                                        <td id="created_at${ind}">${jsonData.projets[ind].email}</td>
+                                        <td id="created_at${ind}">${jsonData.projets[ind].created_at}</td>
                                         <td  id="confirmed_at${ind}"> ${jsonData.prospects[ind].dateConfirmation}</td>
                                         <td  id="confirmed_at${ind}"> ${jsonData.prospects[ind].user.nom}</td>
                                         <td id="provenance${ind}">${jsonData.prospects[ind].provenance.nom}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.projets[ind].id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.projets[ind].id},${ind})">modifier</button>
-                                                ${buttonacive}
+                                            
+                                                
                                             </div>
                                         </td>
                                     </tr>`);
@@ -241,109 +239,11 @@
 
 
         $("#datatable").DataTable();
-        // $('#role').html("")
-        // var StringData2 = $.ajax({
-        //     url: "role/active_index",
-        //     dataType: "json",
-        //     type: "GET",
-        //     async: false,
-        // }).responseText;
-        // jsonData2 = JSON.parse(StringData2);
-
-        // for (let ind = 0; ind < jsonData2.length; ind++) {
-        //     $('#role').append("<option value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].value + "</option>");
-        // }
-
-        // $('#group').html("")
-        // var StringData3 = $.ajax({
-        //     url: "group/active_index",
-        //     dataType: "json",
-        //     type: "GET",
-        //     async: false,
-        // }).responseText;
-        // jsonData3 = JSON.parse(StringData3);
-
-        // for (let ind = 0; ind < jsonData3.length; ind++) {
-        //     $('#group').append("<option value=\"" + jsonData3[ind].id + "\">" + jsonData3[ind].nom + "</option>");
-        // }
+       
 
     }
-    // $('#newmodal').click(function() {
-    //     $('#modalhead').html("<h4 class=\"modal-title\" >Nouvelle Utilisateur</h4>" +
-    //         "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
-    //     $('#modalfooter').html("<button type=\"button\" class=\"btn btn-info\" id=\"save\">Enregistrer</button>");
-    //     $('#exampleModal').modal('show');
-
-    //     $('#sexe').val("");
-    //     $('#nom').val("");
-    //     $('#prenom').val("");
-    //     $('#email').val("");
-    //     $('#tel').val("");
-    //     $('#password').val("");
-    //     $('#role').val("");
-    //     $('#group').val("");
-    //     $('#save').click(function() {
-    //         var inputs = {
-    //             "sexe": $("#sexe").val(),
-    //             "nom": $("#nom").val(),
-    //             "prenom": $("#prenom").val(),
-    //             "email": $("#email").val(),
-    //             "tel": $("#tel").val(),
-    //             "group": $("#group").val(),
-    //             "password": $("#password").val(),
-    //             "role": $("#role").val(),
-    //         };
-
-    //         var StringData = $.ajax({
-    //             url: "user/store",
-    //             type: "POST",
-    //             async: false,
-    //             headers: {
-    //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-    //             },
-    //             data: inputs
-    //         }).responseText;
-    //         jsonData = JSON.parse(StringData);
-
-    //         if ($.isEmptyObject(jsonData.error)) {
-
-    //             clearInputs(jsonData.inputs);
-    //             $('#exampleModal').modal('hide');
-    //             message("utilisateur", "ajouté", jsonData.check);
-
-    //             if (jsonData.user.deleted_at != null) {
-    //                 buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.user.id + "," + jsonData.count + ")\">restorer</button>"
-    //             } else {
-    //                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.user.id + "," + jsonData.count + ")\">supprimer</button>"
-    //             }
-    //             $('#bodytab').append(`<tr id="row${jsonData.count}">
-    //                                     <td id="photo${jsonData.count}">
-    //                                         <div>
-    //                                             <img class="rounded-circle avatar-xs" src="{{ asset('storage/${jsonData.user.photo}') }}" alt="">
-    //                                         </div>
-    //                                     </td>
-    //                                     <td id="nom_prenom${jsonData.count}">${jsonData.user.nom}  ${jsonData.user.prenom}</td>
-
-    //                                     <td id="email${jsonData.count}">${jsonData.user.email}</td>
-    //                                     <td id="role${jsonData.count}">${jsonData.user.role.value}</td>
-    //                                     <td id="group${jsonData.count}">${jsonData.user.group.nom}</td>
-    //                                     <td>
-    //                                         <div class="btn-group" role="group" aria-label="Basic example">
-    //                                         <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})">détails</button>
-    //                                         <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData.user.id}" >Parcourir</a>
-    //                                         <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.user.id},${jsonData.count})">modifier</button>
-    //                                             ${buttonacive}
-    //                                         </div>
-    //                                     </td>
-    //                                 </tr>`);
-    //         } else {
-    //             clearInputs(jsonData.inputs);
-    //             printErrorMsg(jsonData.error);
-    //         }
-    //     });
-    //     $("#datatable").DataTable();
-    // });
-
+   
+   
     function restor(id, ind) {
         var StringData = $.ajax({
             url: "projet/restore/" + id,
@@ -381,8 +281,8 @@
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.projet.id},${ind})">détails</button>
                                             <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData.projet.id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.projet.id},${ind})">modifier</button>
-                                                ${buttonacive}
+                                            
+                                                
                                             </div>
                                         </td>`);
         $("#datatable").DataTable();
@@ -424,300 +324,16 @@
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.projet.id},${ind})">détails</button>
                                             <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData.projet.id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData.projet.id},${ind})">modifier</button>
-                                                ${buttonacive}
+                                            
+                                                
                                             </div>
                                         </td>`);
         $("#datatable").DataTable();
     }
 
-    function edit(id, ind) {
+ 
 
-        $('#detail_head').html("<h4 class=\"modal-title\" >Modifier Utilisateur</h4>" +
-            "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
-        $('#detail_footer').html("<button type=\"button\" class=\"btn btn-info\" id=\"edit\">Enregistrer</button>");
-
-        var StringData1 = $.ajax({
-            url: "user/detail/" + id,
-            type: "POST",
-            async: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-        }).responseText;
-
-        jsonData1 = JSON.parse(StringData1);
-
-        $('#detail_body').html(`<div class="mx-auto d-block" style="width: 14rem;">
-                                    <img class="card-img-top" id="avatar_display" src="{{ asset('storage/${jsonData1.photo}') }}" alt="">
-                                    <div class="form-group" id="err-edit-photo">
-                                        <input type="file" class="form-control" id="edit-photo" name="edit-photo">
-                                        <small class="invalid-feedback"> </small>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-nowrap mb-0">
-                                            <tbody>
-                                                <tr>
-                                                    <th scope="row">nom:</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-nom">
-                                                            <input type="text" class="form-control" id="edit-nom" name="edit-nom" value="${jsonData1.nom}">
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">prénom:</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-prenom">
-                                                            <input type="text" class="form-control" id="edit-prenom" name="edit-prenom" value="${jsonData1.prenom}">
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Sexe :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-sexe">
-                                                            <select class="form-control custom-select selectpicker " name="edit-sexe" id="edit-sexe" value="${jsonData1.sexe}">
-                                                                <option>Male</option>
-                                                                <option>Femlle</option>
-                                                            </select>
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Role :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-role">
-                                                            <select class="form-control custom-select selectpicker " name="edit-role" id="edit-role">
-
-                                                            </select>
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Role :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-group">
-                                                            <select class="form-control custom-select selectpicker " name="edit-group" id="edit-group">
-
-                                                            </select>
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Email :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-email">
-                                                            <input type="text" class="form-control" id="edit-email" name="edit-email" value="${jsonData1.email}">
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Tel :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-tel">
-                                                            <input type="text" class="form-control" id="edit-tel" name="edit-tel" value="${jsonData1.tel}">
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Adresse :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-adresse">
-                                                            <input type="text" class="form-control" id="edit-adresse" name="edit-adresse" value="${jsonData1.adresse}">
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th scope="row">Date de naissance :</th>
-                                                    <td>
-                                                        <div class="form-group" id="err-edit-dateNaissance">
-                                                            <input type="date" class="form-control" id="edit-dateNaissance" name="edit-dateNaissance" value="${jsonData1.dateNaissance}">
-                                                            <small class="invalid-feedback"> </small>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>`);
-
-        $('#edit-role').html("")
-        var StringData2 = $.ajax({
-            url: "role/active_index",
-            dataType: "json",
-            type: "GET",
-            async: false,
-        }).responseText;
-        jsonData2 = JSON.parse(StringData2);
-        for (let ind = 0; ind < jsonData2.length; ind++) {
-            if (jsonData2[ind].id == jsonData1.role.id) {
-                $('#edit-role').append("<option selected value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].value + "</option>");
-
-            } else {
-                $('#edit-role').append("<option value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].value + "</option>");
-
-            }
-        }
-
-        $('#edit-group').html("")
-        var StringData2 = $.ajax({
-            url: "group/active_index",
-            dataType: "json",
-            type: "GET",
-            async: false,
-        }).responseText;
-        jsonData2 = JSON.parse(StringData2);
-        for (let ind = 0; ind < jsonData2.length; ind++) {
-            if (jsonData2[ind].id == jsonData1.group.id) {
-                $('#edit-group').append("<option selected value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].nom + "</option>");
-
-            } else {
-                $('#edit-group').append("<option value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].nom + "</option>");
-
-            }
-        }
-        $('#userdetails').modal('show');
-
-        $('#edit').click(function() {
-            form_data = new FormData();
-            form_data.append("sexe", $("#edit-sexe").val());
-            form_data.append("nom", $("#edit-nom").val());
-            form_data.append("prenom", $("#edit-prenom").val());
-            form_data.append("email", $("#edit-email").val());
-            form_data.append("tel", $("#edit-tel").val());
-            form_data.append("group", $("#edit-group").val());
-            form_data.append("adresse", $("#edit-adresse").val());
-            form_data.append("role", $("#edit-role").val());
-            form_data.append("dateNaissance", $("#edit-dateNaissance").val());
-            form_data.append("photo", $("#edit-photo")[0].files[0]);
-
-            console.log(form_data)
-            var StringData3 = $.ajax({
-                url: "user/edit/" + id,
-                dataType: "json",
-                type: "POST",
-                async: false,
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                data: form_data,
-                processData: false,
-                contentType: false,
-            }).responseText;
-            jsonData3 = JSON.parse(StringData3);
-            console.log(jsonData3)
-            if ($.isEmptyObject(jsonData3.error)) {
-
-                clearEditInputs(jsonData3.inputs);
-                $('#userdetails').modal('hide');
-                message("utilisateur", "modifié", jsonData3.check);
-                if (jsonData3.user.deleted_at != null) {
-                    buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData3.user.id + "," + ind + ")\">restorer</button>"
-                } else {
-                    buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData3.user.id + "," + ind + ")\">supprimer</button>"
-                }
-                $('#row' + ind).html(`
-                                        <td id="photo${ind}">
-                                            <div>
-                                                <img class="rounded-circle avatar-xs" src="{{ asset('storage/${jsonData3.user.photo}') }}" alt="">
-                                            </div>
-                                        </td>
-                                        <td id="nom_prenom${ind}">${jsonData3.user.nom}  ${jsonData3.user.prenom}</td>
-                                        
-                                        <td id="email${ind}">${jsonData3.user.email}</td>
-                                        <td id="role${ind}">${jsonData3.user.role.value}</td>
-                                        <td id="group${ind}">${jsonData3.user.group.nom}</td>
-                                        <td>
-                                            <div class="btn-group" role="group" aria-label="Basic example">
-                                            <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData3.user.id},${ind})">détails</button>
-                                            <a  class="btn btn-success" style="margin: 10px" href="/projet/${jsonData3.projet.id}" >Parcourir</a>
-                                            <button class="btn btn-secondary"style="margin: 10px" onclick="edit(${jsonData3.user.id},${ind})">modifier</button>
-                                                ${buttonacive}
-                                            </div>
-                                        </td>`);
-                $("#datatable").DataTable();
-            } else {
-                clearEditInputs(jsonData3.inputs);
-                printEditErrorMsg(jsonData3.error);
-            }
-        });
-        $("#datatable").DataTable();
-    }
-
-    function detail(id, ind) {
-        var StringData = $.ajax({
-            url: "projet/detail/" + id,
-            type: "POST",
-            async: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-        }).responseText;
-
-        jsonData = JSON.parse(StringData);
-
-        $('#detail_body').html(`
-                                         <div class="mx-auto d-block" style="width: 14rem;">
-                                                <img class="card-img-top" src="{{ asset('storage/${jsonData.photo}') }}" alt="">
-                                            </div>
-                                        <div class="card-body">
-                                            <div class="table-responsive">
-                                                <table class="table table-nowrap mb-0">
-                                                    <tbody>
-                                                        <tr>
-                                                            <th scope="row">nom et prénom:</th>
-                                                            <td>${jsonData.nom} ${jsonData.prenom}</td>
-                                                        </tr>
-                                                        
-                                                        <tr>
-                                                            <th scope="row">Sexe :</th>
-                                                            <td>${jsonData.sexe}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Role :</th>
-                                                            <td>${jsonData.role.value}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Group :</th>
-                                                            <td>${jsonData.group.nom}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Email :</th>
-                                                            <td>${jsonData.email}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Tel :</th>
-                                                            <td>${jsonData.tel}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Adresse :</th>
-                                                            <td>${jsonData.adresse}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <th scope="row">Date de naissance :</th>
-                                                            <td>${jsonData.dateNaissance}</td>
-                                                        </tr>
-                                                                  
-                                                    </tbody>
-                                                </table>                   
-                                            </div>
-                                        </div>`);
-        $('#userdetails').modal('show');
-    }
-
+   
    
     function printErrorMsg(msg) {
 

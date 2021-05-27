@@ -140,6 +140,7 @@
         init_histo()
         init_doc()
         init_projet()
+        init_contrat()
     });
 
     function message(objet, action, statut) {
@@ -209,7 +210,7 @@
                                         <td id="assure_rigime${ind}">${jsonData.projet.assures[ind].regime}</td>
                                         <td><ul class="list-inline mb-0 font-size-16">
                                                 <li class="list-inline-item">
-                                                    <button class="btn btn-link text-success p-1" onclick="edit_assure(${ind},${jsonData.projet.assures[ind].id})"><i class="bx bxs-edit-alt"></i></button>
+                                                    <button class="btn btn-link text-success p-1" onclick="edit_assure(${jsonData.projet.assures[ind].id},${ind})"><i class="bx bxs-edit-alt"></i></button>
                                                 </li>
                                                 <li class="list-inline-item">
                                                     ${deletbutton}
@@ -372,9 +373,9 @@
                                         <td id="assure_securiteNbr${jsonData.count}">${jsonData.assure.securityNumb}</td>
                                         <td id="assure_dateNaissance${jsonData.count}">${jsonData.assure.dateNaissance}</td>
                                         <td id="assure_rigime${jsonData.count}">${jsonData.assure.regime}</td>
-                                        <td>><ul class="list-inline mb-0 font-size-16">
+                                        <td><ul class="list-inline mb-0 font-size-16">
                                                 <li class="list-inline-item">
-                                                    <button class="btn btn-link text-success p-1" onclick="edit_assure(${jsonData.count},${jsonData.assure.id})"><i class="bx bxs-edit-alt"></i></button>
+                                                    <button class="btn btn-link text-success p-1" onclick="edit_assure(${jsonData.assure.id},${jsonData.count})"><i class="bx bxs-edit-alt"></i></button>
                                                 </li>
                                                 <li class="list-inline-item">
                                                     ${deletbutton}
@@ -417,7 +418,7 @@
                                         <td id="assure_rigime${ind}">${jsonData.assure.regime}</td>
                                         <td><ul class="list-inline mb-0 font-size-16">
                                                 <li class="list-inline-item">
-                                                    <button class="btn btn-link text-success p-1" onclick="edit_assure(${ind},${jsonData.assure.id})"><i class="bx bxs-edit-alt"></i></button>
+                                                    <button class="btn btn-link text-success p-1" onclick="edit_assure(${jsonData.assure.id},${ind})"><i class="bx bxs-edit-alt"></i></button>
                                                 </li>
                                                 <li class="list-inline-item">
                                                     ${deletbutton}
@@ -456,7 +457,7 @@
                                 <td id="assure_rigime${ind}">${jsonData.assure.regime}</td>
                                 <td><ul class="list-inline mb-0 font-size-16">
                                         <li class="list-inline-item">
-                                            <button class="btn btn-link text-success p-1" onclick="edit_assure(${ind},${jsonData.assure.id})"><i class="bx bxs-edit-alt"></i></button>
+                                            <button class="btn btn-link text-success p-1" onclick="edit_assure(${jsonData.assure.id},${ind})"><i class="bx bxs-edit-alt"></i></button>
                                         </li>
                                         <li class="list-inline-item">
                                             ${deletbutton}
@@ -465,6 +466,241 @@
                                 </td>`)
         $("#assure_datatable").DataTable();
 
+    }
+
+    function edit_assure(id, ind) {
+
+
+        $('#assure_nom').val($('#assure_nomComplet' + ind).html().split(" ")[0]);
+        $('#assure_prenom').val($('#assure_nomComplet' + ind).html().split(" ")[1]);
+        $('#assure_type').val($('#assure_affiliate' + ind).html());
+        $('#assure_civilite').val($('#assure_civilite' + ind).html());
+        $('#assure_regime').val($('#assure_rigime' + ind).html());
+        $('#assure_dateNassance').val($('#assure_dateNaissance' + ind).html());
+        $('#assure_code_organisme').val($('#assure_codeOrd' + ind).html());
+        $('#assure_NbSecurite').val($('#assure_securiteNbr' + ind).html());
+
+        $('#assure_head').html(`<h5 class="modal-title" id="exampleModalLabel">modifier un assuré</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>`);
+        $('#assure_footer').html(`<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <button class="btn btn-success" id="assure_edit">Enregistrer</button>`);
+        $('#assuremodale').modal('show');
+
+        $('#assure_edit').click(function() {
+            var inputs = {
+                'nom': $('#assure_nom').val(),
+                'prenom': $('#assure_prenom').val(),
+                'affiliate': $('#assure_type').val(),
+                'civilite': $('#assure_civilite').val(),
+                'regime': $('#assure_regime').val(),
+                'dateNaissance': $('#assure_dateNassance').val(),
+                'codeOrg': $('#assure_code_organisme').val(),
+                'securityNumb': $('#assure_NbSecurite').val()
+            };
+
+            var StringData = $.ajax({
+                url: '/assure/edit/' + id,
+                dataType: "json",
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                async: false,
+                data: inputs
+            }).responseText;
+            jsonData = JSON.parse(StringData);
+            $('#assuremodale').modal('hide');
+            message("assuré", "modifié", jsonData.check);
+            console.log(jsonData)
+            if (jsonData.assure.deleted_at == null) {
+                deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
+            } else {
+                deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
+            }
+            $('#assure' + ind).html(`   <td id="assure_nomComplet${ind}">${jsonData.assure.nom} ${jsonData.assure.prenom}</td>
+                                <td id="assure_affiliate${ind}">${jsonData.assure.affiliate}</td>
+                                <td id="assure_civilite${ind}">${jsonData.assure.civilite}</td>
+                                <td id="assure_codeOrd${ind}">${jsonData.assure.codeOrg}</td>
+                                <td id="assure_securiteNbr${ind}">${jsonData.assure.securityNumb}</td>
+                                <td id="assure_dateNaissance${ind}">${jsonData.assure.dateNaissance}</td>
+                                <td id="assure_rigime${ind}">${jsonData.assure.regime}</td>
+                                <td><ul class="list-inline mb-0 font-size-16">
+                                        <li class="list-inline-item">
+                                            <button class="btn btn-link text-success p-1" onclick="edit_assure(${jsonData.assure.id},${ind})"><i class="bx bxs-edit-alt"></i></button>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            ${deletbutton}
+                                        </li>
+                                    </ul>
+                                </td>`)
+            $("#assure_datatable").DataTable();
+        })
+
+    }
+</script>
+<script>
+    function init_contrat() {
+
+        let projet_link = window.location.href.split('/')[5];
+
+        var StringData = $.ajax({
+            url: '/contrat/detail',
+            dataType: "json",
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            async: false,
+            data: {
+                projet_link: projet_link
+            }
+        }).responseText;
+        jsonData = JSON.parse(StringData);
+
+        $('#contrat_compagnie').html("<option value=\"0\">selectionner</option>")
+        $('#contrat_formule').html("<option value=\"0\">selectionner</option>")
+        for (let ind = 0; ind < jsonData.compagnies.length; ind++) {
+            $('#contrat_compagnie').append(`<option value="${jsonData.compagnies[ind].id}">${jsonData.compagnies[ind].nom}</option>`);
+        }
+        for (let ind = 0; ind < jsonData.produits.length; ind++) {
+            $('#contrat_formule').append(`<option value="${jsonData.produits[ind].id}">${jsonData.produits[ind].nom}</option>`);
+        }
+
+        $('#contrat_compagnie').change(function() {
+
+            var StringData = $.ajax({
+                url: '/compagnie/filtred_index',
+                dataType: "json",
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                async: false,
+                data: {
+                    compagnie_id: $(this).val()
+                }
+            }).responseText;
+            jsonData = JSON.parse(StringData);
+
+            $('#contrat_formule').html("<option value=\"0\">selectionner</option>")
+            for (let ind = 0; ind < jsonData.length; ind++) {
+                $('#contrat_formule').append(`<option value="${jsonData[ind].id}">${jsonData[ind].nom}</option>`);
+            }
+        })
+
+
+        if (jsonData.contrat == null) {
+            $('#etat_contrat').html("<span class=\"text-danger\" id=\"CT_val\">état : non contracté</span>")
+        } else {
+            $('#etat_contrat').html("<span class=\"text-success\" id=\"CT_val\">état : contracté</span>")
+
+            $('#contrat_type').val(jsonData.contrat.type);
+            $('#contrat_compagnie').val(jsonData.contrat.produit.compagnie_id);
+            $('#contrat_formule').val(jsonData.contrat.produit_id);
+            $('#contrat_dateSignature').val(jsonData.contrat.souscription.dateSignature);
+            $('#contrat_effet').val(jsonData.contrat.souscription.dateEffet);
+            $('#contrat_nbClient').val(jsonData.contrat.souscription.numClient);
+            $('#contrat_nbContrat').val(jsonData.contrat.numero);
+            $('#contrat_nbAffiliation').val(jsonData.contrat.souscription.numAffiliate);
+            $('#contrat_nbSecurite').val(jsonData.contrat.souscription.numSs);
+            $('#contrat_cotisation').val(jsonData.contrat.souscription.cotisationTotal);
+            $('#contrat_aide_lois').val(jsonData.contrat.souscription.aide_lois);
+            $('#contrat_cBanque').val(jsonData.contrat.souscription.cBanque);
+            $('#contrat_cAgence').val(jsonData.contrat.souscription.cAgence);
+            $('#contrat_nbCompte').val(jsonData.contrat.souscription.numCompte);
+            $('#contrat_cle').val(jsonData.contrat.souscription.cle);
+            $('#contrat_banque').val(jsonData.contrat.souscription.banque);
+            $('#contrat_adress').val(jsonData.contrat.souscription.adresse);
+            $('#contrat_iban').val(jsonData.contrat.souscription.iban);
+            $('#contrat_bic').val(jsonData.contrat.souscription.bic);
+            $('#contrat_modePaiement').val(jsonData.contrat.souscription.modePaiement);
+            $('#contrat_typePaiement').val(jsonData.contrat.souscription.typePaiement);
+            $('#contrat_compagnieGT').val(jsonData.contrat.souscription.gratuiteCompagnie);
+            $('#contrat_fraisDossier').val(jsonData.contrat.souscription.fraisDoss);
+            $('#contrat_paiementCB').val(jsonData.contrat.souscription.paiementCb);
+            $('#contrat_remise').val(jsonData.contrat.souscription.remise);
+        }
+        $('#save_contrat').click(function() {
+            var inputs = {
+                'type': $('#contrat_type').val(),
+                'compagnie': $('#contrat_compagnie').val(),
+                'formule': $('#contrat_formule').val(),
+                'dateSignature': $('#contrat_dateSignature').val(),
+                'effet': $('#contrat_effet').val(),
+                'nbClient': $('#contrat_nbClient').val(),
+                'nbContrat': $('#contrat_nbContrat').val(),
+                'nbAffiliation': $('#contrat_nbAffiliation').val(),
+                'nbSecurite': $('#contrat_nbSecurite').val(),
+                'cotisation': $('#contrat_cotisation').val(),
+                'aide_lois': $('#contrat_aide_lois').val(),
+                'cBanque': $('#contrat_cBanque').val(),
+                'cAgence': $('#contrat_cAgence').val(),
+                'nbCompte': $('#contrat_nbCompte').val(),
+                'cle': $('#contrat_cle').val(),
+                'banque': $('#contrat_banque').val(),
+                'adress': $('#contrat_adress').val(),
+                'iban': $('#contrat_iban').val(),
+                'bic': $('#contrat_bic').val(),
+                'modePaiement': $('#contrat_modePaiement').val(),
+                'typePaiement': $('#contrat_typePaiement').val(),
+                'compagnieGT': $('#contrat_compagnieGT').val(),
+                'fraisDossier': $('#contrat_fraisDossier').val(),
+                'paiementCB': $('#contrat_paiementCB').val(),
+                'remise': $('#contrat_remise').val(),
+                'etat_creation': $('#CT_val').html()
+            };
+
+            console.log(inputs)
+
+
+            var StringData1 = $.ajax({
+                url: '/contrat/edit/' + window.location.href.split('/')[5],
+                dataType: "json",
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                async: false,
+                data: inputs
+            }).responseText;
+            jsonData1 = JSON.parse(StringData1);
+            console.log(jsonData1)
+            message("contrat", "modifié", jsonData1.check);
+
+            if (jsonData1.contrat == null) {
+                $('#etat_contrat').html("<span class=\"text-danger\" id=\"CT_val\">état : non contracté</span>")
+            } else {
+                $('#etat_contrat').html("<span class=\"text-success\" id=\"CT_val\">état : contracté</span>")
+
+                $('#contrat_type').val(jsonData1.contrat.type);
+                $('#contrat_compagnie').val(jsonData1.contrat.produit.compagnie_id);
+                $('#contrat_formule').val(jsonData1.contrat.produit_id);
+                $('#contrat_dateSignature').val(jsonData1.contrat.souscription.dateSignature);
+                $('#contrat_effet').val(jsonData1.contrat.souscription.dateEffet);
+                $('#contrat_nbClient').val(jsonData1.contrat.souscription.numClient);
+                $('#contrat_nbContrat').val(jsonData1.contrat.numero);
+                $('#contrat_nbAffiliation').val(jsonData1.contrat.souscription.numAffiliate);
+                $('#contrat_nbSecurite').val(jsonData1.contrat.souscription.numSs);
+                $('#contrat_cotisation').val(jsonData1.contrat.souscription.cotisationTotal);
+                $('#contrat_aide_lois').val(jsonData1.contrat.souscription.aide_lois);
+                $('#contrat_cBanque').val(jsonData1.contrat.souscription.cBanque);
+                $('#contrat_cAgence').val(jsonData1.contrat.souscription.cAgence);
+                $('#contrat_nbCompte').val(jsonData1.contrat.souscription.numCompte);
+                $('#contrat_cle').val(jsonData1.contrat.souscription.cle);
+                $('#contrat_banque').val(jsonData1.contrat.souscription.banque);
+                $('#contrat_adress').val(jsonData1.contrat.souscription.adresse);
+                $('#contrat_iban').val(jsonData1.contrat.souscription.iban);
+                $('#contrat_bic').val(jsonData1.contrat.souscription.bic);
+                $('#contrat_modePaiement').val(jsonData1.contrat.souscription.modePaiement);
+                $('#contrat_typePaiement').val(jsonData1.contrat.souscription.typePaiement);
+                $('#contrat_compagnieGT').val(jsonData1.contrat.souscription.gratuiteCompagnie);
+                $('#contrat_fraisDossier').val(jsonData1.contrat.souscription.fraisDoss);
+                $('#contrat_paiementCB').val(jsonData1.contrat.souscription.paiementCb);
+                $('#contrat_remise').val(jsonData1.contrat.souscription.remise);
+            }
+        })
     }
 </script>
 <script>
@@ -700,9 +936,9 @@
 
             if ($.isEmptyObject(jsonData.error)) {
                 if (jsonData.tache.deleted_at != null) {
-                    buttonacive = "<button  class=\"btn btn-success\"  onclick=\"tach_renouvler(" + jsonData.tache.id + "," + ind + ")\">renouvler</button>"
+                    buttonacive = "<button  class=\"btn btn-success\"  onclick=\"tach_renouvler(" + jsonData.tache.id + "," + jsonData.count + ")\">renouvler</button>"
                 } else {
-                    buttonacive = "<button  class=\"btn btn-danger\" onclick=\"tach_terminer(" + jsonData.tache.id + "," + ind + ")\">terminer</button>"
+                    buttonacive = "<button  class=\"btn btn-danger\" onclick=\"tach_terminer(" + jsonData.tache.id + "," + jsonData.count + ")\">terminer</button>"
                 }
                 clearInputs(jsonData.inputs);
                 $('#tachmodale').modal('hide');
@@ -799,7 +1035,7 @@
                 contentType: false,
             }).responseText;
             jsonData = JSON.parse(StringData);
-
+            console.log(jsonData)
             if ($.isEmptyObject(jsonData.error)) {
                 if (jsonData.tache.deleted_at != null) {
                     buttonacive = "<button  class=\"btn btn-success\"  onclick=\"tach_renouvler(" + jsonData.tache.id + "," + ind + ")\">renouvler</button>"
@@ -1295,9 +1531,9 @@
             }).responseText;
             jsonData = JSON.parse(StringData);
             if (jsonData.rappel.deleted_at != null) {
-                buttonacive = "<button  class=\"btn btn-success\"  onclick=\"rappel_renouvler(" + jsonData.rappel.id + "," + ind + ")\">renouvler</button>"
+                buttonacive = "<button  class=\"btn btn-success\"  onclick=\"rappel_renouvler(" + jsonData.rappel.id + "," + jsonData.count + ")\">renouvler</button>"
             } else {
-                buttonacive = "<button  class=\"btn btn-danger\" onclick=\"rappel_terminer(" + jsonData.rappel.id + "," + ind + ")\">terminer</button>"
+                buttonacive = "<button  class=\"btn btn-danger\" onclick=\"rappel_terminer(" + jsonData.rappel.id + "," + jsonData.count + ")\">terminer</button>"
             }
 
             if ($.isEmptyObject(jsonData.error)) {
@@ -1329,7 +1565,7 @@
                                                         <div class="col-sm-6">
                                                             <div>
                                                                 <div >
-                                                                <button  class="btn btn-secondary" onclick="edit_rappel(${jsonData.rappel.id},${ind})">Modifier</button>                                                                </div>
+                                                                <button  class="btn btn-secondary" onclick="edit_rappel(${jsonData.rappel.id},${jsonData.count})">Modifier</button>                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-6">

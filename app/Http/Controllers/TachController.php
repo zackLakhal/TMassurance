@@ -146,7 +146,7 @@ class TachController extends Controller
                     $temp->dateEcheance = $request->tach_echeance;
                     $temp->save();
                 }
-                $this->store_histo("modifié","tache",$tache->project_id);
+                $this->store_histo("modifié","tache",$temp->project_id);
             $done = true;
         }
 

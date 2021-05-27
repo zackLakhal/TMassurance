@@ -6,7 +6,6 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">List des Roles</h4>
-                <button type="button" class="btn btn-primary pull-right" id="newmodal">+ nouveau role</button>
 
                 <table id="datatable" class="table text-center table-bordered dt-responsive  nowrap w-100">
 
@@ -127,7 +126,7 @@
                 "<td>" +
 
                 "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData[ind].id + "," + ind + ")\">modifier</button>" +
-                buttonacive +
+                
                 "</td>" +
                 "</tr>");
         }
@@ -170,7 +169,7 @@
                     "<td>" +
 
                     "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.role.id + "," + jsonData.count + ")\">modifier</button>" +
-                    buttonacive +
+                    
                     "</td>" +
                     "</tr>");
             } else {
@@ -181,63 +180,7 @@
         $("#datatable").DataTable();
     });
 
-    function restor(id, ind) {
-        var StringData = $.ajax({
-            url: "role/restore/" + id,
-            type: "POST",
-            async: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-        }).responseText;
-
-        jsonData = JSON.parse(StringData);
-
-        message("role", "activé", jsonData.check);
-        if (jsonData.role.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-secondary\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.role.id + "," + ind + ")\">restorer</button>"
-        } else {
-            buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.role.id + "," + ind + ")\">supprimer</button>"
-        }
-        $('#row' + ind).html(
-            "<th >" + jsonData.role.id + "</th>" +
-            " <td id=\"value" + ind + "\">" + jsonData.role.value + "</td>" +
-            "<td>" +
-
-            "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.role.id + "," + ind + ")\">modifier</button>" +
-            buttonacive +
-            "</td>");
-        $("#datatable").DataTable();
-    }
-
-    function delet(id, ind) {
-        var StringData = $.ajax({
-            url: "role/delete/" + id,
-            type: "POST",
-            async: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-        }).responseText;
-
-        jsonData = JSON.parse(StringData);
-
-        message("role", "désactivé", jsonData.check);
-        if (jsonData.role.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-secondary\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.role.id + "," + ind + ")\">restorer</button>"
-        } else {
-            buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.role.id + "," + ind + ")\">supprimer</button>"
-        }
-        $('#row' + ind).html(
-            "<th >" + jsonData.role.id + "</th>" +
-            " <td id=\"value" + ind + "\">" + jsonData.role.value + "</td>" +
-            "<td>" +
-
-            "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.role.id + "," + ind + ")\">modifier</button>" +
-            buttonacive +
-            "</td>");
-        $("#datatable").DataTable();
-    }
+   
 
     function edit(id, ind) {
 
@@ -276,7 +219,7 @@
                     "<td>" +
 
                     "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.role.id + "," + ind + ")\">modifier</button>" +
-                    buttonacive +
+                    
                     "</td>");
             } else {
                 clearInputs(jsonData.inputs);

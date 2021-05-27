@@ -85,6 +85,12 @@ Route::prefix('/assure')->group(function () {
     
 });
 
+Route::prefix('/contrat')->group(function () {
+    Route::post('/detail', 'ContratController@index');
+    Route::post('/edit/{id}', 'ContratController@edit');
+    
+});
+
 
  Route::prefix('/statut')->group(function () {
     Route::get('/', function () {
@@ -110,7 +116,7 @@ Route::prefix('/document')->group(function () {
 });
 
 Route::prefix('/historique')->group(function () {
-    Route::post('/index', 'ProjetController@histo_idex');
+    Route::post('/index', 'ProjetController@histo_index');
     
 });
 
@@ -132,6 +138,7 @@ Route::prefix('/provenance')->group(function () {
          return view('tools.provenance');
      })->middleware('auth');
     Route::get('/index', 'ProvenanceController@index');
+    Route::post('/list/{id}', 'ProvenanceController@list');
     Route::post('/delete/{id}', 'ProvenanceController@edit');
     Route::post('/restore/{id}', 'ProvenanceController@edit');
 
@@ -143,6 +150,7 @@ Route::prefix('/compagnie')->group(function () {
          return view('tools.compagnie');
      })->middleware('auth');
     Route::get('/index', 'CompagnieController@index');
+    Route::post('/filtred_index', 'CompagnieController@filtred_index');
     Route::post('/{edit}/{id}', 'CompagnieController@edit');
 
     Route::prefix('{id_c}/products')->group(function () {
@@ -150,6 +158,9 @@ Route::prefix('/compagnie')->group(function () {
              return view('tools.product');
          })->middleware('auth');
          Route::post('/index', 'CompagnieController@index_product');
+         Route::post('/delete/{id_p}', 'CompagnieController@edit_product');
+         Route::post('/restore/{id_p}', 'CompagnieController@edit_product');
+         
         
     });
     

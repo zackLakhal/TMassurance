@@ -29,7 +29,7 @@ class ProjetController extends Controller
         return response()->json(['prospects' => $prospects, 'projets' => $projets]);
     }
 
-    public function histo_idex(Request $request)
+    public function histo_index(Request $request)
     {
         $historique = Historique::withTrashed()->where('project_id', '=', $request->projet_link)->with('user')->get();
         return response()->json($historique);
@@ -132,6 +132,9 @@ class ProjetController extends Controller
             $assure = Assure::find($id);
             $assure->delete();
             $done = true;
+
+            
+            $this->store_histo("supprimé","assure",$assure->project_id);
         }
         if ($request->is('assure/restore/*')) {
             $assure = Assure::onlyTrashed()
@@ -139,6 +142,45 @@ class ProjetController extends Controller
                 ->first();
             $assure->restore();
             $done = true;
+            
+            $this->store_histo("restoré","assure",$assure->project_id);
+        }
+
+        if($request->is('assure/edit/*')){
+            $validator = Validator::make($request->all(), [
+
+                    'nom'=> 'required',
+                    'prenom'=> 'required',
+                    'affiliate'=> 'required',
+                    'civilite'=> 'required',
+                    'regime'=> 'required',
+                    'dateNaissance'=> 'required',
+                    'codeOrg'=> 'required',
+                    'securityNumb'=> 'required',
+    
+            ]);
+    
+    
+            if ($validator->fails()) {
+    
+                return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
+            }
+    
+            $temp = Assure::withTrashed()
+            ->where('id', $id)
+            ->first();
+            $temp->nom = $request->nom;
+            $temp->prenom = $request->prenom;
+            $temp->affiliate = $request->affiliate;
+            $temp->civilite = $request->civilite;
+            $temp->regime = $request->regime;
+            $temp->dateNaissance = $request->dateNaissance;
+            $temp->codeOrg = $request->codeOrg;
+            $temp->securityNumb = $request->securityNumb;
+            $temp->save();
+            $done = true;
+    
+            $this->store_histo("modifié","assure",$temp->project_id);
         }
 
         $assure = Assure::withTrashed()
@@ -215,10 +257,12 @@ class ProjetController extends Controller
         $prospet->save();
 
         $done = true;
-
+        
+        
         $projet = Project::withTrashed()->where('id', $id)->with('statut')->with('assures')->first();
         $prospet = Prospect::withTrashed()->where('id', $projet->prospect_id)->with('provenance')->with('user')->first();
 
+        $this->store_histo("modifié","projet",$projet->id);
 
         $check = "";
         if (!$done) {

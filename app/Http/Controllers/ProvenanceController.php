@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Fournisseur;
 use App\Provenance;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,11 @@ class ProvenanceController extends Controller
     {
         $provenances = Provenance::withTrashed()->get();
         return response()->json($provenances);
+    }
+
+    public function list($id){
+        $fournisseurs = Fournisseur::withTrashed()->where('provenance_id', $id)->get();
+        return response()->json($fournisseurs);
     }
 
     /**
