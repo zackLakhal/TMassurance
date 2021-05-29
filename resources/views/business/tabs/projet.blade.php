@@ -221,7 +221,21 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="projet_basicpill-phoneno-input">Regime</label>
-                                <input type="text" class="form-control" name="projet_regime" id="projet_regime">
+                                <select class="form-control" id="projet_regime" name="projet_regime">
+
+                                    <option></option>
+                                    <option value="Salarié">Salarié</option>
+                                    <option value="TNS">TNS</option>
+                                    <option value="Alsace-moselle">Alsace-moselle</option>
+                                    <option value="Exploitant agricole">Exploitant agricole</option>
+                                    <option value="Salarié agricole">Salarié agricole</option>
+                                    <option value="Retraité salarié">Retraité salarié</option>
+                                    <option value="Retraité TNS">Retraité TNS</option>
+                                    <option value="Retraité alsace-moselle">Retraité alsace-moselle</option>
+                                    <option value="Fonction publique">Fonction publique</option>
+                                    <option value="Etudiant">Etudiant</option>
+
+                                </select>
 
                             </div>
                         </div>
@@ -415,7 +429,7 @@
 
         <div class="form-group mb-0">
             <div>
-                <button  id="save_projet" class="btn btn-warning waves-effect waves-light mr-1">
+                <button id="save_projet" class="btn btn-warning waves-effect waves-light mr-1">
                     Modifier
                 </button>
 
@@ -436,7 +450,6 @@
                         <select class="form-control select2" id="assure_type" name="assure_type" required>
                             <option>conjointe</option>
                             <option>enfant</option>
-                            <option>assuré principale</option>
                         </select>
                     </div>
 
@@ -466,16 +479,29 @@
                     <div class="form-group">
                         <label for="assure_civilite">Civilité </label>
                         <select class="form-control select2" required id="assure_civilite" name="assure_civilite">
-                            <option value="marié(e)">marié(e)</option>
-                            <option value="veuf(ve)">veuf(ve)</option>
-                            <option value="divorcé(e)">divorcé(e)</option>
-                            <option value="celibataire">célibataire</option>
+                            <option value="marié(e)">Madame</option>
+                            <option value="veuf(ve)">Madamoizelle</option>
+                            <option value="divorcé(e)">Monsieur</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="assure_regime">Régime</label>
-                        <input type="text" required id="assure_regime" name="assure_regime" class="form-control" />
+                        <select class="form-control" id="assure_regime" name="assure_regime">
+
+                            <option></option>
+                            <option value="Salarié">Salarié</option>
+                            <option value="TNS">TNS</option>
+                            <option value="Alsace-moselle">Alsace-moselle</option>
+                            <option value="Exploitant agricole">Exploitant agricole</option>
+                            <option value="Salarié agricole">Salarié agricole</option>
+                            <option value="Retraité salarié">Retraité salarié</option>
+                            <option value="Retraité TNS">Retraité TNS</option>
+                            <option value="Retraité alsace-moselle">Retraité alsace-moselle</option>
+                            <option value="Fonction publique">Fonction publique</option>
+                            <option value="Etudiant">Etudiant</option>
+
+                        </select>
 
                     </div>
 
