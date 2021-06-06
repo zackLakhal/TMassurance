@@ -46,7 +46,7 @@
                         <tr>
                             <th>nom</th>
                             <th>prix</th>
-                            <th>email</th>
+                            <th>cle</th>
                             <th>description</th>
 
                         </tr>
@@ -392,7 +392,7 @@
             $('#provenance_bodytab').append("<tr>" +
                 " <td >" + jsonData[ind].nom + "</td>" +
                 " <td >" + jsonData[ind].prix + "</td>" +
-                " <td >" + jsonData[ind].email + "</td>" +
+                " <td >" + jsonData[ind].cle + "</td>" +
                 " <td >" + jsonData[ind].description + "</td>" +
                 "</tr>");
         }

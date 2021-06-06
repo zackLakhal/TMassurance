@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Fournisseur;
 use App\Prospect;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -99,14 +100,14 @@ class ProspectController extends Controller
         }
 
         $provenanceObj = Provenance::where('nom','=',$request->provenance)->first();
-
+        $fournisseur = Fournisseur::where('id','=',$provenanceObj->fournisseur_id)->first();
         $temp = new Prospect();
         $temp->nom = $request->nom;
         $temp->prenom = $request->prenom;
         $temp->email = $request->email;
         $temp->tel = $request->tel;
         $temp->provenance_id = $provenanceObj->id;
-        $temp->token_fr = $provenanceObj->fournisseur->token;
+        $temp->token_fr = $fournisseur->token;
         $temp->save();
 
 
