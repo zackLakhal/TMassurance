@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Compagnie;
 use App\Produit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class CompagnieController extends Controller
 {
@@ -34,6 +36,16 @@ class CompagnieController extends Controller
         $produits =  $produits = Produit::withTrashed()->where('compagnie_id',$compagnie->id)->get();
         return response()->json(['compagnie' => $compagnie, 'produits' => $produits]);
     }
+    
+    public function detail_compagnie($id)
+    {
+        $compagnie = Compagnie::withTrashed()->where('id', $id)->first();
+
+        return response()->json($compagnie);
+    }
+
+
+    
 
     /**
      * Show the form for creating a new resource.
@@ -53,7 +65,50 @@ class CompagnieController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+
+            'email' => 'required',
+            'nom' => 'required',
+            'tel' => 'required',
+        ]);
+
+
+        if ($validator->fails()) {
+
+            return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
+        }
+
+        $compagnie = new Compagnie();
+        $compagnie->email = $request->email;
+        $compagnie->nom = $request->nom;
+        $compagnie->tel = $request->tel;
+        $compagnie->adresse = $request->adresse;
+        $token = "";
+       
+            do {
+                $token ='CP-'. Str::random(12);
+            } while (Compagnie::where('token','=',$token)->first());
+        $compagnie->token = $token;
+        $compagnie->save();
+
+        $compagnie = Compagnie::where('token','=',$token)->first();
+
+
+        $check = "";
+        $count = Compagnie::all()->count();
+        if (is_null($compagnie)) {
+            $check = "faile";
+        } else {
+            $check = "done";
+        }
+
+        $objet =  [
+            'check' => $check,
+            'count' => $count - 1,
+            'compagnie' => $compagnie,
+            'inputs' => $request->all()
+        ];
+        return response()->json($objet);
     }
 
     /**
@@ -73,10 +128,45 @@ class CompagnieController extends Controller
      * @param  \App\Compagnie  $compagnie
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, $edit, $id)
+    public function edit(Request $request, $id)
     {
         $done = false;
-        if ($edit == "delete") {
+        if ($request->is('compagnie/edit/*')) {
+            $validator = Validator::make($request->all(), [
+
+                'email' => 'required',
+                'nom' => 'required',
+                'tel' => 'required',
+            ]);
+    
+    
+            if ($validator->fails()) {
+    
+                return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
+            }
+    
+            $compagnie = Compagnie::find($id);
+            $compagnie->email = $request->email;
+            $compagnie->nom = $request->nom;
+            $compagnie->tel = $request->tel;
+            $compagnie->adresse = $request->adresse;
+            $compagnie->save();
+
+            if ($request->file('logo')) {
+                $file = $request->file('logo');
+                $image = time() . '.' . $file->getClientOriginalExtension();
+                $path = $request->file('logo')->storeAs(
+                    'compagnies',
+                    $compagnie->id . "_" . $image,
+                    'public'
+                );
+                $compagnie->logo = $path;
+                $compagnie->save();
+            } 
+
+            $done = true;
+        }
+        if ($request->is('compagnie/delete/*')) {
             $compagnie = Compagnie::find($id);
             foreach ($compagnie->produits as  $produit) {
                 $produit->delete();
@@ -84,7 +174,7 @@ class CompagnieController extends Controller
             $compagnie->delete();
             $done = true;
         }
-        if ($edit == "restore") {
+        if ($request->is('compagnie/restore/*')) {
             $compagnie = Compagnie::onlyTrashed()
                 ->where('id', $id)
                 ->first();

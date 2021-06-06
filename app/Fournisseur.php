@@ -8,8 +8,10 @@ class Fournisseur extends Model
 {
     use SoftDeletes;
     
-    public function provenance()
+    
+
+    public function provenances()
     {
-        return $this->belongsTo('App\Provenance');
+        return $this->hasMany('App\Fournisseur');
     }
 }

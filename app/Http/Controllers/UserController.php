@@ -16,7 +16,15 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::withTrashed()->with('role')->with('group')->get();
+        $users =  null ;
+
+        if(auth()->user()->role_id == 4){
+            $users = User::withTrashed()->where('group_id','=',auth()->user()->group_id)->with('role')->with('group')->get();
+        }else{
+            $users = User::withTrashed()->with('role')->with('group')->get();
+        }
+        
+        
 
         return response()->json($users);
     }
@@ -45,7 +53,6 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
             'role' => 'required|gt:0',
-            'groupe' => 'required|gt:0',
             'nom' => 'required',
             'prenom' => 'required',
             'tel' => 'required',
@@ -64,7 +71,7 @@ class UserController extends Controller
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
         $user->role_id = $request->role;
-        $user->groupe_id = $request->groupe;
+        $request->group != 0 ? $user->group_id = $request->group : $user->group_id = 999 ;
         $user->nom = $request->nom;
         $user->prenom = $request->prenom;
         $user->tel = $request->tel;
@@ -138,7 +145,7 @@ class UserController extends Controller
                 $validator = Validator::make($request->all(), [
 
                     'email' => 'required|email',
-                    'group' => 'required|gt:0',
+                    
                     'role' => 'required|gt:0',
                     'nom' => 'required',
                     'prenom' => 'required',
@@ -150,7 +157,7 @@ class UserController extends Controller
                     $validator = Validator::make($request->all(), [
 
                         'email' => 'required|email|unique:users',
-                        'group' => 'required|gt:0',
+                        
                         'role' => 'required|gt:0',
                         'nom' => 'required',
                         'prenom' => 'required',
@@ -172,7 +179,7 @@ class UserController extends Controller
             $user->nom = $request->nom;
             $user->prenom = $request->prenom;
             $user->tel = $request->tel;
-            $user->group_id = $request->group;
+            $request->group != 0 ? $user->group_id = $request->group : $user->group_id = 999 ;
             $user->sexe = $request->sexe;
             $user->save();
 

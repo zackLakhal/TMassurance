@@ -6,7 +6,8 @@
 
                 <h4 class="card-title mb-4">Contrat et Souscription</h4>
                 <h3 class="card-title mb-4" id="etat_contrat"> </h3>
-                <div class="row">
+                @if(auth()->user()->role_id != 2 && auth()->user()->role_id != 4)
+                <div class="row ">
                     <div class="col-xl-4 col-sm-6">
 
                         <div>
@@ -31,7 +32,7 @@
                                         <span class="input-group-text" id="option-startView">Compagnie</span>
                                     </div>
                                     <select class="form-control" id="contrat_compagnie" name="contrat_compagnie">
-                                        
+
                                     </select>
                                 </div>
                             </div>
@@ -128,11 +129,13 @@
                     </div>
 
                 </div>
+                @endif
             </div>
         </div>
     </div>
 </div>
-<div class="row">
+@if(auth()->user()->role_id != 3 )
+<div class="row ctr_role">
     <div class="col-lg-6">
         <div class="card">
             <div class="card-body">
@@ -276,6 +279,11 @@
             </div>
         </div>
     </div>
+
+</div>
+@endif
+
+<div class="row ctr_role">
     <div class="form-group mb-0">
         <div>
             <button id="save_contrat" class="btn btn-warning waves-effect waves-light mr-1">
@@ -285,7 +293,6 @@
         </div>
     </div>
 </div>
-
 
 <!--modal contrat-->
 <div class="modal fade bs-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">

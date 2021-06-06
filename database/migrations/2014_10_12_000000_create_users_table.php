@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
             $table->string('tel')->nullable();
             $table->string('adresse')->nullable();
             $table->bigInteger('role_id');
-            $table->bigInteger('group_id');
+            $table->bigInteger('group_id')->nullable();
             $table->string('photo')->default('avatars/av_ph.png');
             $table->rememberToken();
             $table->timestamps();

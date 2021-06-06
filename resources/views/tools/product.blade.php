@@ -84,7 +84,7 @@
         }
         $('#info_elements').html(`<div class="col-xl-4">
                                     <div class="card">
-                                        <img class="card-img-top img-fluid" style="border-radius: 10px;" src="{{ asset('${jsonData.compagnie.logo}') }}" alt="Card image cap">
+                                        <img class="card-img-top img-fluid" style="border-radius: 10px;" src="{{ asset('storage/${jsonData.compagnie.logo}') }}" alt="Card image cap">
                                         <div class="card-body">
                                             <h4 class="card-title mb-4">Information de la Compagnie</h4>
                                             <div class="table-responsive">

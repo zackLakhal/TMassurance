@@ -133,7 +133,7 @@
     }
     $('#newmodal').click(function() {
         $('#modalhead').html("<h4 class=\"modal-title\" >Nouveau statut</h4>" +
-            "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
+            "<button type=\"button\" class=\"close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
         $('#modalfooter').html("<button type=\"button\" class=\"btn btn-info\" id=\"save\">Enregistrer</button>");
         $('#exampleModal').modal('show');
 
@@ -240,7 +240,7 @@
     function edit(id, ind) {
 
         $('#modalhead').html("<h4 class=\"modal-title\" >Modifier statut</h4>" +
-            "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
+            "<button type=\"button\" class=\"close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
         $('#modalfooter').html("<button type=\"button\" class=\"btn btn-info\" id=\"edit\">Enregistrer</button>");
         $('#crmStatut').val($('#crmStatut' + ind).html());
         $('#exampleModal').modal('show');

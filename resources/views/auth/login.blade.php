@@ -113,7 +113,6 @@
                     <div class="mt-5 text-center">
 
                         <div>
-                            <p>Don't have an account ? <a href="auth-register.html" class="fw-medium text-primary"> Signup now </a> </p>
                             <p>© <script>
                                     document.write(new Date().getFullYear())
                                 </script> TM Assurance. Crafted with <i class="mdi mdi-heart text-danger"></i> by Nourane</p>

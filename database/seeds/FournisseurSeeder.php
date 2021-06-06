@@ -1,7 +1,9 @@
 <?php
 
+use App\Fournisseur;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class FournisseurSeeder extends Seeder
 {
@@ -12,13 +14,16 @@ class FournisseurSeeder extends Seeder
      */
     public function run()
     {
-        for ($i=6; $i < 60; $i++) { 
+        for ($i=1; $i < 7; $i++) { 
+            $token = "";
+       
+            do {
+                $token ='FR-'. Str::random(12);
+            } while (Fournisseur::where('token','=',$token)->first());
             DB::table('fournisseurs')->insert([
-                'username' => 'founisseur username'.$i,
                 'nom' => 'nom fr '.$i,
-                'prenom' => 'prenom fr'.$i,
+                'token' => $token,
                 'email' => 'fournisseur'.$i.'@gmail.com',
-                'provenance_id' => rand(1,6),
                 'description' => 'description'.$i,
             ]);
         }

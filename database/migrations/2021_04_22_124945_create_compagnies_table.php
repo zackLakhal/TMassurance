@@ -19,7 +19,8 @@ class CreateCompagniesTable extends Migration
             $table->string('email');
             $table->string('tel');
             $table->string('adresse')->nullable();
-            $table->string('logo');
+            $table->string('token')->nullable();
+            $table->string('logo')->default('compagnies/av_ph.png');
             $table->timestamps();
             $table->softDeletes();
         });

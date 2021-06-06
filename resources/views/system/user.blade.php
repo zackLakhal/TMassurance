@@ -7,8 +7,9 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">List des Utilisateurs</h4>
+                @if(auth()->user()->role_id != 4)
                 <button type="button" class="btn btn-primary pull-right" id="newmodal">+ nouveau utilisateur</button>
-
+                @endif
                 <table id="datatable" class="table text-center table-bordered dt-responsive  nowrap w-100">
 
                     <thead class="table-light">
@@ -17,7 +18,7 @@
                             <th>Nom Complet</th>
                             <th>Email</th>
                             <th>Role</th>
-                            <th>Groupe</th>
+                            <th>Group</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -76,9 +77,9 @@
                     </select>
                     <small class="invalid-feedback"> </small>
                 </div>
-                <div class="form-group" id="err-groupe">
-                    <label for="groupe" class="control-label"><b>groupe:</b></label>
-                    <select class="form-control custom-select selectpicker " name="groupe" id="groupe">
+                <div class="form-group" id="err-group">
+                    <label for="group" class="control-label"><b>group:</b></label>
+                    <select class="form-control custom-select selectpicker " name="group" id="group">
 
                     </select>
                     <small class="invalid-feedback"> </small>
@@ -222,7 +223,7 @@
             $('#role').append("<option value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].value + "</option>");
         }
 
-        $('#group').html("")
+        $('#group').html("<option selected value=\"0\">aucun</option>")
         var StringData3 = $.ajax({
             url: "group/active_index",
             dataType: "json",
@@ -238,7 +239,7 @@
     }
     $('#newmodal').click(function() {
         $('#modalhead').html("<h4 class=\"modal-title\" >Nouvelle Utilisateur</h4>" +
-            "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
+            "<button type=\"button\" class=\"close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
         $('#modalfooter').html("<button type=\"button\" class=\"btn btn-info\" id=\"save\">Enregistrer</button>");
         $('#exampleModal').modal('show');
 
@@ -396,7 +397,7 @@
     function edit(id, ind) {
 
         $('#detail_head').html("<h4 class=\"modal-title\" >Modifier Utilisateur</h4>" +
-            "<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
+            "<button type=\"button\" class=\"close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
         $('#detail_footer').html("<button type=\"button\" class=\"btn btn-info\" id=\"edit\">Enregistrer</button>");
 
         var StringData1 = $.ajax({
@@ -464,7 +465,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <th scope="row">Role :</th>
+                                                    <th scope="row">Group :</th>
                                                     <td>
                                                         <div class="form-group" id="err-edit-group">
                                                             <select class="form-control custom-select selectpicker " name="edit-group" id="edit-group">
@@ -534,7 +535,7 @@
             }
         }
 
-        $('#edit-group').html("")
+        $('#edit-group').html("<option value=\"0\">aucun</option>")
         var StringData2 = $.ajax({
             url: "group/active_index",
             dataType: "json",
@@ -551,6 +552,9 @@
 
             }
         }
+        $("#edit-photo").change(function() {
+            readURL(this);
+        });
         $('#userdetails').modal('show');
 
         $('#edit').click(function() {
@@ -689,6 +693,17 @@
 
         });
 
+    }
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                $('#avatar_display').attr('src', e.target.result);
+            }
+
+            reader.readAsDataURL(input.files[0]); // convert to base64 string
+        }
     }
 
     function clearInputs(msg) {

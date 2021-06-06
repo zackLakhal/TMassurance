@@ -117,8 +117,8 @@
                 </div>
                 <div class="form-group" id="err-doc_type">
                     <label for="doc_type" class="control-label"><b>Type:</b></label>
-                    <select class="form-control custom-select selectpicker " name="doc_type" id="doc_type">
-                    <option>pdf</option>
+                    <select class="form-control " name="doc_type" id="doc_type">
+                    <option selected >pdf</option>
                     <option>image</option>
                     <option>word</option>
                     <option>excel</option>

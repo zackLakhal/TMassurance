@@ -36,8 +36,9 @@ class CreateProspectsTable extends Migration
             $table->string('wishes')->nullable();// soins or hospitalisation or optique or dentaire
             $table->boolean('is_confirmed')->default(false);
             $table->date('dateConfirmation')->nullable(); 
-            $table->bigInteger('user_id');
-            $table->bigInteger('provenance_id');
+            $table->bigInteger('user_id')->default(1);
+            $table->bigInteger('provenance_id')->nullable();
+            $table->string('token_fr')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

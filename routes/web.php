@@ -133,14 +133,17 @@ Route::prefix('/rappel')->group(function () {
     
 });
 
-Route::prefix('/provenance')->group(function () {
+Route::prefix('/fournisseur')->group(function () {
     Route::get('/', function () {
-         return view('tools.provenance');
+         return view('tools.fournisseur');
      })->middleware('auth');
     Route::get('/index', 'ProvenanceController@index');
+    Route::post('/store', 'ProvenanceController@store');
     Route::post('/list/{id}', 'ProvenanceController@list');
     Route::post('/delete/{id}', 'ProvenanceController@edit');
     Route::post('/restore/{id}', 'ProvenanceController@edit');
+    Route::post('/edit/{id}', 'ProvenanceController@edit');
+
 
     
 });
@@ -150,8 +153,13 @@ Route::prefix('/compagnie')->group(function () {
          return view('tools.compagnie');
      })->middleware('auth');
     Route::get('/index', 'CompagnieController@index');
+    Route::post('/store', 'CompagnieController@store');
+    Route::post('/detail/{id}', 'CompagnieController@detail_compagnie')->name('compagnie.detail');
+
     Route::post('/filtred_index', 'CompagnieController@filtred_index');
-    Route::post('/{edit}/{id}', 'CompagnieController@edit');
+    Route::post('/delete/{id}', 'CompagnieController@edit');
+    Route::post('/restore/{id}', 'CompagnieController@edit');
+    Route::post('/edit/{id}', 'CompagnieController@edit');
 
     Route::prefix('{id_c}/products')->group(function () {
         Route::get('/', function () {

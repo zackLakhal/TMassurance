@@ -16,13 +16,13 @@ class GroupController extends Controller
      */
     public function index()
     {
-        $groups = Group::withTrashed()->get();
+        $groups = Group::withTrashed()->where('id','<>',999)->get();
         return response()->json($groups);
     }
 
     public function active_index()
     {
-        $groups = Group::all();
+        $groups = Group::where('id','<>',999)->get();
         return response()->json($groups);
     }
 
@@ -30,7 +30,7 @@ class GroupController extends Controller
     public function deleted()
     {
 
-        $groups = Group::onlyTrashed();
+        $groups = Group::onlyTrashed()->where('id','<>',999)->get();
         return response()->json($groups);
     }
 
@@ -66,7 +66,7 @@ class GroupController extends Controller
         $group->nom = $request->nom;
         $group->save();
         $check = "";
-        $count = Group::all()->count();
+        $count = Group::all()->count() - 1;
         if (is_null($group)) {
             $check = "faile";
         } else {

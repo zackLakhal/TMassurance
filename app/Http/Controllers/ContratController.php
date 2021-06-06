@@ -22,14 +22,13 @@ class ContratController extends Controller
     public function index(Request $request)
     {
         $contrat = Contrat::withTrashed()->where('project_id', $request->projet_link)->with('souscription')->with('produit')->first();
-        
+
         $objet =  [
             'contrat' => $contrat,
             'compagnies' => Compagnie::all(),
             'produits' => Produit::all()
         ];
         return response()->json($objet);
-        
     }
 
     /**
@@ -74,64 +73,70 @@ class ContratController extends Controller
     {
 
         $done = false;
-        
+
         $contrat = null;
         $souscription = null;
         if ($request->etat_creation == "état : non contracté") {
             $contrat = new Contrat();
             $souscription = new Souscription();
-        }else{
+        } else {
             $contrat = Contrat::withTrashed()
-            ->where('project_id', $id)
-            ->first();
+                ->where('project_id', $id)
+                ->first();
 
             $souscription = $contrat->souscription;
         }
-        $contrat->type = $request->type;
-        $contrat->numero = $request->nbContrat;
-        $contrat->produit_id = $request->formule;
+        if (auth()->user()->role_id != 2 && auth()->user()->role_id != 4) {
+            $contrat->type = $request->type;
+            $contrat->numero = $request->nbContrat;
+            $contrat->produit_id = $request->formule;
+            $souscription->typeContrat = $request->type;
+            $souscription->compagnie = Compagnie::find($request->compagnie)->nom;
+            $souscription->formule  = Produit::find($request->formule)->nom;
+            $souscription->cotisationTotal  = $request->cotisation;
+            $souscription->numSs = $request->nbSecurite;
+            $souscription->numClient = $request->nbClient;
+            $souscription->numContrat  = $request->nbContrat;
+            $souscription->dateSignature  = $request->dateSignature;
+            $souscription->dateEffet  = $request->effet;
+            $souscription->numAffiliate  = $request->nbAffiliation;
+            $souscription->aide_lois  = $request->aide_lois;
+        }
+
         if ($request->etat_creation != "état : non contracté") {
             $contrat->project_id = $id;
         }
-        
+
         $contrat->save();
-       
-        $souscription->typeContrat = $request->type ;
-        $souscription->compagnie = Compagnie::find($request->compagnie)->nom;     
-        $souscription->formule  = Produit::find($request->formule)->nom ;    
-        $souscription->cotisationTotal  = $request->cotisation ;        
-        $souscription->numSs = $request->nbSecurite ;     
-        $souscription->numClient = $request->nbClient ;      
-        $souscription->numContrat  = $request->nbContrat ;
-        $souscription->dateSignature  = $request->dateSignature ;    
-        $souscription->dateEffet  = $request->effet ;     
-        $souscription->numAffiliate  = $request->nbAffiliation ;       
-        $souscription->cBanque = $request->cBanque ;   
-        $souscription->cAgence = $request->cAgence ;   
-        $souscription->numCompte = $request->nbClient ;
-        $souscription->cle  = $request->cle ;        
-        $souscription->banque = $request->banque ;
-        $souscription->adresse  = $request->adress ;   
-        $souscription->iban = $request->iban ;
-        $souscription->bic  = $request->bic ;
-        $souscription->modePaiement  = $request->modePaiement ;
-        $souscription->typePaiement  = $request->typePaiement ;
-        $souscription->gratuiteCompagnie  = $request->compagnieGT ;    
-        $souscription->remise  = $request->remise ;
-        $souscription->fraisDoss  = $request->fraisDossier ;
-        $souscription->aide_lois  = $request->aide_lois ;
-        $souscription->paiementCb  = $request->paiementCB ;
+
+        if (auth()->user()->role_id != 3) {
+            $souscription->cBanque = $request->cBanque;
+            $souscription->cAgence = $request->cAgence;
+            $souscription->numCompte = $request->nbCompte;
+            $souscription->cle  = $request->cle;
+            $souscription->banque = $request->banque;
+            $souscription->adresse  = $request->adress;
+            $souscription->iban = $request->iban;
+            $souscription->bic  = $request->bic;
+            $souscription->modePaiement  = $request->modePaiement;
+            $souscription->typePaiement  = $request->typePaiement;
+            $souscription->gratuiteCompagnie  = $request->compagnieGT;
+            $souscription->remise  = $request->remise;
+            $souscription->fraisDoss  = $request->fraisDossier;
+            $souscription->paiementCb  = $request->paiementCB;
+        }
+
 
         $souscription->save();
         if ($request->etat_creation != "état : non contracté") {
             $contrat->souscription_id = $souscription->id;
         }
-        
+
         $contrat->save();
 
         $done = true;
-        
-        $this->store_histo("modifié","contrat et souscription",$id);
+
+        $this->store_histo("modifié", "contrat et souscription", $id);
 
         $contrat = Contrat::withTrashed()->where('project_id', $id)->with('souscription')->with('produit')->first();
 
@@ -162,8 +167,9 @@ class ContratController extends Controller
         //
     }
 
-    public function store_histo($action,$composante,$project_id){
-        
+    public function store_histo($action, $composante, $project_id)
+    {
+
         $histo = new Historique();
         $histo->action = $action;
         $histo->composante = $composante;

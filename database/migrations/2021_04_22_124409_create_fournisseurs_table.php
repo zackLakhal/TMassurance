@@ -15,12 +15,10 @@ class CreateFournisseursTable extends Migration
     {
         Schema::create('fournisseurs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('username');
+            $table->string('token');
             $table->string('nom');
-            $table->string('prenom');
             $table->string('email');
-            $table->text('description');
-            $table->bigInteger('provenance_id');
+            $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

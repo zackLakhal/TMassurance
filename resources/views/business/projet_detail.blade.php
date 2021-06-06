@@ -558,7 +558,7 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-
+        console.log(jsonData)
         $('#contrat_compagnie').html("<option value=\"0\">selectionner</option>")
         $('#contrat_formule').html("<option value=\"0\">selectionner</option>")
         for (let ind = 0; ind < jsonData.compagnies.length; ind++) {
@@ -583,7 +583,7 @@
                 }
             }).responseText;
             jsonData = JSON.parse(StringData);
-
+            
             $('#contrat_formule').html("<option value=\"0\">selectionner</option>")
             for (let ind = 0; ind < jsonData.length; ind++) {
                 $('#contrat_formule').append(`<option value="${jsonData[ind].id}">${jsonData[ind].nom}</option>`);
@@ -593,9 +593,14 @@
 
         if (jsonData.contrat == null) {
             $('#etat_contrat').html("<span class=\"text-danger\" id=\"CT_val\">état : non contracté</span>")
+            $('#save_contrat').html('créer le contrat')
+            if('{!! auth()->user()->role_id !!}' == 2 || '{!! auth()->user()->role_id !!}' == 4 ){
+                $('.ctr_role').hide()
+            }
         } else {
+            
             $('#etat_contrat').html("<span class=\"text-success\" id=\"CT_val\">état : contracté</span>")
-
+            $('#save_contrat').html('modifier le contrat')
             $('#contrat_type').val(jsonData.contrat.type);
             $('#contrat_compagnie').val(jsonData.contrat.produit.compagnie_id);
             $('#contrat_formule').val(jsonData.contrat.produit_id);
@@ -621,6 +626,9 @@
             $('#contrat_fraisDossier').val(jsonData.contrat.souscription.fraisDoss);
             $('#contrat_paiementCB').val(jsonData.contrat.souscription.paiementCb);
             $('#contrat_remise').val(jsonData.contrat.souscription.remise);
+            if('{!! auth()->user()->role_id !!}' == 2 || '{!! auth()->user()->role_id !!}' == 4 ){
+                $('.ctr_role').show()
+            }
         }
         $('#save_contrat').click(function() {
             var inputs = {
@@ -771,10 +779,11 @@
         $("#doc_datatable").DataTable();
 
         $('#creat_doc').click(function() {
-            $('#docmodale').modal('show');
+            
 
             $('#doc_file').val("");
-            $('#doc_type').val("");
+
+            $('#docmodale').modal('show');
 
             $('#doc_save').click(function() {
                 form_data = new FormData();

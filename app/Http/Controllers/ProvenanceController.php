@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Fournisseur;
 use App\Provenance;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 class ProvenanceController extends Controller
 {
     /**
@@ -15,13 +16,14 @@ class ProvenanceController extends Controller
      */
     public function index()
     {
-        $provenances = Provenance::withTrashed()->get();
+        $provenances = Fournisseur::withTrashed()->get();
         return response()->json($provenances);
     }
 
     public function list($id){
-        $fournisseurs = Fournisseur::withTrashed()->where('provenance_id', $id)->get();
-        return response()->json($fournisseurs);
+
+        $provenances = Provenance::withTrashed()->where('fournisseur_id', $id)->get();
+        return response()->json($provenances);
     }
 
     /**
@@ -42,7 +44,48 @@ class ProvenanceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+
+            'email' => 'required',
+            'nom' => 'required',
+        ]);
+
+
+        if ($validator->fails()) {
+
+            return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
+        }
+
+        $temp = new Fournisseur();
+        $temp->email = $request->email;
+        $temp->nom = $request->nom;
+        $token = "";
+       
+            do {
+                $token ='FR-'. Str::random(12);
+            } while (Fournisseur::where('token','=',$token)->first());
+        $temp->token = $token;
+        $temp->description = $request->description;
+        $temp->save();
+
+        $fournisseur = Fournisseur::withTrashed()->where('id','=',$temp->id)->first();
+
+
+        $check = "";
+        $count = Fournisseur::all()->count();
+        if (is_null($fournisseur)) {
+            $check = "faile";
+        } else {
+            $check = "done";
+        }
+
+        $objet =  [
+            'check' => $check,
+            'count' => $count - 1,
+            'fournisseur' => $fournisseur,
+            'inputs' => $request->all()
+        ];
+        return response()->json($objet);
     }
 
     /**
@@ -65,21 +108,42 @@ class ProvenanceController extends Controller
     public function edit(Request $request,$id)
     {
         $done = false;
-        if ($request->is('provenance/delete/*')) {
+        if ($request->is('fournisseur/edit/*')) {
             
-            $provenance = Provenance::find($id);
-            $provenance->delete();
+            $validator = Validator::make($request->all(), [
+
+                'email' => 'required',
+                'nom' => 'required',
+            ]);
+    
+    
+            if ($validator->fails()) {
+    
+                return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
+            }
+    
+            $temp = Fournisseur::find($id);
+            $temp->email = $request->email;
+            $temp->nom = $request->nom;
+            $temp->description = $request->description;
+            $temp->save();
             $done = true;
         }
-        if ($request->is('provenance/restore/*')) {
-            $provenance = Provenance::onlyTrashed()
+        if ($request->is('fournisseur/delete/*')) {
+            
+            $fournisseur = Fournisseur::find($id);
+            $fournisseur->delete();
+            $done = true;
+        }
+        if ($request->is('fournisseur/restore/*')) {
+            $fournisseur = Fournisseur::onlyTrashed()
                 ->where('id', $id)
                 ->first();
-            $provenance->restore();
+            $fournisseur->restore();
             $done = true;
         }
 
-        $provenance = Provenance::withTrashed()
+        $fournisseur = Fournisseur::withTrashed()
             ->where('id', $id)
             ->first();
 
@@ -92,7 +156,7 @@ class ProvenanceController extends Controller
 
         $objet =  [
             'check' => $check,
-            'provenance' => $provenance,
+            'fournisseur' => $fournisseur,
             'inputs' => $request->all()
         ];
         return response()->json($objet);
