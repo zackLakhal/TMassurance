@@ -6,6 +6,8 @@ use App\Prospect;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Project;
+use App\Provenance;
+use Illuminate\Support\Facades\Validator;
 
 class ProspectController extends Controller
 {
@@ -29,7 +31,7 @@ class ProspectController extends Controller
     }
 
 
-    public function confirmer(Request $request,$id)
+    public function confirmer(Request $request, $id)
     {
         $done = false;
         $prospect = Prospect::find($id);
@@ -80,7 +82,48 @@ class ProspectController extends Controller
      */
     public function api_save(Request $request)
     {
-        return ['data' => $request];
+        $validator = Validator::make($request->all(), [
+
+            'nom' => 'required',
+            'prenom' => 'required',
+            'email' => 'required',
+            'tel' => 'required',
+            'provenance' => 'required'
+
+        ]);
+
+
+        if ($validator->fails()) {
+
+            return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
+        }
+
+        $provenanceObj = Provenance::where('nom','=',$request->provenance)->first();
+
+        $temp = new Prospect();
+        $temp->nom = $request->nom;
+        $temp->prenom = $request->prenom;
+        $temp->email = $request->email;
+        $temp->tel = $request->tel;
+        $temp->provenance_id = $provenanceObj->id;
+        $temp->token_fr = $provenanceObj->fournisseur->token;
+        $temp->save();
+
+
+        $prospect = Prospect::withTrashed()->where('id', '=', $temp->id)->first();
+        $check = "";
+        if (is_null($prospect)) {
+            $check = "faile";
+        } else {
+            $check = "done";
+        }
+
+        $objet =  [
+            'check' => $check,
+            'Prospect' => $prospect,
+            'inputs' => $request->all()
+        ];
+        return response()->json($objet);
     }
 
     /**
@@ -100,11 +143,11 @@ class ProspectController extends Controller
      * @param  \App\Prospect  $prospect
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request,$id)
+    public function edit(Request $request, $id)
     {
         $done = false;
         if ($request->is('prospect/delete/*')) {
-            
+
             $prospect = Prospect::find($id);
             $prospect->delete();
             $done = true;
