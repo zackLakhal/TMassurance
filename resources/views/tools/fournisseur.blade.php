@@ -1,7 +1,7 @@
 @extends('layouts.appback')
 
 @section('content')
-<button type="button" id="creat_fournisseur" class="btn btn-warning btn-sm btn-rounded waves-effect waves-light mb-3">Ajouter un fournisseur</button>
+<button type="button" id="creat_fournisseur" class="btn btn-success btn-sm btn-rounded waves-effect waves-light mb-3">Ajouter un fournisseur</button>
 
 <div class="row ">
     <div class="col-12">
@@ -165,6 +165,7 @@
     function init() {
 
         var buttonacive;
+        var coloractive;
         var StringData = $.ajax({
             url: "fournisseur/index",
             dataType: "json",
@@ -177,10 +178,12 @@
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {
                 buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData[ind].id + "," + ind + ")\">restorer</button>"
+                coloractive = "table-danger";
             } else {
                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData[ind].id + "," + ind + ")\">supprimer</button>"
+                coloractive = "";
             }
-            $('#bodytab').append("<tr id=\"row" + ind + "\">" +
+            $('#bodytab').append("<tr class=\""+coloractive+"\" id=\"row" + ind + "\">" +
                 " <td id=\"nom" + ind + "\">" + jsonData[ind].nom + "</td>" +
                 " <td id=\"token" + ind + "\">" + jsonData[ind].token + "</td>" +
                 " <td id=\"email" + ind + "\">" + jsonData[ind].email + "</td>" +
@@ -188,7 +191,7 @@
                 "<td>" +
 
                 "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData[ind].id + "," + ind + ")\" >modifier</button>" +
-                "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listprovenance(" + jsonData[ind].id + "," + ind + ")\" >List des provenances</button>" +
+                "<a href=\"fournisseur/"+jsonData[ind].id+"/provenance\" class=\"btn btn-primary\"style=\"margin: 10px\"  >List des provenances</a>" +
                 buttonacive +
                 "</td>" +
                 "</tr>");
@@ -236,7 +239,7 @@
             } else {
                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.fournisseur.id + "," + jsonData.count + ")\">supprimer</button>"
             }
-            $('#bodytab').append("<tr id=\"row" + jsonData.count + "\">" +
+            $('#bodytab').append("<tr class=\"table-success\" id=\"row" + jsonData.count + "\">" +
                 
                 " <td id=\"nom" + jsonData.count + "\">" + jsonData.fournisseur.nom + "</td>" +
                 " <td id=\"token" + jsonData.count + "\">" + jsonData.fournisseur.token + "</td>" +
@@ -244,7 +247,7 @@
                 " <td id=\"description" + jsonData.count + "\">" + jsonData.fournisseur.description + "</td>" +
                 "<td>" +
                 "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.fournisseur.id + "," + jsonData.count + ")\" >modifier</button>" +
-                "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listprovenance(" + jsonData.fournisseur.id + "," + jsonData.count + ")\" >List des fournisseurs</button>" +
+                "<a href=\"fournisseur/"+jsonData.fournisseur.id+"/provenance\" class=\"btn btn-primary\"style=\"margin: 10px\"  >List des provenances</a>" +
                 buttonacive +
                 "</td>" +
                 "</tr>");
@@ -287,6 +290,7 @@
             } else {
                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.fournisseur.id + "," + ind + ")\">supprimer</button>"
             }
+            $('#row' + ind).attr('class','table-success')
             $('#row' + ind).html(
                 
                 " <td id=\"nom" + ind + "\">" + jsonData.fournisseur.nom + "</td>" +
@@ -296,7 +300,7 @@
                 "<td>" +
 
                 "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.fournisseur.id + "," + ind + ")\" >modifier</button>" +
-                "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listprovenance(" + jsonData.fournisseur.id + "," + ind + ") \">List des fournisseurs</button>" +
+                "<a href=\"fournisseur/"+jsonData.fournisseur.id+"/provenance\" class=\"btn btn-primary\"style=\"margin: 10px\"  >List des provenances</a>" +
                 buttonacive +
                 "</td>");
             $("#datatable").DataTable();
@@ -326,6 +330,7 @@
         } else {
             buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.fournisseur.id + "," + ind + ")\">supprimer</button>"
         }
+        $('#row' + ind).attr('class','')
         $('#row' + ind).html(
             
             " <td id=\"nom" + ind + "\">" + jsonData.fournisseur.nom + "</td>" +
@@ -335,7 +340,7 @@
             "<td>" +
 
             "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.fournisseur.id + "," + ind + ")\" >modifier</button>" +
-            "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listprovenance(" + jsonData.fournisseur.id + "," + ind + ") \">List des fournisseurs</button>" +
+            "<a href=\"fournisseur/"+jsonData.fournisseur.id+"/provenance\" class=\"btn btn-primary\"style=\"margin: 10px\"  >List des provenances</a>" +
             buttonacive +
             "</td>");
         $("#datatable").DataTable();
@@ -359,6 +364,7 @@
         } else {
             buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.fournisseur.id + "," + ind + ")\">supprimer</button>"
         }
+        $('#row' + ind).attr('class','table-danger')
         $('#row' + ind).html(
             
             " <td id=\"nom" + ind + "\">" + jsonData.fournisseur.nom + "</td>" +
@@ -368,38 +374,10 @@
             "<td>" +
 
             "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.fournisseur.id + "," + ind + ")\" >modifier</button>" +
-            "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listprovenance(" + jsonData.fournisseur.id + "," + ind + ") \">List des fournisseurs</button>" +
+            "<a href=\"fournisseur/"+jsonData.fournisseur.id+"/provenance\" class=\"btn btn-primary\"style=\"margin: 10px\"  >List des provenances</a>" +
             buttonacive +
             "</td>");
         $("#datatable").DataTable();
-    }
-
-    function listprovenance(id, ind) {
-        var StringData = $.ajax({
-            url: "fournisseur/list/" + id,
-            type: "POST",
-            async: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-        }).responseText;
-
-        jsonData = JSON.parse(StringData);
-        console.log(jsonData)
-        $('#provenance_bodytab').html("")
-        for (let ind = 0; ind < jsonData.length; ind++) {
-
-            $('#provenance_bodytab').append("<tr>" +
-                " <td >" + jsonData[ind].nom + "</td>" +
-                " <td >" + jsonData[ind].prix + "</td>" +
-                " <td >" + jsonData[ind].cle + "</td>" +
-                " <td >" + jsonData[ind].description + "</td>" +
-                "</tr>");
-        }
-
-        $("#provenance_datatable").DataTable();
-        $('#exampleModal').modal('show');
-
     }
 
 

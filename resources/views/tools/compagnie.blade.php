@@ -2,7 +2,7 @@
 @section('content')
 
 
-<button type="button" id="creat_compagnie" class="btn btn-warning btn-sm btn-rounded waves-effect waves-light mb-3">Ajouter une compagnie</button>
+<button type="button" id="creat_compagnie" class="btn btn-success btn-sm btn-rounded waves-effect waves-light mb-3">Ajouter une compagnie</button>
 
 <div class="row" id="bodytab">
     <!-- <div class="col-lg-4">
@@ -120,6 +120,7 @@
     function init() {
 
         var buttonacive;
+        var coloractive;
         var StringData = $.ajax({
             url: "compagnie/index",
             dataType: "json",
@@ -131,14 +132,16 @@
         $('#bodytab').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {
-                buttonacive = "<button  class=\"btn btn-success\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData[ind].id + ")\">restorer</button>"
+                buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData[ind].id + ")\">restorer</button>"
+                coloractive = "card-body bg-danger text-white-50";
             } else {
                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData[ind].id + ")\">supprimer</button>"
+                coloractive = "card-body";
             }
             $('#bodytab').append(`<div class="col-lg-4" id="compagnie_${jsonData[ind].id}">
                                     <div class="card" >
                                         <img class="card-img-top img-fluid" style="border-radius: 10px;" src="{{ asset('storage/${jsonData[ind].logo}') }}" alt="Card image cap">
-                                        <div class="card-body" >
+                                        <div id="body_${jsonData[ind].id}" class="${coloractive}" >
                                             <h4 class="card-title mt-0">${jsonData[ind].nom}</h4>
                                             <ul>
                                                 <li><b>Email : </b> ${jsonData[ind].email}</li>
@@ -195,14 +198,14 @@
             message("Compagnie", "ajouté", jsonData.check);
 
             if (jsonData.compagnie.deleted_at != null) {
-                buttonacive = "<button  class=\"btn btn-success\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ")\">restorer</button>"
+                buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ")\">restorer</button>"
             } else {
                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.compagnie.id + ")\">supprimer</button>"
             }
             $('#bodytab').append(`<div class="col-lg-4" id="compagnie_${jsonData.compagnie.id}">
                                     <div class="card" >
                                         <img class="card-img-top img-fluid" style="border-radius: 10px;" src="{{ asset('storage/${jsonData.compagnie.logo}') }}" alt="Card image cap">
-                                        <div class="card-body" >
+                                        <div id="body_${jsonData.compagnie.id}" class="card-body bg-success text-white-50" >
                                             <h4 class="card-title mt-0">${jsonData.compagnie.nom}</h4>
                                             <ul>
                                                 <li><b>Email : </b> ${jsonData.compagnie.email}</li>
@@ -329,14 +332,14 @@
                 $('#compagnieedit').modal('hide');
                 message("compagnie", "modifié", jsonData3.check);
                 if (jsonData3.compagnie.deleted_at != null) {
-                    buttonacive = "<button  class=\"btn btn-success\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData3.compagnie.id + ")\">restorer</button>"
+                    buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData3.compagnie.id + ")\">restorer</button>"
                 } else {
                     buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData3.compagnie.id + ")\">supprimer</button>"
                 }
                 $('#compagnie_' + jsonData3.compagnie.id).html(`
                                     <div class="card" >
                                         <img class="card-img-top img-fluid" style="border-radius: 10px;" src="{{ asset('storage/${jsonData3.compagnie.logo}') }}" alt="Card image cap">
-                                        <div class="card-body" id="compagnie_${jsonData3.compagnie.id}">
+                                        <div class="card-body bg-success text-white-50" id="body_${jsonData3.compagnie.id}">
                                             <h4 class="card-title mt-0">${jsonData3.compagnie.nom}</h4>
                                             <ul>
                                                 <li><b>Email : </b> ${jsonData3.compagnie.email}</li>
@@ -370,14 +373,14 @@
         console.log(jsonData)
         message("compagnie", "activé", jsonData.check);
         if (jsonData.compagnie.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-success\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ")\">restorer</button>"
+            buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ")\">restorer</button>"
         } else {
             buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.compagnie.id + ")\">supprimer</button>"
         }
         $('#compagnie_' + jsonData.compagnie.id).html(`
                                     <div class="card" >
                                         <img class="card-img-top img-fluid" style="border-radius: 10px;" src="{{ asset('storage/${jsonData.compagnie.logo}') }}" alt="Card image cap">
-                                        <div class="card-body" id="compagnie_${jsonData.compagnie.id}">
+                                        <div class="card-body" id="body_${jsonData.compagnie.id}">
                                             <h4 class="card-title mt-0">${jsonData.compagnie.nom}</h4>
                                             <ul>
                                                 <li><b>Email : </b> ${jsonData.compagnie.email}</li>
@@ -409,14 +412,14 @@
         console.log(jsonData)
         message("compagnie", "désactivé", jsonData.check);
         if (jsonData.compagnie.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-success\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ")\">restorer</button>"
+            buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ")\">restorer</button>"
         } else {
             buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.compagnie.id + ")\">supprimer</button>"
         }
         $('#compagnie_' + jsonData.compagnie.id).html(`
                                     <div class="card" >
                                         <img class="card-img-top img-fluid" style="border-radius: 10px;" src="{{ asset('storage/${jsonData.compagnie.logo}') }}" alt="Card image cap">
-                                        <div class="card-body" id="compagnie_${jsonData.compagnie.id}">
+                                        <div class="card-body bg-danger text-white-50" id="body_${jsonData.compagnie.id}">
                                             <h4 class="card-title mt-0">${jsonData.compagnie.nom}</h4>
                                             <ul>
                                                 <li><b>Email : </b> ${jsonData.compagnie.email}</li>

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Project;
 use App\Provenance;
+use App\User;
 use Illuminate\Support\Facades\Validator;
 
 class ProspectController extends Controller
@@ -19,9 +20,34 @@ class ProspectController extends Controller
      */
     public function index()
     {
-        $prospects = Prospect::withTrashed()->with('provenance')->with('user')->get();
+        $prospects = null;
+        switch (auth()->user()->role_id) {
+            case 1:
+                $notadmins = User::where('role_id', '<>', 1)->pluck('id')->toArray();
+                $prospects = Prospect::withTrashed()->where('user_id', '=', auth()->user()->id)->orWhereIn('user_id', $notadmins)->with('provenance')->with('user')->get();
+                break;
+            case 2:
+                $prospects = Prospect::where('user_id', '=',auth()->user()->id)->with('provenance')->with('user')->get();
+                break;
+            case 3:
+                $prospects = Prospect::withTrashed()->with('provenance')->with('user')->get();
+                break;
+
+            case 4:
+                $users =  User::where('group_id', '=', auth()->user()->group_id)->pluck('id')->toArray();
+                $prospects = Prospect::whereIn('user_id', $users)->with('provenance')->with('user')->get();
+                break;
+        }
+
 
         return response()->json($prospects);
+    }
+
+    public function list_commercial(Request $request)
+    {
+        $commercials = User::where([['role_id', '=', 2], ['id', '<>', $request->user_id]])->get();
+
+        return response()->json($commercials);
     }
 
     public function detail($id)
@@ -99,8 +125,8 @@ class ProspectController extends Controller
             return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
         }
 
-        $provenanceObj = Provenance::where('nom','=',$request->provenance)->first();
-        $fournisseur = Fournisseur::where('id','=',$provenanceObj->fournisseur_id)->first();
+        $provenanceObj = Provenance::where('nom', '=', $request->provenance)->first();
+        $fournisseur = Fournisseur::where('id', '=', $provenanceObj->fournisseur_id)->first();
         $temp = new Prospect();
         $temp->nom = $request->nom;
         $temp->prenom = $request->prenom;
@@ -108,6 +134,8 @@ class ProspectController extends Controller
         $temp->tel = $request->tel;
         $temp->provenance_id = $provenanceObj->id;
         $temp->token_fr = $fournisseur->token;
+        $users = User::where('role_id', '=', 1)->pluck('id')->toArray();
+        $temp->user_id = $users[rand(1, count($users) - 1)];
         $temp->save();
 
 
@@ -158,6 +186,15 @@ class ProspectController extends Controller
                 ->where('id', $id)
                 ->first();
             $prospect->restore();
+            $done = true;
+        }
+
+        if ($request->is('prospect/affecter/*')) {
+            $prospect = Prospect::withTrashed()
+                ->where('id', $id)
+                ->first();
+            $prospect->user_id = $request->user_id;
+            $prospect->save();
             $done = true;
         }
 

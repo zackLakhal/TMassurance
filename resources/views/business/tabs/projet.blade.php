@@ -12,7 +12,7 @@
         </div>
         <div class="col-lg-2">
             <div class="form-group">
-                <input type="text" class="form-control" style="height:30px" name="projet_fournisseur" id="projet_fournisseur">
+                <input type="text" disabled class="form-control" style="height:30px" name="projet_fournisseur" id="projet_fournisseur">
             </div>
         </div>
     </div>

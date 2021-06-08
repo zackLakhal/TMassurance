@@ -18,6 +18,7 @@
                             <th>Telephone</th>
                             <th>Provenance</th>
                             <th>état de Confirmation</th>
+                            <th>Commercial</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -34,68 +35,7 @@
 </div>
 
 <!-- /.modal 1-->
-<!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header" id="modalhead">
 
-            </div>
-            <div class="modal-body">
-                <div class="form-group" id="err-email">
-                    <label for="email" class="control-label"><b>Email:</b></label>
-                    <input type="email" class="form-control" id="email" name="email">
-                    <small class="invalid-feedback"> </small>
-                </div>
-                <div class="form-group" id="err-password">
-                    <label for="password" class="control-label"><b>Mot de passe:</b></label>
-                    <input type="password" class="form-control" id="password" name="password">
-                    <small class="invalid-feedback"> </small>
-                </div>
-                <div class="form-group" id="err-nom">
-                    <label for="nom" class="control-label"><b>nom:</b></label>
-                    <input type="text" class="form-control" id="nom" name="nom">
-                    <small class="invalid-feedback"> </small>
-                </div>
-                <div class="form-group" id="err-prenom">
-                    <label for="prenom" class="control-label"><b>Prénom:</b></label>
-                    <input type="text" class="form-control" id="prenom" name="prenom">
-                    <small class="invalid-feedback"> </small>
-                </div>
-                <div class="form-group" id="err-sexe">
-                    <label for="sexe" class="control-label"><b>Sexe:</b></label>
-                    <select class="form-control custom-select selectpicker " name="sexe" id="sexe" é>
-                        <option selected>Male</option>
-                        <option>Femlle</option>
-                    </select>
-                    <small class="invalid-feedback"> </small>
-                </div>
-                <div class="form-group" id="err-role">
-                    <label for="role" class="control-label"><b>Role:</b></label>
-                    <select class="form-control custom-select selectpicker " name="role" id="role">
-
-                    </select>
-                    <small class="invalid-feedback"> </small>
-                </div>
-                <div class="form-group" id="err-groupe">
-                    <label for="groupe" class="control-label"><b>groupe:</b></label>
-                    <select class="form-control custom-select selectpicker " name="groupe" id="groupe">
-
-                    </select>
-                    <small class="invalid-feedback"> </small>
-                </div>
-
-                <div class="form-group" id="err-tel">
-                    <label for="tel" class="control-label"><b>tel:</b></label>
-                    <input type="text" class="form-control" id="tel" name="tel">
-                    <small class="invalid-feedback"> </small>
-                </div>
-            </div>
-            <div class="modal-footer" id="modalfooter">
-                <button type="button" class="btn btn-info" id="save">Enregistrer</button>
-            </div>
-        </div>
-    </div>
-</div> -->
 <!-- /.modal 1 -->
 
 <!-- /.modal 2-->
@@ -159,6 +99,27 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="affectationModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Choisir un commercial</h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="user_list" class="control-label"><b>List des commercial</b></label>
+                    <select class="form-control custom-select selectpicker " name="user_list" id="user_list">
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="affect">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- /.modal confirmation -->
 @endsection
 
@@ -197,6 +158,7 @@
 
         var buttonacive;
         var buttonconfirm;
+        var coloractive;
         var StringData = $.ajax({
             url: "prospect/index",
             dataType: "json",
@@ -204,23 +166,25 @@
             async: false,
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        var role_user =' {! auth()->user()->role_id !}'
         var parcourir = ""
         $('#bodytab').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {
                 buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData[ind].id + "," + ind + ")\">restorer</button>"
+                coloractive = "table-danger";
             } else {
                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData[ind].id + "," + ind + ")\">supprimer</button>"
+                coloractive = "";
             }
             if (jsonData[ind].is_confirmed == 0) {
                 buttonconfirm = "<button  class=\"btn btn-dark\" style=\"margin: 10px\"  onclick=\"confirm(" + jsonData[ind].id + "," + ind + ")\">Confirmer</button>"
                 parcourir = ""
             } else {
                 buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
-                parcourir = "<a  class=\"btn btn-success\" style=\"margin: 10px\" href=\"/prospect/projet/"+jsonData[ind].id+"\" >Parcourir</a>"
+                parcourir = "<a  class=\"btn btn-success\" style=\"margin: 10px\" href=\"/prospect/projet/" + jsonData[ind].id + "\" >Parcourir</a>"
             }
-            $('#bodytab').append(`<tr id="row${ind}">
+            $('#bodytab').append(`<tr id="row${ind}" class="${coloractive}">
                                         <td id="id${ind}">
                                         ${jsonData[ind].id}
                                         </td>
@@ -229,12 +193,18 @@
                                         <td id="email${ind}">${jsonData[ind].email}</td>
                                         <td id="tel${ind}">${jsonData[ind].tel}</td>
                                         <td id="provenance${ind}">${jsonData[ind].provenance.nom}</td>
-                                        <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
+                                        <td  id="is_confirmed${ind}"> 
+                                        ${buttonconfirm}
+                                        </td>
+                                        <td>
+                                        <button  class="btn btn-link" style="margin: 10px" title="changer"  onclick="affecter(${jsonData[ind].user.id},${ind})">${jsonData[ind].user.nom} ${jsonData[ind].user.prenom}</button>
+
+                                        </td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             ${parcourir}
                                             
-                                                                                         ${buttonacive}
+                                            ${role_user == 1 ? buttonacive : '' }
                                             </div>
                                         </td>
                                     </tr>`);
@@ -250,6 +220,7 @@
 
 
     function restor(id, ind) {
+        var role_user =' {! auth()->user()->role_id !}'
         var StringData = $.ajax({
             url: "prospect/restore/" + id,
             type: "POST",
@@ -276,6 +247,7 @@
             parcourir = `<a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>`
             buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
         }
+        $('#row' + ind).attr('class','')
         $('#row' + ind).html(`<td id="id${ind}">
                                         ${jsonData.prospect.id}
                                         </td>
@@ -286,16 +258,20 @@
                                         <td id="provenance${ind}">${jsonData.prospect.provenance.nom}</td>
                                         <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
                                         <td>
+                                        <button  class="btn btn-link" style="margin: 10px" title="changer"  onclick="affecter(${jsonData.prospect.user.id},${ind})">${jsonData.prospect.user.nom} ${jsonData.prospect.user.prenom}</button>
+
+                                        </td>
+                                        <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
-                                            
                                                 ${parcourir}
-                                                ${buttonacive}
+                                                ${role_user == 1 ? buttonacive : '' }
                                             </div>
                                         </td>`);
         $("#datatable").DataTable();
     }
 
     function delet(id, ind) {
+        var role_user =' {! auth()->user()->role_id !}'
         var StringData = $.ajax({
             url: "prospect/delete/" + id,
             type: "POST",
@@ -321,6 +297,7 @@
             parcourir = `<a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>`
             buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
         }
+        $('#row' + ind).attr('class','table-danger')
         $('#row' + ind).html(`<td id="id${ind}">
                                         ${jsonData.prospect.id}
                                         </td>
@@ -331,10 +308,14 @@
                                         <td id="provenance${ind}">${jsonData.prospect.provenance.nom}</td>
                                         <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
                                         <td>
+                                        <button  class="btn btn-link" style="margin: 10px" title="changer"  onclick="affecter(${jsonData.prospect.user.id},${ind})">${jsonData.prospect.user.nom} ${jsonData.prospect.user.prenom}</button>
+
+                                        </td>
+                                        <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             
                                             ${parcourir}
-                                                ${buttonacive}
+                                            ${role_user == 1 ? buttonacive : '' }
                                             </div>
                                         </td>`);
         $("#datatable").DataTable();
@@ -344,7 +325,7 @@
 
 
     function confirm(id, ind) {
-
+        var role_user =' {! auth()->user()->role_id !}'
         $('#confirmationModal').modal('show');
 
         $('#confirm').click(function() {
@@ -379,6 +360,7 @@
                 parcourir = `<a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>`
                 buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
             }
+            $('#row' + ind).attr('class','table-success')
             $('#row' + ind).html(`<td id="id${ind}">
                                         ${jsonData.prospect.id}
                                         </td>
@@ -388,12 +370,96 @@
                                         <td id="provenance${ind}">${jsonData.prospect.provenance.nom}</td>
                                         <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
                                         <td>
+                                        <button  class="btn btn-link" style="margin: 10px" title="changer"  onclick="affecter(${jsonData.prospect.user.id},${ind})">${jsonData.prospect.user.nom} ${jsonData.prospect.user.prenom}</button>
+
+                                        </td>
+                                        <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             
                                             ${parcourir}
-                                                ${buttonacive}
+                                            ${role_user == 1 ? buttonacive : '' }
                                             </div>
                                         </td>`);
+            $("#datatable").DataTable();
+
+        });
+
+    }
+
+    function affecter(id, ind) {
+        var role_user =' {! auth()->user()->role_id !}'
+        $('#user_list').html("");
+        var StringData = $.ajax({
+            url: "prospect/list_commercial",
+            dataType: "json",
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            async: false,
+            data: {
+                user_id: id
+            }
+        }).responseText;
+        jsonData = JSON.parse(StringData);
+        console.log(jsonData)
+        for (let ind = 0; ind < jsonData.length; ind++) {
+            $('#user_list').append("<option value=\"" + jsonData[ind].id + "\">" + jsonData[ind].nom + " " + jsonData[ind].prenom + " </option>");
+        }
+
+        $('#affectationModal').modal('show');
+
+        $('#affect').click(function() {
+            $('#affectationModal').modal('hide');
+            var StringData = $.ajax({
+                url: "prospect/affecter/" + id,
+                type: "POST",
+                async: false,
+                data: {
+                    user_id: $('#user_list').val()
+                },
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+            }).responseText;
+
+            jsonData = JSON.parse(StringData);
+
+            message("comercial", "affecté", jsonData.check);
+
+            if (jsonData.prospect.deleted_at != null) {
+                buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.prospect.id + "," + ind + ")\">restorer</button>"
+            } else {
+                buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.prospect.id + "," + ind + ")\">supprimer</button>"
+            }
+            var parcourir = ""
+            if (jsonData.prospect.is_confirmed == 0) {
+                buttonconfirm = "<button  class=\"btn btn-dark\" style=\"margin: 10px\"  onclick=\"confirm(" + jsonData.prospect.id + "," + ind + ")\">Confirmer</button>"
+                parcourir = ""
+            } else {
+                parcourir = `<a  class="btn btn-success" style="margin: 10px" href="/prospect/projet/${jsonData.prospect.id}" >Parcourir</a>`
+                buttonconfirm = " <a class=\"btn btn-outline-dark waves-effect waves-light \" style=\"color:green\" type=\"button\"><i class=\"bx bx-check label-icon\"></i>confirmé</a>"
+            }
+            $('#row' + ind).attr('class','table-success')
+            $('#row' + ind).html(`<td id="id${ind}">
+                                ${jsonData.prospect.id}
+                                </td>
+                                <td id="nom_prenom${ind}">${jsonData.prospect.nom}  ${jsonData.prospect.prenom}</td>
+                                <td id="email${ind}">${jsonData.prospect.email}</td>
+                                <td id="tel${ind}">${jsonData.prospect.tel}</td>
+                                <td id="provenance${ind}">${jsonData.prospect.provenance.nom}</td>
+                                <td  id="is_confirmed${ind}"> ${buttonconfirm}</td>
+                                <td>
+                                        <button  class="btn btn-link" style="margin: 10px" title="changer"  onclick="affecter(${jsonData.prospect.user.id},${ind})">${jsonData.prospect.user.nom} ${jsonData.prospect.user.prenom}</button>
+
+                                        </td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                    
+                                    ${parcourir}
+                                    ${role_user == 1 ? buttonacive : '' }
+                                    </div>
+                                </td>`);
             $("#datatable").DataTable();
 
         });

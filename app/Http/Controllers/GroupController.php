@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Validator;
 
 use Illuminate\Http\Request;
 use App\Group;
+use App\User;
 
 class GroupController extends Controller
 {
@@ -16,13 +17,13 @@ class GroupController extends Controller
      */
     public function index()
     {
-        $groups = Group::withTrashed()->where('id','<>',999)->get();
+        $groups = Group::withTrashed()->where('id', '<>', 999)->get();
         return response()->json($groups);
     }
 
     public function active_index()
     {
-        $groups = Group::where('id','<>',999)->get();
+        $groups = Group::where('id', '<>', 999)->get();
         return response()->json($groups);
     }
 
@@ -30,9 +31,91 @@ class GroupController extends Controller
     public function deleted()
     {
 
-        $groups = Group::onlyTrashed()->where('id','<>',999)->get();
+        $groups = Group::onlyTrashed()->where('id', '<>', 999)->get();
         return response()->json($groups);
     }
+
+    public function index_users($id_g)
+    {
+        $users =  null;
+        $supervisor = null;
+
+        $users = User::withTrashed()->where([['group_id', '=', $id_g], ['role_id', '<>', 4]])->with('role')->get();
+        $supervisor = User::withTrashed()->where([['group_id', '=', $id_g], ['role_id', '=', 4]])->with('role')->first();
+
+        $objet =  [
+            'users' => $users,
+            'supervisor' => $supervisor
+        ];
+
+        return response()->json($objet);
+    }
+
+    public function list_sup($id_g)
+    {
+        $supervisors = User::withTrashed()->where([['group_id', '<>', $id_g], ['role_id', '=', 4]])->with('role')->get();
+        return response()->json($supervisors);
+    }
+
+    public function list_user(Request $request, $id_g)
+    {
+        $users = User::withTrashed()->where([['id', '<>', $request->user_id], ['group_id', '<>', $id_g], ['role_id', '<>', 4]])->with('role')->get();
+        return response()->json($users);
+    }
+
+    public function attach_sup(Request $request, $id_g)
+    {
+        $old_supervisor = User::withTrashed()->where([['group_id', '=', $id_g], ['role_id', '=', 4]])->with('role')->first();
+        if ($old_supervisor != null) {
+            $old_supervisor->group_id = 999;
+            $old_supervisor->save();
+        }
+        $new_supervisor = User::withTrashed()->where('id', '=', $request->new_sup)->with('role')->first();
+        $new_supervisor->group_id = $id_g;
+        $new_supervisor->save();
+        return response()->json($new_supervisor);
+    }
+    public function attach_user(Request $request, $id_g)
+    {
+        $old_user = User::withTrashed()->where('id', '=', $request->user_id)->with('role')->first();
+        if ($old_user != null) {
+            $old_user->group_id = 999;
+            $old_user->save();
+        }
+        $new_user = User::withTrashed()->where('id', '=', $request->new_user)->with('role')->first();
+        $new_user->group_id = $id_g;
+        $new_user->save();
+        $count =  User::withTrashed()->where([['group_id', '=', $id_g], ['role_id', '<>', 4]])->count();
+        $objet =  [
+            'old_user' => $old_user,
+            'count' => $count - 1,
+            'new_user' => $new_user
+        ];
+        return response()->json($objet);
+    }
+
+    public function detach_sup($id_g)
+    {
+        $old_supervisor = User::withTrashed()->where([['group_id', '=', $id_g], ['role_id', '=', 4]])->with('role')->first();
+        if ($old_supervisor != null) {
+            $old_supervisor->group_id = 999;
+            $old_supervisor->save();
+        }
+        $new_supervisor = User::withTrashed()->where([['group_id', '=', $id_g], ['role_id', '=', 4]])->with('role')->first();
+        return response()->json($new_supervisor);
+    }
+
+    public function detach_user(Request $request, $id_g)
+    {
+        $old_user = User::withTrashed()->where('id', '=', $request->user_id)->with('role')->first();
+        if ($old_user != null) {
+            $old_user->group_id = 999;
+            $old_user->save();
+        }
+
+        return response()->json($old_user);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -106,6 +189,12 @@ class GroupController extends Controller
         $done = false;
         if ($edit == "delete") {
             $group = Group::find($id);
+            $users = User::withTrashed()->where('group_id', '=', $id)->get();
+
+            foreach ($users as $user) {
+                $user->group_id = 999;
+                $user->save();
+            }
             $group->delete();
             $done = true;
         }

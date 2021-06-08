@@ -17,15 +17,20 @@ class UserController extends Controller
     public function index()
     {
         $users =  null ;
-
-        if(auth()->user()->role_id == 4){
-            $users = User::withTrashed()->where('group_id','=',auth()->user()->group_id)->with('role')->with('group')->get();
-        }else{
-            $users = User::withTrashed()->with('role')->with('group')->get();
+        switch (auth()->user()->role_id) {
+            case 1:
+                $users = User::withTrashed()->with('role')->with('group')->get();
+                break;
+            
+            case 4:
+                $users = User::withTrashed()->where('group_id','=',auth()->user()->group_id)->with('role')->with('group')->get();
+                break;
+            case 3:
+                $users = User::withTrashed()->whereNotIn('role_id',[1,3])->with('role')->with('group')->get();
+                break;
         }
-        
-        
 
+        
         return response()->json($users);
     }
 

@@ -174,9 +174,9 @@
         }).responseText;
         jsonData = JSON.parse(StringData);
 
-        console.log(jsonData)
         //info general
         $('#projet_fiche').val(jsonData.projet.id);
+        $('#projet_fournisseur').val(jsonData.fournisseur.nom);
         $('#projet_commercial').val(jsonData.prospet.user.email);
         $('#projet_provenance').val(jsonData.prospet.provenance.nom);
         $('#projet_statut_gestion').val(jsonData.projet.status_gestion);
@@ -194,13 +194,16 @@
         }
         $('#assure_body').html("");
         var deletbutton
+        var colordelet
         for (let ind = 0; ind < jsonData.projet.assures.length; ind++) {
             if (jsonData.projet.assures[ind].deleted_at == null) {
                 deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.projet.assures[ind].id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
+                colordelet = ''
             } else {
                 deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.projet.assures[ind].id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
+                colordelet = 'table-danger'
             }
-            $('#assure_body').append(`<tr id="assure${ind}">
+            $('#assure_body').append(`<tr id="assure${ind}" class="${colordelet}">
                                         <td id="assure_nomComplet${ind}">${jsonData.projet.assures[ind].nom} ${jsonData.projet.assures[ind].prenom}</td>
                                         <td id="assure_affiliate${ind}">${jsonData.projet.assures[ind].affiliate}</td>
                                         <td id="assure_civilite${ind}">${jsonData.projet.assures[ind].civilite}</td>
@@ -360,12 +363,14 @@
             }).responseText;
             jsonData = JSON.parse(StringData);
             $('#assuremodale').modal('hide');
+            message("assuré", "ajouté", jsonData.check);
             if (jsonData.assure.deleted_at == null) {
                 deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.assure.id + "," + jsonData.count + ")\"><i class=\"bx bx-trash\"></i></button>"
             } else {
                 deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.assure.id + "," + jsonData.count + ")\"><i class=\"bx bx-revision\"></i></button>"
             }
-            $('#assure_body').append(`<tr id="assure${jsonData.count}">
+            
+            $('#assure_body').append(`<tr class="table-success" id="assure${jsonData.count}">
                                         <td id="assure_nomComplet${jsonData.count}">${jsonData.assure.nom} ${jsonData.assure.prenom}</td>
                                         <td id="assure_affiliate${jsonData.count}">${jsonData.assure.affiliate}</td>
                                         <td id="assure_civilite${jsonData.count}">${jsonData.assure.civilite}</td>
@@ -409,6 +414,7 @@
         } else {
             deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
         }
+        $('#assure' + ind).attr('class','table-danger')
         $('#assure' + ind).html(`   <td id="assure_nomComplet${ind}">${jsonData.assure.nom} ${jsonData.assure.prenom}</td>
                                         <td id="assure_affiliate${ind}">${jsonData.assure.affiliate}</td>
                                         <td id="assure_civilite${ind}">${jsonData.assure.civilite}</td>
@@ -448,6 +454,7 @@
         } else {
             deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
         }
+        $('#assure' + ind).attr('class','')
         $('#assure' + ind).html(`   <td id="assure_nomComplet${ind}">${jsonData.assure.nom} ${jsonData.assure.prenom}</td>
                                 <td id="assure_affiliate${ind}">${jsonData.assure.affiliate}</td>
                                 <td id="assure_civilite${ind}">${jsonData.assure.civilite}</td>
@@ -511,9 +518,10 @@
                 data: inputs
             }).responseText;
             jsonData = JSON.parse(StringData);
+            console.log(jsonData)
             $('#assuremodale').modal('hide');
             message("assuré", "modifié", jsonData.check);
-            console.log(jsonData)
+            $('#assure' + ind).attr('class','table-success')
             if (jsonData.assure.deleted_at == null) {
                 deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
             } else {
@@ -583,7 +591,7 @@
                 }
             }).responseText;
             jsonData = JSON.parse(StringData);
-            
+
             $('#contrat_formule').html("<option value=\"0\">selectionner</option>")
             for (let ind = 0; ind < jsonData.length; ind++) {
                 $('#contrat_formule').append(`<option value="${jsonData[ind].id}">${jsonData[ind].nom}</option>`);
@@ -594,11 +602,11 @@
         if (jsonData.contrat == null) {
             $('#etat_contrat').html("<span class=\"text-danger\" id=\"CT_val\">état : non contracté</span>")
             $('#save_contrat').html('créer le contrat')
-            if('{!! auth()->user()->role_id !!}' == 2 || '{!! auth()->user()->role_id !!}' == 4 ){
+            if ('{!! auth()->user()->role_id !!}' == 2 || '{!! auth()->user()->role_id !!}' == 4) {
                 $('.ctr_role').hide()
             }
         } else {
-            
+
             $('#etat_contrat').html("<span class=\"text-success\" id=\"CT_val\">état : contracté</span>")
             $('#save_contrat').html('modifier le contrat')
             $('#contrat_type').val(jsonData.contrat.type);
@@ -626,7 +634,7 @@
             $('#contrat_fraisDossier').val(jsonData.contrat.souscription.fraisDoss);
             $('#contrat_paiementCB').val(jsonData.contrat.souscription.paiementCb);
             $('#contrat_remise').val(jsonData.contrat.souscription.remise);
-            if('{!! auth()->user()->role_id !!}' == 2 || '{!! auth()->user()->role_id !!}' == 4 ){
+            if ('{!! auth()->user()->role_id !!}' == 2 || '{!! auth()->user()->role_id !!}' == 4) {
                 $('.ctr_role').show()
             }
         }
@@ -762,7 +770,7 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData);
+      
         $('#doc_bodytab').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             $('#doc_bodytab').append(`<tr id="row${ind}">
@@ -771,7 +779,7 @@
                                         <td id="size_doc${ind}">${jsonData[ind].size}</td>
                                         <td id="created_at_doc${ind}">${jsonData[ind].created_at}</td>
                                         <td>
-                                        <button class="btn btn-danger"> delete</button>
+                                        <button class="btn btn-danger" onclick="doc_delet(${jsonData[ind].id},${ind})"> supprimer</button>
                                         </td>
                                     </tr>`);
         }
@@ -779,7 +787,7 @@
         $("#doc_datatable").DataTable();
 
         $('#creat_doc').click(function() {
-            
+
 
             $('#doc_file').val("");
 
@@ -820,7 +828,7 @@
                                         <td id="size_doc${jsonData.count}">${jsonData.document.size}</td>
                                         <td id="created_at_doc${jsonData.count}">${jsonData.document.created_at}</td>
                                         <td>
-                                        <button class="btn btn-danger"> delete</button>
+                                        <button class="btn btn-danger" onclick="doc_delet(${jsonData[ind].id},${jsonData.count})"> supprimer</button>
                                         </td>
                                     </tr>`);
                     $("#doc_datatable").DataTable();
@@ -831,6 +839,28 @@
             });
 
         });
+
+    }
+
+    function doc_delet(id, ind) {
+        let projet_link = window.location.href.split('/')[5];
+        var StringData = $.ajax({
+            url: '/document/delete/' + id,
+            dataType: "json",
+            type: "POST",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            async: false,
+            data: {
+                projet_link: projet_link
+            }
+        }).responseText;
+        jsonData = JSON.parse(StringData);
+        console.log(jsonData)
+        message("document", "supprimé", jsonData.check);
+        $('#row'+ind).remove()
+        $("#doc_datatable").DataTable();
 
     }
 </script>

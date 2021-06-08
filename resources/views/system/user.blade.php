@@ -7,7 +7,7 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">List des Utilisateurs</h4>
-                @if(auth()->user()->role_id != 4)
+                @if(auth()->user()->role_id != 4 && auth()->user()->role_id != 3)
                 <button type="button" class="btn btn-primary pull-right" id="newmodal">+ nouveau utilisateur</button>
                 @endif
                 <table id="datatable" class="table text-center table-bordered dt-responsive  nowrap w-100">
@@ -169,6 +169,7 @@
     function init() {
 
         var buttonacive;
+        var coloractive;
         var StringData = $.ajax({
             url: "user/index",
             dataType: "json",
@@ -181,10 +182,12 @@
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {
                 buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData[ind].id + "," + ind + ")\">restorer</button>"
+                coloractive = "table-danger";
             } else {
                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData[ind].id + "," + ind + ")\">supprimer</button>"
+                coloractive = "";
             }
-            $('#bodytab').append(`<tr id="row${ind}">
+            $('#bodytab').append(`<tr id="row${ind}" class="${coloractive}">
                                         <td id="photo${ind}">
                                             <div>
                                                 <img class="rounded-circle avatar-xs" src="{{ asset('storage/${jsonData[ind].photo}') }}" alt="">
@@ -285,7 +288,7 @@
                 } else {
                     buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.user.id + "," + jsonData.count + ")\">supprimer</button>"
                 }
-                $('#bodytab').append(`<tr id="row${jsonData.count}">
+                $('#bodytab').append(`<tr id="row${jsonData.count}" class="table-success">
                                         <td id="photo${jsonData.count}">
                                             <div>
                                                 <img class="rounded-circle avatar-xs" src="{{ asset('storage/${jsonData.user.photo}') }}" alt="">
@@ -332,6 +335,7 @@
         } else {
             buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.user.id + "," + ind + ")\">supprimer</button>"
         }
+        $('#row' + ind).attr('class','')
         $('#row' + ind).html(`
                                         <td id="photo${ind}">
                                             <div>
@@ -372,6 +376,7 @@
         } else {
             buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.user.id + "," + ind + ")\">supprimer</button>"
         }
+        $('#row' + ind).attr('class','table-danger')
         $('#row' + ind).html(`
                                         <td id="photo${ind}">
                                             <div>
@@ -595,6 +600,7 @@
                 } else {
                     buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData3.user.id + "," + ind + ")\">supprimer</button>"
                 }
+                $('#row' + ind).attr('class','table-success')
                 $('#row' + ind).html(`
                                         <td id="photo${ind}">
                                             <div>

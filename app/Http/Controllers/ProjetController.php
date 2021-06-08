@@ -7,9 +7,12 @@ use App\Prospect;
 use App\Historique;
 use App\Statut;
 use App\Assure;
+use App\Fournisseur;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+
 class ProjetController extends Controller
 {
     /**
@@ -19,11 +22,30 @@ class ProjetController extends Controller
      */
     public function index()
     {
-        $projets = Project::withTrashed()->get();
+        $projets = null;
+        switch (auth()->user()->role_id) {
+            case 1:
+                $projets = Project::withTrashed()->get();
+                break;
+            case 2:
+                $temps = Prospect::where('user_id', auth()->user()->id)->pluck('id')->toArray();
+                $projets = Project::whereIn('prospect_id', $temps)->get();
+                break;
+            case 3:
+                $projets = Project::withTrashed()->get();
+                break;
+
+
+            case 4:
+                $users =  User::where('group_id', '=', auth()->user()->group_id)->pluck('id')->toArray();
+                $temps = Prospect::whereIn('user_id', $users)->pluck('id')->toArray();
+                $projets = Project::whereIn('prospect_id', $temps)->get();
+                break;
+        }
         $prospects = array();
 
         foreach ($projets as $projet) {
-            $prospects[] = Prospect::withTrashed()->where('id', $projet->prospect_id)->with('provenance')->with('user')->first();
+            $prospects[] = Prospect::where('id', $projet->prospect_id)->with('provenance')->with('user')->first();
         }
 
         return response()->json(['prospects' => $prospects, 'projets' => $projets]);
@@ -39,11 +61,13 @@ class ProjetController extends Controller
     {
         $projet = Project::withTrashed()->where('id', $request->projet_link)->with('statut')->with('assures')->first();
         $prospet = Prospect::withTrashed()->where('id', $projet->prospect_id)->with('provenance')->with('user')->first();
+        $fournisseur = Fournisseur::withTrashed()->where('id', $prospet->provenance->fournisseur_id)->first();
         $statuts = Statut::all();
         $objet =  [
             'projet' => $projet,
             'prospet' => $prospet,
-            'statuts' => $statuts
+            'statuts' => $statuts,
+            'fournisseur' =>  $fournisseur
         ];
         return response()->json($objet);
     }
@@ -70,19 +94,20 @@ class ProjetController extends Controller
         //
     }
 
-    public function store_assure(Request $request){
+    public function store_assure(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
 
-            'nom'=> 'required',
-                'prenom'=> 'required',
-                'affiliate'=> 'required',
-                'civilite'=> 'required',
-                'regime'=> 'required',
-                'dateNaissance'=> 'required',
-                'codeOrg'=> 'required',
-                'securityNumb'=> 'required',
-                'project_id'=> 'required'
+            'nom' => 'required',
+            'prenom' => 'required',
+            'affiliate' => 'required',
+            'civilite' => 'required',
+            'regime' => 'required',
+            'dateNaissance' => 'required',
+            'codeOrg' => 'required',
+            'securityNumb' => 'required',
+            'project_id' => 'required'
 
         ]);
 
@@ -105,7 +130,7 @@ class ProjetController extends Controller
         $temp->save();
 
 
-        $this->store_histo("ajouté","assure",$temp->project_id);
+        $this->store_histo("ajouté", "assure", $temp->project_id);
 
         $assure = Assure::withTrashed()->where('id', '=', $temp->id)->first();
         $check = "";
@@ -123,9 +148,10 @@ class ProjetController extends Controller
             'inputs' => $request->all()
         ];
         return response()->json($objet);
-    }   
+    }
 
-    public function edit_assure(Request $request, $id){
+    public function edit_assure(Request $request, $id)
+    {
         $done = false;
         if ($request->is('assure/delete/*')) {
 
@@ -133,8 +159,8 @@ class ProjetController extends Controller
             $assure->delete();
             $done = true;
 
-            
-            $this->store_histo("supprimé","assure",$assure->project_id);
+
+            $this->store_histo("supprimé", "assure", $assure->project_id);
         }
         if ($request->is('assure/restore/*')) {
             $assure = Assure::onlyTrashed()
@@ -142,33 +168,33 @@ class ProjetController extends Controller
                 ->first();
             $assure->restore();
             $done = true;
-            
-            $this->store_histo("restoré","assure",$assure->project_id);
+
+            $this->store_histo("restoré", "assure", $assure->project_id);
         }
 
-        if($request->is('assure/edit/*')){
+        if ($request->is('assure/edit/*')) {
             $validator = Validator::make($request->all(), [
 
-                    'nom'=> 'required',
-                    'prenom'=> 'required',
-                    'affiliate'=> 'required',
-                    'civilite'=> 'required',
-                    'regime'=> 'required',
-                    'dateNaissance'=> 'required',
-                    'codeOrg'=> 'required',
-                    'securityNumb'=> 'required',
-    
+                'nom' => 'required',
+                'prenom' => 'required',
+                'affiliate' => 'required',
+                'civilite' => 'required',
+                'regime' => 'required',
+                'dateNaissance' => 'required',
+                'codeOrg' => 'required',
+                'securityNumb' => 'required',
+
             ]);
-    
-    
+
+
             if ($validator->fails()) {
-    
+
                 return response()->json(['error' => $validator->errors(), 'inputs' => $request->all()]);
             }
-    
+
             $temp = Assure::withTrashed()
-            ->where('id', $id)
-            ->first();
+                ->where('id', $id)
+                ->first();
             $temp->nom = $request->nom;
             $temp->prenom = $request->prenom;
             $temp->affiliate = $request->affiliate;
@@ -179,13 +205,13 @@ class ProjetController extends Controller
             $temp->securityNumb = $request->securityNumb;
             $temp->save();
             $done = true;
-    
-            $this->store_histo("modifié","assure",$temp->project_id);
+
+            $this->store_histo("modifié", "assure", $temp->project_id);
         }
 
         $assure = Assure::withTrashed()
-        ->where('id', $id)
-        ->first();
+            ->where('id', $id)
+            ->first();
 
         $check = "";
         if (!$done) {
@@ -223,7 +249,7 @@ class ProjetController extends Controller
     {
 
         $done = false;
-        
+
         $project = Project::withTrashed()
             ->where('id', $id)
             ->first();
@@ -257,12 +283,12 @@ class ProjetController extends Controller
         $prospet->save();
 
         $done = true;
-        
-        
+
+
         $projet = Project::withTrashed()->where('id', $id)->with('statut')->with('assures')->first();
         $prospet = Prospect::withTrashed()->where('id', $projet->prospect_id)->with('provenance')->with('user')->first();
 
-        $this->store_histo("modifié","projet",$projet->id);
+        $this->store_histo("modifié", "projet", $projet->id);
 
         $check = "";
         if (!$done) {
@@ -293,8 +319,9 @@ class ProjetController extends Controller
         //
     }
 
-    public function store_histo($action,$composante,$project_id){
-        
+    public function store_histo($action, $composante, $project_id)
+    {
+
         $histo = new Historique();
         $histo->action = $action;
         $histo->composante = $composante;

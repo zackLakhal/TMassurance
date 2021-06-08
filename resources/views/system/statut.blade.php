@@ -104,6 +104,7 @@
     function init() {
 
         var buttonacive;
+        var coloractive;
         var StringData = $.ajax({
             url: "statut/index",
             dataType: "json",
@@ -115,16 +116,18 @@
         $('#bodytab').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {
-                buttonacive = "<button  class=\"btn btn-secondary\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData[ind].id + "," + ind + ")\">restorer</button>"
+                buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData[ind].id + "," + ind + ")\">restorer</button>"
+                coloractive = "table-danger";
             } else {
                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData[ind].id + "," + ind + ")\">supprimer</button>"
+                coloractive = "";
             }
-            $('#bodytab').append("<tr id=\"row" + ind + "\">" +
+            $('#bodytab').append("<tr class=\""+coloractive+"\" id=\"row" + ind + "\">" +
                 "<th >" + jsonData[ind].id + "</th>" +
                 " <td id=\"crmStatut" + ind + "\">" + jsonData[ind].crmStatut + "</td>" +
                 "<td>" +
 
-                "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData[ind].id + "," + ind + ")\">modifier</button>" +
+                "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData[ind].id + "," + ind + ")\">modifier</button>" +
                 buttonacive +
                 "</td>" +
                 "</tr>");
@@ -158,16 +161,16 @@
                 $('#exampleModal').modal('hide');
                 message("statut", "ajouté", jsonData.check);
                 if (jsonData.statut.deleted_at != null) {
-                    buttonacive = "<button  class=\"btn btn-secondary\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.statut.id + "," + jsonData.count + ")\">restorer</button>"
+                    buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.statut.id + "," + jsonData.count + ")\">restorer</button>"
                 } else {
                     buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.statut.id + "," + jsonData.count + ")\">supprimer</button>"
                 }
-                $('#bodytab').append("<tr id=\"row" + jsonData.count + "\">" +
+                $('#bodytab').append("<tr class=\"table-success\" id=\"row" + jsonData.count + "\">" +
                     "<th >" + jsonData.statut.id + "</th>" +
                     " <td id=\"crmStatut" + jsonData.count + "\">" + jsonData.statut.crmStatut + "</td>" +
                     "<td>" +
 
-                    "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.statut.id + "," + jsonData.count + ")\">modifier</button>" +
+                    "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.statut.id + "," + jsonData.count + ")\">modifier</button>" +
                     buttonacive +
                     "</td>" +
                     "</tr>");
@@ -193,16 +196,17 @@
 
         message("statut", "activé", jsonData.check);
         if (jsonData.statut.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-secondary\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.statut.id + "," + ind + ")\">restorer</button>"
+            buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.statut.id + "," + ind + ")\">restorer</button>"
         } else {
             buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.statut.id + "," + ind + ")\">supprimer</button>"
         }
+        $('#row' + ind).attr('class','')
         $('#row' + ind).html(
             "<th >" + jsonData.statut.id + "</th>" +
             " <td id=\"crmStatut" + ind + "\">" + jsonData.statut.crmStatut + "</td>" +
             "<td>" +
 
-            "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.statut.id + "," + ind + ")\">modifier</button>" +
+            "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.statut.id + "," + ind + ")\">modifier</button>" +
             buttonacive +
             "</td>");
         $("#datatable").DataTable();
@@ -222,16 +226,17 @@
 
         message("statut", "désactivé", jsonData.check);
         if (jsonData.statut.deleted_at != null) {
-            buttonacive = "<button  class=\"btn btn-secondary\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.statut.id + "," + ind + ")\">restorer</button>"
+            buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.statut.id + "," + ind + ")\">restorer</button>"
         } else {
             buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.statut.id + "," + ind + ")\">supprimer</button>"
         }
+        $('#row' + ind).attr('class','table-danger')
         $('#row' + ind).html(
             "<th >" + jsonData.statut.id + "</th>" +
             " <td id=\"crmStatut" + ind + "\">" + jsonData.statut.crmStatut + "</td>" +
             "<td>" +
 
-            "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.statut.id + "," + ind + ")\">modifier</button>" +
+            "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.statut.id + "," + ind + ")\">modifier</button>" +
             buttonacive +
             "</td>");
         $("#datatable").DataTable();
@@ -264,16 +269,17 @@
                 $('#exampleModal').modal('hide');
                 message("statut", "modifié", jsonData.check);
                 if (jsonData.statut.deleted_at != null) {
-                    buttonacive = "<button  class=\"btn btn-secondary\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.statut.id + "," + ind + ")\">restorer</button>"
+                    buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.statut.id + "," + ind + ")\">restorer</button>"
                 } else {
                     buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.statut.id + "," + ind + ")\">supprimer</button>"
                 }
+                $('#row' + ind).attr('class','table-success')
                 $('#row' + ind).html(
                     "<th >" + jsonData.statut.id + "</th>" +
                     " <td id=\"crmStatut" + ind + "\">" + jsonData.statut.crmStatut + "</td>" +
                     "<td>" +
 
-                    "<button class=\"btn btn-warning\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.statut.id + "," + ind + ")\">modifier</button>" +
+                    "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.statut.id + "," + ind + ")\">modifier</button>" +
                     buttonacive +
                     "</td>");
             } else {

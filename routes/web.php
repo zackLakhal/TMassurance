@@ -10,8 +10,13 @@
 |
 */
 
+use App\Fournisseur;
+
 Route::get('/', function () {
      return redirect('/home');
+});
+Route::get('/comparateur', function () {
+    return view('comparateur');
 });
 
 Auth::routes();
@@ -23,18 +28,42 @@ Route::prefix('/role')->group(function () {
      Route::get('/index', 'RoleController@index');
      Route::get('/active_index', 'RoleController@active_index');
      Route::post('/{edit}/{id}', 'RoleController@edit');
-     Route::post('/store', 'RoleController@store');
-     
+
  });
 
  Route::prefix('/group')->group(function () {
      Route::get('/', function () {
           return view('system.group');
       })->middleware('auth');
+
      Route::get('/index', 'GroupController@index');
      Route::get('/active_index', 'GroupController@active_index');
      Route::post('/{edit}/{id}', 'GroupController@edit');
      Route::post('/store', 'GroupController@store');
+
+     Route::prefix('{id_g}/detailGR')->group(function () {
+        Route::get('/', function () {
+            if (auth()->user()->role_id == 4) {
+                return view('system.myGroup');
+            } else {
+                return view('system.detailGroup');
+            }
+            
+             return view('system.detailGroup');
+         })->middleware('auth');
+         Route::post('/index', 'GroupController@index_users');
+         Route::post('/list_sup', 'GroupController@list_sup');
+         Route::post('/list_user', 'GroupController@list_user');
+         Route::post('/attach_sup', 'GroupController@attach_sup');
+         Route::post('/attach_user', 'GroupController@attach_user');
+         Route::post('/detach_user', 'GroupController@detach_user');
+         Route::post('/attach_user', 'GroupController@attach_user');
+
+         Route::post('/delete/{id_p}', 'GroupController@edit_users');
+         Route::post('/restore/{id_p}', 'GroupController@edit_users');
+         
+        
+    });
      
  });
 
@@ -55,6 +84,8 @@ Route::prefix('/prospect')->group(function () {
         return view('business.prospect');
     })->middleware('auth');
     Route::get('/index', 'ProspectController@index');
+    Route::post('/list_commercial', 'ProspectController@list_commercial');
+    Route::post('/affecter/{id}', 'ProspectController@edit');
     Route::post('/delete/{id}', 'ProspectController@edit');
     Route::post('/restore/{id}', 'ProspectController@edit');
     Route::post('/edit/{id}', 'ProspectController@edit');
@@ -112,6 +143,7 @@ Route::prefix('/tach')->group(function () {
 Route::prefix('/document')->group(function () {
     Route::post('/index', 'DocumentController@index');
     Route::post('/store', 'DocumentController@store');
+    Route::post('/{edit}/{id}', 'DocumentController@edit');
     
 });
 
@@ -139,14 +171,26 @@ Route::prefix('/fournisseur')->group(function () {
      })->middleware('auth');
     Route::get('/index', 'ProvenanceController@index');
     Route::post('/store', 'ProvenanceController@store');
-    Route::post('/list/{id}', 'ProvenanceController@list');
     Route::post('/delete/{id}', 'ProvenanceController@edit');
     Route::post('/restore/{id}', 'ProvenanceController@edit');
     Route::post('/edit/{id}', 'ProvenanceController@edit');
 
-
+    Route::prefix('{id_f}/provenance')->group(function () {
+        Route::get('/', function ($id_f) {
+             return view('tools.provenance',['fournisseur' => Fournisseur::withTrashed()->where('id',$id_f)->first()]);
+         })->middleware('auth');
+        Route::get('/index', 'ProvenanceController@prov_index');
+        Route::post('/store', 'ProvenanceController@prov_store');
+        Route::post('/delete/{id}', 'ProvenanceController@prov_edit');
+        Route::post('/restore/{id}', 'ProvenanceController@prov_edit');
+        Route::post('/edit/{id}', 'ProvenanceController@prov_edit');
+    
+    
+        
+    });
     
 });
+
 
 Route::prefix('/compagnie')->group(function () {
     Route::get('/', function () {

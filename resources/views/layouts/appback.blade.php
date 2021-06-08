@@ -65,12 +65,7 @@
                     </button>
 
                     <!-- App Search-->
-                    <form class="app-search d-none d-lg-block">
-                        <div class="position-relative">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <span class="bx bx-search-alt"></span>
-                        </div>
-                    </form>
+
 
                     <!-- <div class="dropdown dropdown-mega d-none d-lg-block ms-2">
                         <button type="button" class="btn header-item waves-effect" data-bs-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
@@ -225,8 +220,8 @@
                         </div>
                     </div>
 
-                    
-                  
+
+
                     <div class="dropdown d-none d-lg-inline-block ms-1">
                         <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
                             <i class="bx bx-fullscreen"></i>
@@ -235,7 +230,7 @@
 
                     <div class="dropdown d-inline-block">
                         <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="rounded-circle header-profile-user" src="{{ asset('storage/'.auth()->user()->photo)}}" alt="Header Avatar">
+                            <img class="rounded-circle header-profile-user" src="{{ asset('storage/'.auth()->user()->photo)}}" alt="Header Avatar">
                             <span class="d-none d-xl-inline-block ms-1" key="t-henry"> {{Auth::user()->nom }} {{Auth::user()->prenom }} </span>
                             <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                         </button>
@@ -271,57 +266,65 @@
                         <li class="menu-title" key="t-menu">Menu</li>
                         @if(auth()->user()->role_id == 1)
                         <li>
-                            <a href="/role" class="waves-effect">
-                                <i class="bx bx-calendar"></i>
-                                <span key="t-calendar">gérer les roles</span>
+                            <a href="/group" class="waves-effect">
+                                <i class="bx bx-group"></i>
+                                <span key="t-group">gérer les groups</span>
                             </a>
                         </li>
+
                         <li>
-                            <a href="/group" class="waves-effect">
-                                <i class="bx bx-calendar"></i>
-                                <span key="t-calendar">gérer les groups</span>
+                            <a href="/statut" class="waves-effect">
+                                <i class="bx bx-carousel"></i>
+                                <span key="t-carousel">gérer les statuts </span>
                             </a>
                         </li>
                         @endif
+                        @if(auth()->user()->role_id == 4)
                         <li>
-                            <a href="/statut" class="waves-effect">
-                                <i class="bx bx-calendar"></i>
-                                <span key="t-calendar">gérer les statuts </span>
+                            <a href="/group/{{auth()->user()->group_id}}/detailGR" class="waves-effect">
+                                <i class="bx bx-group"></i>
+                                <span key="t-group">gérer mon group</span>
                             </a>
                         </li>
-                        
+                        @endif
                         @if(auth()->user()->role_id != 2 && auth()->user()->role_id != 4)
                         <li>
                             <a href="/compagnie" class="waves-effect">
-                                <i class="bx bx-calendar"></i>
-                                <span key="t-calendar">gérer les compagnies </span>
+                                <i class="bx bx-building-house"></i>
+                                <span key="t-building-house">gérer les compagnies </span>
                             </a>
                         </li>
                         <li>
                             <a href="/fournisseur" class="waves-effect">
-                                <i class="bx bx-calendar"></i>
-                                <span key="t-calendar">gérer les fournisseurs </span>
+                                <i class="bx bx-user-voice"></i>
+                                <span key="t-user-voice">gérer les fournisseurs </span>
                             </a>
                         </li>
                         @endif
-                        @if(auth()->user()->role_id != 2 )
+                        @if(auth()->user()->role_id != 2 && auth()->user()->role_id != 4)
                         <li>
                             <a href="/user" class="waves-effect">
-                                <i class="bx bx-calendar"></i>
-                                <span key="t-calendar">gérer les utilisateurs </span>
+                                <i class="bx bx-user-pin"></i>
+                                <span key="t-user-pin">gérer les utilisateurs </span>
                             </a>
                         </li>
                         @endif
                         <li>
                             <a href="/prospect" class="waves-effect">
-                                <i class="bx bx-calendar"></i>
-                                <span key="t-calendar">gérer les prospects </span>
+                                <i class="bx bx-user-plus"></i>
+                                <span key="t-user-plus">gérer les prospects </span>
                             </a>
                         </li>
                         <li>
                             <a href="/projet" class="waves-effect">
-                                <i class="bx bx-calendar"></i>
-                                <span key="t-calendar">gérer les projets </span>
+                                <i class="bx bx-user-check"></i>
+                                <span key="t-user-check">gérer les projets </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/comparateur" class="waves-effect">
+                                <i class="bx bx-user-check"></i>
+                                <span key="t-user-check">comparateur </span>
                             </a>
                         </li>
                         <li>
@@ -352,7 +355,7 @@
                     <div class="row">
                         <div class="col-12">
                             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                                
+
 
 
 

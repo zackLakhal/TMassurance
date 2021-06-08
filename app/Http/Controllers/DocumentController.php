@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Document;
+use App\Historique;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 class DocumentController extends Controller
@@ -101,10 +103,49 @@ class DocumentController extends Controller
      * @param  \App\Document  $document
      * @return \Illuminate\Http\Response
      */
-    public function edit(Document $document)
+    public function edit(Request $request,$edit,$id)
     {
-        //
+        if ($edit == "delete") {
+           
+            $temp = Document::withTrashed()
+                ->where('id', $id)
+                ->first();
+                $temp->delete() ;
+               
+                $this->store_histo("supprimé","document",$temp->project_id);
+                $temp->save();
+            $done = true;
+        }
+
+        $document = Document::withTrashed()
+            ->where('id', $id)
+            ->first();
+
+        $check = "";
+        if (!$done) {
+            $check = "faile";
+        } else {
+            $check = "done";
+        }
+
+        $objet =  [
+            'check' => $check,
+            'document' => $document,
+            'inputs' => $request->all()
+        ];
+        return response()->json($objet);
     }
+
+    public function store_histo($action,$composante,$project_id){
+        
+        $histo = new Historique();
+        $histo->action = $action;
+        $histo->composante = $composante;
+        $histo->project_id = $project_id;
+        $histo->user_id = Auth::user()->id;
+        $histo->save();
+    }
+
 
     /**
      * Update the specified resource in storage.

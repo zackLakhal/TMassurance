@@ -18,6 +18,7 @@ class TachController extends Controller
      */
     public function index(Request $request)
     {
+        
         $taches = Tache::withTrashed()->where('project_id','=',$request->projet_link)->with('user')->get();
         return response()->json($taches);
     }

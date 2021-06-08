@@ -60,7 +60,8 @@
 
     function init() {
         let compagnie_link = window.location.href.split('/')[4];
-
+        var coloractive;
+        var coloractiveprod;
         var StringData = $.ajax({
             url: 'products/index',
             dataType: "json",
@@ -79,13 +80,15 @@
         var active_compagnie;
         if (jsonData.compagnie.deleted_at != null) {
             active_compagnie = "<button  class=\"btn btn-success\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ", -1)\">restorer</button>"
+            coloractive = "card-body bg-danger text-white-50";
         } else {
             active_compagnie = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.compagnie.id + ", -1)\">supprimer</button>"
+            coloractive = "card-body ";
         }
         $('#info_elements').html(`<div class="col-xl-4">
                                     <div class="card">
                                         <img class="card-img-top img-fluid" style="border-radius: 10px;" src="{{ asset('storage/${jsonData.compagnie.logo}') }}" alt="Card image cap">
-                                        <div class="card-body">
+                                        <div class="${coloractive}">
                                             <h4 class="card-title mb-4">Information de la Compagnie</h4>
                                             <div class="table-responsive">
                                                 <table class="table table-nowrap mb-0">
@@ -140,12 +143,14 @@
         var buttonactive;
         for (let ind = 0; ind < jsonData.produits.length; ind++) {
             if (jsonData.produits[ind].deleted_at != null) {
-                buttonactive = "<button  class=\"btn btn-link text-success p-1\"  onclick=\"restor(" + jsonData.produits[ind].id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
+                buttonactive = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"restor(" + jsonData.produits[ind].id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
+                coloractiveprod = "table-danger";
             } else {
                 buttonactive = "<button  class=\"btn btn-link text-danger p-1\" onclick=\"delet(" + jsonData.produits[ind].id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
+                coloractiveprod = "";
             }
 
-            $('#bodytable').append(`<tr id="row${ind}">
+            $('#bodytable').append(`<tr id="row${ind}" class="${coloractiveprod}">
                                         <td>
                                             <div>
                                                 <img class="rounded-circle avatar-xs" src="{{ asset('${jsonData.produits[ind].logo}') }}" alt="">
@@ -181,11 +186,11 @@
         console.log(jsonData)
         message("produit", "activé", jsonData.check);
         if (jsonData.produit.deleted_at != null) {
-            buttonactive = "<button  class=\"btn btn-link text-success p-1\"  onclick=\"restor(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
+            buttonactive = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"restor(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
         } else {
             buttonactive = "<button  class=\"btn btn-link text-danger p-1\" onclick=\"delet(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
         }
-
+        $('#row' + ind).attr('class','')
         $('#row' + ind).html(`<td>
                                      <div>
                                         <img class="rounded-circle avatar-xs" src="{{ asset('${jsonData.produit.logo}') }}" alt="">
@@ -216,10 +221,11 @@
         console.log(jsonData)
         message("produit", "désactivé", jsonData.check);
         if (jsonData.produit.deleted_at != null) {
-            buttonactive = "<button  class=\"btn btn-link text-success p-1\"  onclick=\"restor(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
+            buttonactive = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"restor(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
         } else {
             buttonactive = "<button  class=\"btn btn-link text-danger p-1\" onclick=\"delet(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
         }
+        $('#row' + ind).attr('class','table-danger')
         $('#row' + ind).html(`<td>
                                      <div>
                                         <img class="rounded-circle avatar-xs" src="{{ asset('${jsonData.produit.logo}') }}" alt="">

@@ -1,7 +1,48 @@
 @extends('layouts.appback')
 
 @section('content')
-<button type="button" id="creat_provenance" class="btn btn-warning btn-sm btn-rounded waves-effect waves-light mb-3">Ajouter une provenance</button>
+
+<div class="row ">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Fournisseur des provenances</h4>
+
+                <table class="table  table-bordered text-center dt-responsive  nowrap w-100">
+                    <thead class="table-light">
+                        <tr>
+                            
+                            <th>nom</th>
+                            <th>token</th>
+                            <th>email</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id='fournisseur'>
+                       
+                        @if($fournisseur->deleted_at == null)
+                        <tr class="">
+                            <td> {{$fournisseur->nom}} </td>
+                            <td> {{$fournisseur->token}}</td>
+                            <td> {{$fournisseur->email}}</td>
+                            <td> {{$fournisseur->description}}</td>
+                        </tr>
+                        @else
+                        <tr class="table-danger">
+                            <td> {{$fournisseur->nom}} </td>
+                            <td> {{$fournisseur->token}}</td>
+                            <td> {{$fournisseur->email}}</td>
+                            <td> {{$fournisseur->description}}</td>
+                        </tr>
+                        @endif
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<button type="button" id="creat_provenance" class="btn btn-success btn-sm btn-rounded waves-effect waves-light mb-3">Ajouter une provenance</button>
 
 <div class="row ">
     <div class="col-12">
@@ -32,37 +73,6 @@
     </div>
 </div>
 
-<!-- /.modal 1-->
-<div class="modal fade bs-example-modal-xl" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5>List des Fournisseurs</h5>
-            </div>
-            <div class="modal-body">
-                <table id="fournisseur_datatable" class="table text-center table-bordered dt-responsive  nowrap w-100">
-
-                    <thead class="table-light">
-                        <tr>
-                            <th>nom</th>
-                            <th>token</th>
-                            <th>email</th>
-                            <th>description</th>
-
-                        </tr>
-                    </thead>
-                    <tbody id='fournisseur_bodytab'>
-
-                    </tbody>
-                </table>
-
-            </div>
-            <div class="modal-footer">
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="modal fade" id="provenanceedit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -89,11 +99,6 @@
             </div>
             <div class="modal-body">
 
-                <div class="form-group" id="err-cle">
-                    <label for="cle" class="control-label"><b>cle:</b></label>
-                    <input type="cle" class="form-control" id="cle" name="cle">
-                    <small class="invalid-feedback"> </small>
-                </div>
                 <div class="form-group" id="err-nom">
                     <label for="nom" class="control-label"><b>nom:</b></label>
                     <input type="text" class="form-control" id="nom" name="nom">
@@ -169,6 +174,7 @@
     function init() {
 
         var buttonacive;
+        var coloractive;
         var StringData = $.ajax({
             url: "provenance/index",
             dataType: "json",
@@ -176,15 +182,16 @@
             async: false,
         }).responseText;
         jsonData = JSON.parse(StringData);
-
         $('#bodytab').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {
                 buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData[ind].id + "," + ind + ")\">restorer</button>"
+                coloractive = "table-danger";
             } else {
                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData[ind].id + "," + ind + ")\">supprimer</button>"
+                coloractive = "";
             }
-            $('#bodytab').append("<tr id=\"row" + ind + "\">" +
+            $('#bodytab').append("<tr class=\""+coloractive+"\" id=\"row" + ind + "\">" +
                 "<th >" + jsonData[ind].id + "</th>" +
                 " <td id=\"nom" + ind + "\">" + jsonData[ind].nom + "</td>" +
                 " <td id=\"cle" + ind + "\">" + jsonData[ind].cle + "</td>" +
@@ -193,7 +200,6 @@
                 "<td>" +
 
                 "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData[ind].id + "," + ind + ")\" >modifier</button>" +
-                "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listfournisseur(" + jsonData[ind].id + "," + ind + ")\" >List des fournisseurs</button>" +
                 buttonacive +
                 "</td>" +
                 "</tr>");
@@ -208,7 +214,6 @@
 
 
         $('#nom').val("");
-        $('#cle').val("");
         $('#prix').val("");
         $('#description').val("");
 
@@ -216,7 +221,6 @@
         $('#save').click(function() {
             var inputs = {
                 "nom": $("#nom").val(),
-                "cle": $("#cle").val(),
                 "prix": $("#prix").val(),
                 "description": $("#description").val(),
 
@@ -243,7 +247,7 @@
             } else {
                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.provenance.id + "," + jsonData.count + ")\">supprimer</button>"
             }
-            $('#bodytab').append("<tr id=\"row" + jsonData.count + "\">" +
+            $('#bodytab').append("<tr class=\"table-success\" id=\"row" + jsonData.count + "\">" +
                 "<th >" + jsonData.provenance.id + "</th>" +
                 " <td id=\"nom" + jsonData.count + "\">" + jsonData.provenance.nom + "</td>" +
                 " <td id=\"cle" + jsonData.count + "\">" + jsonData.provenance.cle + "</td>" +
@@ -251,7 +255,6 @@
                 " <td id=\"description" + jsonData.count + "\">" + jsonData.provenance.description + "</td>" +
                 "<td>" +
                 "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.provenance.id + "," + jsonData.count + ")\" >modifier</button>" +
-                "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listfournisseur(" + jsonData.provenance.id + "," + jsonData.count + ")\" >List des fournisseurs</button>" +
                 buttonacive +
                 "</td>" +
                 "</tr>");
@@ -296,6 +299,7 @@
             } else {
                 buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.provenance.id + "," + ind + ")\">supprimer</button>"
             }
+            $('#row' + ind).attr('class','table-success')
             $('#row' + ind).html(
                 "<th >" + jsonData.provenance.id + "</th>" +
                 " <td id=\"nom" + ind + "\">" + jsonData.provenance.nom + "</td>" +
@@ -305,7 +309,7 @@
                 "<td>" +
 
                 "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.provenance.id + "," + ind + ")\" >modifier</button>" +
-                "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listfournisseur(" + jsonData.provenance.id + "," + ind + ") \">List des fournisseurs</button>" +
+                
                 buttonacive +
                 "</td>");
             $("#datatable").DataTable();
@@ -335,6 +339,7 @@
         } else {
             buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.provenance.id + "," + ind + ")\">supprimer</button>"
         }
+        $('#row' + ind).attr('class','')
         $('#row' + ind).html(
             "<th >" + jsonData.provenance.id + "</th>" +
             " <td id=\"nom" + ind + "\">" + jsonData.provenance.nom + "</td>" +
@@ -344,7 +349,7 @@
             "<td>" +
 
             "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.provenance.id + "," + ind + ")\" >modifier</button>" +
-            "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listfournisseur(" + jsonData.provenance.id + "," + ind + ") \">List des fournisseurs</button>" +
+            
             buttonacive +
             "</td>");
         $("#datatable").DataTable();
@@ -368,6 +373,7 @@
         } else {
             buttonacive = "<button  class=\"btn btn-danger\" style=\"margin: 10px\" onclick=\"delet(" + jsonData.provenance.id + "," + ind + ")\">supprimer</button>"
         }
+        $('#row' + ind).attr('class','table-danger')
         $('#row' + ind).html(
             "<th >" + jsonData.provenance.id + "</th>" +
             " <td id=\"nom" + ind + "\">" + jsonData.provenance.nom + "</td>" +
@@ -377,39 +383,12 @@
             "<td>" +
 
             "<button class=\"btn btn-secondary\"style=\"margin: 10px\" onclick=\"edit(" + jsonData.provenance.id + "," + ind + ")\" >modifier</button>" +
-            "<button class=\"btn btn-success\"style=\"margin: 10px\" onclick=\"listfournisseur(" + jsonData.provenance.id + "," + ind + ") \">List des fournisseurs</button>" +
+            
             buttonacive +
             "</td>");
         $("#datatable").DataTable();
     }
 
-    function listfournisseur(id, ind) {
-        var StringData = $.ajax({
-            url: "provenance/list/" + id,
-            type: "POST",
-            async: false,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-        }).responseText;
-
-        jsonData = JSON.parse(StringData);
-        console.log(jsonData)
-        $('#fournisseur_bodytab').html("")
-        for (let ind = 0; ind < jsonData.length; ind++) {
-
-            $('#fournisseur_bodytab').append("<tr>" +
-                " <td >" + jsonData[ind].nom + "</td>" +
-                " <td >" + jsonData[ind].token + "</td>" +
-                " <td >" + jsonData[ind].email + "</td>" +
-                " <td >" + jsonData[ind].description + "</td>" +
-                "</tr>");
-        }
-
-        $("#fournisseur_datatable").DataTable();
-        $('#exampleModal').modal('show');
-
-    }
 
 
 
