@@ -34,6 +34,8 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    
+
     public function detail($id)
     {
         $user = User::withTrashed()->where('id', $id)->with('role')->with('group')->first();
@@ -51,6 +53,8 @@ class UserController extends Controller
         //
     }
 
+    
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -58,9 +62,9 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
             'role' => 'required|gt:0',
-            'nom' => 'required',
+            'nom' => 'required|min:3',
             'prenom' => 'required',
-            'tel' => 'required',
+            'tel' => 'required|max:8',
             'sexe' => 'required',
         ]);
 

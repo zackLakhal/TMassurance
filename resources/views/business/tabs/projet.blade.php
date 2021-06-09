@@ -479,9 +479,9 @@
                     <div class="form-group">
                         <label for="assure_civilite">Civilité </label>
                         <select class="form-control select2" required id="assure_civilite" name="assure_civilite">
-                            <option value="marié(e)">Madame</option>
-                            <option value="veuf(ve)">Madamoizelle</option>
-                            <option value="divorcé(e)">Monsieur</option>
+                            <option value="Madame">Madame</option>
+                            <option value="Madamoizelle">Madamoizelle</option>
+                            <option value="Monsieur">Monsieur</option>
                         </select>
                     </div>
 

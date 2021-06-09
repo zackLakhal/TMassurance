@@ -3,9 +3,7 @@
 @extends('layouts.appback')
 
 @section('content')
-<?php
-ob_start();
-?>
+
 
 <div class="page-content">
     <div class="container-fluid">
@@ -678,56 +676,6 @@ ob_start();
         </div>
     </div>
 </div>
-<?php
-$curl = curl_init();
-
-$baseUrl = "http://wstarifs.neoliane.fr";
-$api = "/price";
-
-$requestPayload = array(
-    "login" => "nr2259@neoliane.fr",
-    "password" => "8bbe2b4d61289e5a987d46d93f8d8283abce3235b8df7c4fb06f312acd277d55",
-    "producttype" => "sante",
-    "adhesiondate" => "25/01/2021",
-    "effectdate" => "02/02/2021",
-    "postalcode" => "7000",
-    "birthdate_adult1" => "10/01/1993",
-    "regime_adult1" => "SS"
-);
-
-
-function post($baseUrl, $api, $method, $requestPayload, $vheader)
-{
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_URL, "$baseUrl$api");
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_ENCODING, "");
-    curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
-    curl_setopt($curl, CURLOPT_TIMEOUT, 30);
-    curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "$method");
-    curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($requestPayload));
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $vheader);
-    $responseBody = curl_exec($curl);
-    return $responseBody;
-}
-
-$vheader = array("accept:application/json", "content-type:application/json");
-
-$response = post($baseUrl, $api, "POST", $requestPayload, $vheader);
-$requestPayload['producttype'] = 'gav';
-
-$res_gav = post($baseUrl, $api, "POST", $requestPayload, $vheader);
-$requestPayload['producttype'] = 'obseques';
-$res_obs = post($baseUrl, $api, "POST", $requestPayload, $vheader);
-$requestPayload['producttype'] = 'ijh';
-$res_ijh = post($baseUrl, $api, "POST", $requestPayload, $vheader);
-// echo $res_gav;
-
-$content = ob_get_clean();
-
-
-?>
 
 
 
@@ -971,11 +919,7 @@ $content = ob_get_clean();
 
 
 <script>
-    var res_gav = <?php echo $res_gav; ?>;
-    var res_obs = <?php echo $res_obs; ?>;
-    var res_ijh = <?php echo $res_ijh; ?>;
-    var response = <?php echo $response; ?>;
-
+ 
     //document.getElementById("nb").innerHTML=response.value.length;
     var l = response.value.length;
     var l_gav = res_gav.value.length;
