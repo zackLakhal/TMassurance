@@ -323,7 +323,7 @@
                         </li>
                         <li>
                             <a href="/comparateur" class="waves-effect">
-                                <i class="bx bx-user-check"></i>
+                                <i class="bx bx-git-compare"></i>
                                 <span key="t-user-check">comparateur </span>
                             </a>
                         </li>

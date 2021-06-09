@@ -57,7 +57,7 @@ Route::prefix('/role')->group(function () {
          Route::post('/attach_sup', 'GroupController@attach_sup');
          Route::post('/attach_user', 'GroupController@attach_user');
          Route::post('/detach_user', 'GroupController@detach_user');
-         Route::post('/attach_user', 'GroupController@attach_user');
+         Route::post('/detach_sup', 'GroupController@detach_sup');
 
          Route::post('/delete/{id_p}', 'GroupController@edit_users');
          Route::post('/restore/{id_p}', 'GroupController@edit_users');

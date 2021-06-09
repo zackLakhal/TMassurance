@@ -166,7 +166,7 @@
             async: false,
         }).responseText;
         jsonData = JSON.parse(StringData);
-        var role_user =' {! auth()->user()->role_id !}'
+        var role_user = '{{ auth()->user()->role_id }}'
         var parcourir = ""
         $('#bodytab').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
@@ -210,7 +210,7 @@
                                     </tr>`);
 
         }
-
+        console.log(role_user)
 
 
         $("#datatable").DataTable();
