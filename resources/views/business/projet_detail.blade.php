@@ -342,12 +342,12 @@
             var inputs = {
                 'nom': $('#assure_nom').val(),
                 'prenom': $('#assure_prenom').val(),
-                'affiliate': $('#assure_type').val(),
+                'affiliate': $('#assure_affiliate').val(),
                 'civilite': $('#assure_civilite').val(),
                 'regime': $('#assure_regime').val(),
-                'dateNaissance': $('#assure_dateNassance').val(),
-                'codeOrg': $('#assure_code_organisme').val(),
-                'securityNumb': $('#assure_NbSecurite').val(),
+                'dateNaissance': $('#assure_dateNaissance').val(),
+                'codeOrg': $('#assure_codeOrg').val(),
+                'securityNumb': $('#assure_securityNumb').val(),
                 'project_id': window.location.href.split('/')[5]
             };
 
@@ -362,15 +362,19 @@
                 data: inputs
             }).responseText;
             jsonData = JSON.parse(StringData);
-            $('#assuremodale').modal('hide');
-            message("assuré", "ajouté", jsonData.check);
-            if (jsonData.assure.deleted_at == null) {
-                deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.assure.id + "," + jsonData.count + ")\"><i class=\"bx bx-trash\"></i></button>"
-            } else {
-                deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.assure.id + "," + jsonData.count + ")\"><i class=\"bx bx-revision\"></i></button>"
-            }
-            
-            $('#assure_body').append(`<tr class="table-success" id="assure${jsonData.count}">
+          
+            if ($.isEmptyObject(jsonData.error)) {
+                console.log("here")
+                assure_clearInputs(jsonData.inputs);
+                $('#assuremodale').modal('hide');
+                message("assuré", "ajouté", jsonData.check);
+                if (jsonData.assure.deleted_at == null) {
+                    deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.assure.id + "," + jsonData.count + ")\"><i class=\"bx bx-trash\"></i></button>"
+                } else {
+                    deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.assure.id + "," + jsonData.count + ")\"><i class=\"bx bx-revision\"></i></button>"
+                }
+
+                $('#assure_body').append(`<tr class="table-success" id="assure${jsonData.count}">
                                         <td id="assure_nomComplet${jsonData.count}">${jsonData.assure.nom} ${jsonData.assure.prenom}</td>
                                         <td id="assure_affiliate${jsonData.count}">${jsonData.assure.affiliate}</td>
                                         <td id="assure_civilite${jsonData.count}">${jsonData.assure.civilite}</td>
@@ -388,7 +392,12 @@
                                             </ul>
                                         </td>
                                     </tr>`)
-            $("#assure_datatable").DataTable();
+                $("#assure_datatable").DataTable();
+            } else {
+                console.log(jsonData.error)
+                assure_clearInputs(jsonData.inputs);
+                assure_printErrorMsg(jsonData.error);
+            }
         })
 
 
@@ -414,7 +423,7 @@
         } else {
             deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
         }
-        $('#assure' + ind).attr('class','table-danger')
+        $('#assure' + ind).attr('class', 'table-danger')
         $('#assure' + ind).html(`   <td id="assure_nomComplet${ind}">${jsonData.assure.nom} ${jsonData.assure.prenom}</td>
                                         <td id="assure_affiliate${ind}">${jsonData.assure.affiliate}</td>
                                         <td id="assure_civilite${ind}">${jsonData.assure.civilite}</td>
@@ -454,7 +463,7 @@
         } else {
             deletbutton = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"assure_restore(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
         }
-        $('#assure' + ind).attr('class','')
+        $('#assure' + ind).attr('class', '')
         $('#assure' + ind).html(`   <td id="assure_nomComplet${ind}">${jsonData.assure.nom} ${jsonData.assure.prenom}</td>
                                 <td id="assure_affiliate${ind}">${jsonData.assure.affiliate}</td>
                                 <td id="assure_civilite${ind}">${jsonData.assure.civilite}</td>
@@ -480,12 +489,12 @@
 
         $('#assure_nom').val($('#assure_nomComplet' + ind).html().split(" ")[0]);
         $('#assure_prenom').val($('#assure_nomComplet' + ind).html().split(" ")[1]);
-        $('#assure_type').val($('#assure_affiliate' + ind).html());
+        $('#assure_affiliate').val($('#assure_affiliate' + ind).html());
         $('#assure_civilite').val($('#assure_civilite' + ind).html());
         $('#assure_regime').val($('#assure_rigime' + ind).html());
-        $('#assure_dateNassance').val($('#assure_dateNaissance' + ind).html());
-        $('#assure_code_organisme').val($('#assure_codeOrd' + ind).html());
-        $('#assure_NbSecurite').val($('#assure_securiteNbr' + ind).html());
+        $('#assure_dateNaissance').val($('#assure_dateNaissance' + ind).html());
+        $('#assure_codeOrg').val($('#assure_codeOrd' + ind).html());
+        $('#assure_securityNumb').val($('#assure_securiteNbr' + ind).html());
 
         $('#assure_head').html(`<h5 class="modal-title" id="exampleModalLabel">modifier un assuré</h5>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
@@ -499,12 +508,12 @@
             var inputs = {
                 'nom': $('#assure_nom').val(),
                 'prenom': $('#assure_prenom').val(),
-                'affiliate': $('#assure_type').val(),
+                'affiliate': $('#assure_affiliate').val(),
                 'civilite': $('#assure_civilite').val(),
                 'regime': $('#assure_regime').val(),
-                'dateNaissance': $('#assure_dateNassance').val(),
-                'codeOrg': $('#assure_code_organisme').val(),
-                'securityNumb': $('#assure_NbSecurite').val()
+                'dateNaissance': $('#assure_dateNaissance').val(),
+                'codeOrg': $('#assure_codeOrg').val(),
+                'securityNumb': $('#assure_securityNumb').val()
             };
 
             var StringData = $.ajax({
@@ -521,7 +530,7 @@
             console.log(jsonData)
             $('#assuremodale').modal('hide');
             message("assuré", "modifié", jsonData.check);
-            $('#assure' + ind).attr('class','table-success')
+            $('#assure' + ind).attr('class', 'table-success')
             if (jsonData.assure.deleted_at == null) {
                 deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
             } else {
@@ -545,6 +554,30 @@
                                 </td>`)
             $("#assure_datatable").DataTable();
         })
+
+    }
+
+    function assure_printErrorMsg(msg) {
+
+
+        $.each(msg, function(key, value) {
+
+            $("#err-assure_" + key).find("input").addClass('is-invalid');
+            $("#err-assure_" + key).find("small").html(value);
+
+        });
+
+    }
+
+    function assure_clearInputs(msg) {
+
+
+        $.each(msg, function(key, value) {
+
+            $("#err-assure_" + key).find("input").removeClass('is-invalid');
+            $("#err-assure_" + key).find("small").html("");
+
+        });
 
     }
 </script>
@@ -770,7 +803,7 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-      
+
         $('#doc_bodytab').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             $('#doc_bodytab').append(`<tr id="row${ind}">
@@ -859,7 +892,7 @@
         jsonData = JSON.parse(StringData);
         console.log(jsonData)
         message("document", "supprimé", jsonData.check);
-        $('#row'+ind).remove()
+        $('#row' + ind).remove()
         $("#doc_datatable").DataTable();
 
     }
@@ -1721,8 +1754,6 @@
             }
         });
     }
-
-
 
     function rappel_terminer(id, ind) {
         var buttonactive;

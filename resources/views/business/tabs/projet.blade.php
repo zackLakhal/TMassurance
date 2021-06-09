@@ -445,47 +445,68 @@
 
                 </div>
                 <div class="modal-body">
-                    <div class="form-group" id="err-assure_titre">
-                        <label for="assure_type">Type</label>
-                        <select class="form-control select2" id="assure_type" name="assure_type" required>
+                    <div class="form-group" id="err-assure_affiliate">
+                        <label for="assure_affiliate">Type</label>
+                        <select class="form-control select2" id="assure_affiliate" name="assure_affiliate" required>
                             <option>conjointe</option>
                             <option>enfant</option>
                         </select>
+                        <small class="invalid-feedback">
+                            ce champ est obligatoir
+                        </small>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="err-assure_prenom">
                         <label for="assure_prenom">prenom</label>
                         <input type="text" id="assure_prenom" name="assure_prenom" required class="form-control" />
+                        <small class="invalid-feedback">
+                            ce champ est obligatoir
+                        </small>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" id="err-assure_nom">
                         <label for="assure_nom">Nom</label>
                         <input type="text" id="assure_nom" name="assure_nom" required class="form-control" />
+                        <small class="invalid-feedback">
+                            ce champ est obligatoir
+                        </small>
                     </div>
 
-                    <div class="form-group">
-                        <label for="assure_dateNassance">Date de naissance</label>
-                        <input type="date" id="assure_dateNassance" required name="assure_dateNassance" class="form-control" />
+                    <div class="form-group" id="err-assure_dateNaissance">
+                        <label for="assure_dateNaissance">Date de naissance</label>
+                        <input type="date" id="assure_dateNaissance" required name="assure_dateNaissance" class="form-control" />
+                        <small class="invalid-feedback">
+                            ce champ est obligatoir
+                        </small>
                     </div>
 
-                    <div class="form-group">
-                        <label for="assure_code_organisme">Code organisme</label>
-                        <input type="text" id="assure_code_organisme" required name="assure_code_organisme" class="form-control" />
+                    <div class="form-group" id="err-assure_codeOrg">
+                        <label for="assure_codeOrg">Code organisme</label>
+                        <input type="text" id="assure_codeOrg" required name="assure_codeOrg" class="form-control" />
+                        <small class="invalid-feedback">
+                            ce champ est obligatoir
+                        </small>
                     </div>
-                    <div class="form-group">
-                        <label for="assure_NbSecurite">N° sécurité</label>
-                        <input type="text" id="assure_NbSecurite" required name="assure_NbSecurite" class="form-control" />
+                    <div class="form-group" id="err-assure_securityNumb">
+                        <label for="assure_securityNumb">N° sécurité</label>
+                        <input type="text" id="assure_securityNumb" required name="assure_securityNumb" class="form-control" />
+                        <small class="invalid-feedback">
+                            ce champ est obligatoir
+                        </small>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="err-assure_civilite">
                         <label for="assure_civilite">Civilité </label>
                         <select class="form-control select2" required id="assure_civilite" name="assure_civilite">
                             <option value="Madame">Madame</option>
                             <option value="Madamoizelle">Madamoizelle</option>
                             <option value="Monsieur">Monsieur</option>
                         </select>
+                        <small class="invalid-feedback">
+                            ce champ est obligatoir
+                        </small>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" id="err-assure_regime">
                         <label for="assure_regime">Régime</label>
                         <select class="form-control" id="assure_regime" name="assure_regime">
 
@@ -502,6 +523,9 @@
                             <option value="Etudiant">Etudiant</option>
 
                         </select>
+                        <small class="invalid-feedback">
+                            ce champ est obligatoir
+                        </small>
 
                     </div>
 
