@@ -128,7 +128,7 @@
             async: false,
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         $('#bodytab').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {
@@ -191,7 +191,7 @@
             }).responseText;
             jsonData = JSON.parse(StringData);
 
-            console.log(jsonData)
+            // console.log(jsonData)
 
 
             $('#exampleModal').modal('hide');
@@ -242,7 +242,7 @@
         }).responseText;
 
         jsonData1 = JSON.parse(StringData1);
-        console.log(jsonData1)
+        // console.log(jsonData1)
 
         $('#edit_body').html(`<div class="mx-auto d-block" style="width: 14rem;">
                                     <img class="card-img-top" id="avatar_display" src="{{ asset('storage/${jsonData1.logo}') }}" alt="">
@@ -327,7 +327,7 @@
                 contentType: false,
             }).responseText;
             jsonData3 = JSON.parse(StringData3);
-            console.log(jsonData3)
+            // console.log(jsonData3)
 
                 $('#compagnieedit').modal('hide');
                 message("compagnie", "modifié", jsonData3.check);
@@ -370,7 +370,7 @@
         }).responseText;
 
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         message("compagnie", "activé", jsonData.check);
         if (jsonData.compagnie.deleted_at != null) {
             buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ")\">restorer</button>"
@@ -409,7 +409,7 @@
         }).responseText;
 
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         message("compagnie", "désactivé", jsonData.check);
         if (jsonData.compagnie.deleted_at != null) {
             buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.compagnie.id + ")\">restorer</button>"

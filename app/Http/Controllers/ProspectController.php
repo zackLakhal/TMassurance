@@ -134,8 +134,8 @@ class ProspectController extends Controller
         $temp->tel = $request->tel;
         $temp->provenance_id = $provenanceObj->id;
         $temp->token_fr = $fournisseur->token;
-        $users = User::where('role_id', '=', 1)->pluck('id')->toArray();
-        $temp->user_id = $users[rand(1, count($users) - 1)];
+        $user = User::where('role_id', '=', 1)->first();
+        $temp->user_id = $user->id;
         $temp->save();
 
 

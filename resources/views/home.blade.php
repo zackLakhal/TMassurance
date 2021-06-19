@@ -9,7 +9,7 @@
 
                 <div class="card-body text-center">
                     <div class="mb-5 ">
-                        <a href="index.html" class="d-block auth-logo">
+                        <a href="/" class="d-block auth-logo">
                             <img src="{{asset('images/logo-dark.png')}}" alt="" height="20" class="auth-logo-dark mx-auto">
                             <img src="{{asset('images/logo-light.png')}}" alt="" height="20" class="auth-logo-light mx-auto">
                         </a>
@@ -23,7 +23,7 @@
                             </div>
                         </div>
                     </div>
-                    <h1 class="mt-5 text-success">Bienvenu à TM Assurance</h1>
+                    <h1 class="mt-5 text-success">Bienvenues chez Laveyronnaise d'assurance</h1>
                 </div>
             </div>
         </div>

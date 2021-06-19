@@ -301,20 +301,21 @@
                             </a>
                         </li>
                         @endif
-                        @if(auth()->user()->role_id != 2 && auth()->user()->role_id != 4)
+                        @if(auth()->user()->role_id == 1)
                         <li>
                             <a href="/user" class="waves-effect">
                                 <i class="bx bx-user-pin"></i>
                                 <span key="t-user-pin">gérer les utilisateurs </span>
                             </a>
                         </li>
-                        @endif
+                       
                         <li>
                             <a href="/prospect" class="waves-effect">
                                 <i class="bx bx-user-plus"></i>
                                 <span key="t-user-plus">gérer les prospects </span>
                             </a>
                         </li>
+                        @endif
                         <li>
                             <a href="/projet" class="waves-effect">
                                 <i class="bx bx-user-check"></i>
@@ -375,11 +376,11 @@
                         <div class="col-sm-6">
                             <script>
                                 document.write(new Date().getFullYear())
-                            </script> © Skote.
+                            </script> © Laveyronnaise d'assurance 
                         </div>
                         <div class="col-sm-6">
                             <div class="text-sm-end d-none d-sm-block">
-                                Design & Develop by Themesbrand
+                               CRM
                             </div>
                         </div>
                     </div>

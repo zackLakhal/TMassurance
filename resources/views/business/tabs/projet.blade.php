@@ -448,8 +448,8 @@
                     <div class="form-group" id="err-assure_affiliate">
                         <label for="assure_affiliate">Type</label>
                         <select class="form-control select2" id="assure_affiliate" name="assure_affiliate" required>
-                            <option>conjointe</option>
-                            <option>enfant</option>
+                            <option value="conjointe">conjointe</option>
+                            <option value="enfant">enfant</option>
                         </select>
                         <small class="invalid-feedback">
                             ce champ est obligatoir

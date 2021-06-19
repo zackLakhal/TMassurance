@@ -9,8 +9,8 @@
                             <div class="row">
                                 <div class="col-7">
                                     <div class="text-primary p-4">
-                                        <h5 class="text-primary">Welcome Back !</h5>
-                                        <p>Sign in to continue to TM Assurance.</p>
+                                        <h5 class="text-primary">soyez les bienvenues !</h5>
+                                        <p>Connectez-vous</p>
                                     </div>
                                 </div>
                                 <div class="col-5 align-self-end">
@@ -115,7 +115,7 @@
                         <div>
                             <p>© <script>
                                     document.write(new Date().getFullYear())
-                                </script> TM Assurance. Crafted with <i class="mdi mdi-heart text-danger"></i> by Nourane</p>
+                                </script> Laveyronnaise d'assurance </p>
                         </div>
                     </div>
 

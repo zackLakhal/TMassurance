@@ -282,7 +282,7 @@
         }).responseText;
 
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         message("prospect", "désactivé", jsonData.check);
         if (jsonData.prospect.deleted_at != null) {
             buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.prospect.id + "," + ind + ")\">restorer</button>"
@@ -344,7 +344,7 @@
 
             jsonData = JSON.parse(StringData);
 
-            console.log(jsonData)
+            // console.log(jsonData)
             message("prospect", "confirmé", jsonData.check);
 
             if (jsonData.prospect.deleted_at != null) {
@@ -402,7 +402,7 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         for (let ind = 0; ind < jsonData.length; ind++) {
             $('#user_list').append("<option value=\"" + jsonData[ind].id + "\">" + jsonData[ind].nom + " " + jsonData[ind].prenom + " </option>");
         }

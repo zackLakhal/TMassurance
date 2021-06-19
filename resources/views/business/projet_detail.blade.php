@@ -284,7 +284,7 @@
                 data: inputs
             }).responseText;
             jsonData1 = JSON.parse(StringData1);
-            console.log(jsonData1)
+            // console.log(jsonData1)
             message("fiche", "modifié", jsonData1.check);
             $('#projet_fiche').val(jsonData1.projet.id);
             $('#projet_commercial').val(jsonData1.prospet.user.email);
@@ -394,7 +394,7 @@
                                     </tr>`)
                 $("#assure_datatable").DataTable();
             } else {
-                console.log(jsonData.error)
+                // console.log(jsonData.error)
                 assure_clearInputs(jsonData.inputs);
                 assure_printErrorMsg(jsonData.error);
             }
@@ -416,7 +416,7 @@
             async: false
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         message("assuré", "désactivé", jsonData.check);
         if (jsonData.assure.deleted_at == null) {
             deletbutton = "<button  class=\"btn btn-link text-danger p-1\"  onclick=\"assure_delet(" + jsonData.assure.id + "," + ind + ")\"><i class=\"bx bx-trash\"></i></button>"
@@ -527,7 +527,7 @@
                 data: inputs
             }).responseText;
             jsonData = JSON.parse(StringData);
-            console.log(jsonData)
+            // console.log(jsonData)
             $('#assuremodale').modal('hide');
             message("assuré", "modifié", jsonData.check);
             $('#assure' + ind).attr('class', 'table-success')
@@ -599,7 +599,7 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         $('#contrat_compagnie').html("<option value=\"0\">selectionner</option>")
         $('#contrat_formule').html("<option value=\"0\">selectionner</option>")
         for (let ind = 0; ind < jsonData.compagnies.length; ind++) {
@@ -715,7 +715,7 @@
                 data: inputs
             }).responseText;
             jsonData1 = JSON.parse(StringData1);
-            console.log(jsonData1)
+            // console.log(jsonData1)
             message("contrat", "modifié", jsonData1.check);
 
             if (jsonData1.contrat == null) {
@@ -847,7 +847,7 @@
                     contentType: false,
                 }).responseText;
                 jsonData = JSON.parse(StringData);
-                console.log(jsonData)
+                // console.log(jsonData)
                 if ($.isEmptyObject(jsonData.error)) {
 
                     clearInputs(jsonData.inputs);
@@ -890,7 +890,7 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         message("document", "supprimé", jsonData.check);
         $('#row' + ind).remove()
         $("#doc_datatable").DataTable();
@@ -1107,7 +1107,7 @@
                 contentType: false,
             }).responseText;
             jsonData = JSON.parse(StringData);
-            console.log(jsonData)
+            // console.log(jsonData)
             if ($.isEmptyObject(jsonData.error)) {
                 if (jsonData.tache.deleted_at != null) {
                     buttonacive = "<button  class=\"btn btn-success\"  onclick=\"tach_renouvler(" + jsonData.tache.id + "," + ind + ")\">renouvler</button>"

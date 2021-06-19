@@ -39,7 +39,7 @@
                             <div class="docs-datepicker">
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
-                                        <span class="input-group-text" id="option-startView">Formule</span>
+                                        <span class="input-group-text" id="option-startView">Produit</span>
                                     </div>
                                     <select class="form-control" id="contrat_formule" name="contrat_formule">
 

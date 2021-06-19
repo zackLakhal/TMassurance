@@ -183,7 +183,7 @@
         }).responseText;
 
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         message("produit", "activé", jsonData.check);
         if (jsonData.produit.deleted_at != null) {
             buttonactive = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"restor(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"
@@ -218,7 +218,7 @@
         }).responseText;
 
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         message("produit", "désactivé", jsonData.check);
         if (jsonData.produit.deleted_at != null) {
             buttonactive = "<button  class=\"btn btn-link text-warning p-1\"  onclick=\"restor(" + jsonData.produit.id + "," + ind + ")\"><i class=\"bx bx-revision\"></i></button>"

@@ -237,7 +237,7 @@
             }).responseText;
             jsonData = JSON.parse(StringData);
 
-            console.log(jsonData)
+            // console.log(jsonData)
 
 
             $('#storeModal').modal('hide');

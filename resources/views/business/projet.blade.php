@@ -205,7 +205,7 @@
             async: false,
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         $('#bodytab').html("");
         for (let ind = 0; ind < jsonData.projets.length; ind++) {
             if (jsonData.projets[ind].deleted_at != null) {
@@ -299,7 +299,7 @@
         }).responseText;
 
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         message("projet", "désactivé", jsonData.check);
         if (jsonData.projet.deleted_at != null) {
             buttonacive = "<button  class=\"btn btn-warning\" style=\"margin: 10px\"  onclick=\"restor(" + jsonData.projet.id + "," + ind + ")\">restorer</button>"

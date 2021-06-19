@@ -167,7 +167,7 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         $('#bodytab').html("");
         $('#supervisor').html("");
 
@@ -334,7 +334,7 @@
                 data: inputs
             }).responseText;
             jsonData = JSON.parse(StringData);
-            console.log(jsonData)
+            // console.log(jsonData)
             if (id_user == 0) {
                 $('#bodytab').append(`<tr id="row${jsonData.new_user.id}">
                                         <td id="photo${jsonData.new_user.id}">
@@ -403,7 +403,7 @@
             }
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         $('#supervisor').html("<tr><td colspan=\"5\"><button  class=\"btn btn-link pull-right\" onclick=\"attach_sup()\">Pas de superviseur , Attacher un </button></td></tr>");
 
 

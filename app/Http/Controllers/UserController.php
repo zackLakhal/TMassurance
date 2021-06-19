@@ -60,11 +60,12 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
 
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'password' => 'required|min:8',
             'role' => 'required|gt:0',
-            'nom' => 'required|min:3',
-            'prenom' => 'required',
-            'tel' => 'required|max:8',
+            'group' => 'required',
+            'nom' => 'required|alpha|min:3|max:12',
+            'prenom' => 'required|alpha|min:3|max:12',
+            'tel' => 'required|min:8|max:8',
             'sexe' => 'required',
         ]);
 

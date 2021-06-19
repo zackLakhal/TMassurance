@@ -93,17 +93,18 @@
                 <div class="form-group" id="err-nom">
                     <label for="nom" class="control-label"><b>nom:</b></label>
                     <input type="text" class="form-control" id="nom" name="nom">
-                    <small class="invalid-feedback"> </small>
+                    <small class="invalid-feedback"> ce champ est obligatoire </small>
                 </div>
                 <div class="form-group" id="err-email">
                     <label for="email" class="control-label"><b>email:</b></label>
                     <input type="text" class="form-control" id="email" name="email">
-                    <small class="invalid-feedback"> </small>
+                    <small class="invalid-feedback">ce champ est obligatoire </small>
+                    
                 </div>
                 <div class="form-group" id="err-description">
                     <label for="description" class="control-label"><b>description:</b></label>
                     <input type="text" class="form-control" id="description" name="description">
-                    <small class="invalid-feedback"> </small>
+                    <small class="invalid-feedback">ce champ est obligatoire </small>
                 </div>
 
 
@@ -229,9 +230,11 @@
             }).responseText;
             jsonData = JSON.parse(StringData);
 
-            console.log(jsonData)
+            // console.log(jsonData)
 
+            if ($.isEmptyObject(jsonData.error)) {
 
+            clearInputs(jsonData.inputs);
             $('#storeModal').modal('hide');
             message("fournisseur", "ajouté", jsonData.check);
             if (jsonData.fournisseur.deleted_at != null) {
@@ -251,6 +254,10 @@
                 buttonacive +
                 "</td>" +
                 "</tr>");
+            } else {
+                clearInputs(jsonData.inputs);
+                printErrorMsg(jsonData.error);
+            }
         });
         $("#datatable").DataTable();
     });
@@ -385,25 +392,24 @@
     function printErrorMsg(msg) {
 
 
-        $.each(msg, function(key, value) {
+$.each(msg, function(key, value) {
+    $("#err-" + key).find("input").addClass('is-invalid');
+    $("#err-" + key).find("small").html(value);
 
-            $("#err-" + key).addClass('has-danger');
-            $("#err-" + key).find("small").html(value);
+});
 
-        });
+}
 
-    }
-
-    function clearInputs(msg) {
+function clearInputs(msg) {
 
 
-        $.each(msg, function(key, value) {
+$.each(msg, function(key, value) {
 
-            $("#err-" + key).removeClass('has-danger');
-            $("#err-" + key).find("small").html("");
+    $("#err-" + key).find("input").removeClass('is-invalid');
+    $("#err-" + key).find("small").html("");
 
-        });
+});
 
-    }
+}
 </script>
 @endsection

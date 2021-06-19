@@ -90,7 +90,10 @@
                     <input type="text" class="form-control" id="tel" name="tel">
                     <small class="invalid-feedback"> </small>
                 </div>
+               
+            
             </div>
+            
             <div class="modal-footer" id="modalfooter">
                 <button type="button" class="btn btn-info" id="save">Enregistrer</button>
             </div>
@@ -177,7 +180,7 @@
             async: false,
         }).responseText;
         jsonData = JSON.parse(StringData);
-        console.log(jsonData)
+        // console.log(jsonData)
         $('#bodytab').html("");
         for (let ind = 0; ind < jsonData.length; ind++) {
             if (jsonData[ind].deleted_at != null) {
@@ -198,6 +201,7 @@
                                         <td id="email${ind}">${jsonData[ind].email}</td>
                                         <td id="role${ind}">${jsonData[ind].role.value}</td>
                                         <td id="group${ind}">${jsonData[ind].group.nom}</td>
+                                       
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData[ind].id},${ind})">détails</button>
@@ -222,7 +226,9 @@
         }).responseText;
         jsonData2 = JSON.parse(StringData2);
 
+
         for (let ind = 0; ind < jsonData2.length; ind++) {
+
             $('#role').append("<option value=\"" + jsonData2[ind].id + "\">" + jsonData2[ind].value + "</option>");
         }
 
@@ -234,26 +240,26 @@
             async: false,
         }).responseText;
         jsonData3 = JSON.parse(StringData3);
-
         for (let ind = 0; ind < jsonData3.length; ind++) {
             $('#group').append("<option value=\"" + jsonData3[ind].id + "\">" + jsonData3[ind].nom + "</option>");
         }
+        
 
     }
     $('#newmodal').click(function() {
-        $('#modalhead').html("<h4 class=\"modal-title\" >Nouvelle Utilisateur</h4>" +
+        $('#modalhead').html("<h4 class=\"modal-title\" >Nouveau Utilisateur</h4>" +
             "<button type=\"button\" class=\"close\" data-bs-dismiss=\"modal\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>");
         $('#modalfooter').html("<button type=\"button\" class=\"btn btn-info\" id=\"save\">Enregistrer</button>");
         $('#exampleModal').modal('show');
-
+        
         $('#sexe').val("");
         $('#nom').val("");
         $('#prenom').val("");
         $('#email').val("");
         $('#tel').val("");
         $('#password').val("");
-        $('#role').val("");
-        $('#group').val("");
+       
+       
         $('#save').click(function() {
             var inputs = {
                 "sexe": $("#sexe").val(),
@@ -264,6 +270,7 @@
                 "group": $("#group").val(),
                 "password": $("#password").val(),
                 "role": $("#role").val(),
+               
             };
 
             var StringData = $.ajax({
@@ -299,6 +306,7 @@
                                         <td id="email${jsonData.count}">${jsonData.user.email}</td>
                                         <td id="role${jsonData.count}">${jsonData.user.role.value}</td>
                                         <td id="group${jsonData.count}">${jsonData.user.group.nom}</td>
+                                       
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})">détails</button>
@@ -307,6 +315,10 @@
                                                 ${buttonacive}
                                             </div>
                                         </td>
+                        
+                                        
+                                                                 
+                                                
                                     </tr>`);
             } else {
                 clearInputs(jsonData.inputs);
@@ -347,6 +359,7 @@
                                         <td id="email${ind}">${jsonData.user.email}</td>
                                         <td id="role${ind}">${jsonData.user.role.value}</td>
                                         <td id="group${ind}">${jsonData.user.group.nom}</td>
+                                      
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})">détails</button>
@@ -388,6 +401,7 @@
                                         <td id="email${ind}">${jsonData.user.email}</td>
                                         <td id="role${ind}">${jsonData.user.role.value}</td>
                                         <td id="group${ind}">${jsonData.user.group.nom}</td>
+                                        
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">
                                             <button  class="btn btn-success" style="margin: 10px" onclick="detail(${jsonData.user.id},${ind})">détails</button>
@@ -589,7 +603,7 @@
                 contentType: false,
             }).responseText;
             jsonData3 = JSON.parse(StringData3);
-            console.log(jsonData3)
+            // console.log(jsonData3)
             if ($.isEmptyObject(jsonData3.error)) {
 
                 clearEditInputs(jsonData3.inputs);
