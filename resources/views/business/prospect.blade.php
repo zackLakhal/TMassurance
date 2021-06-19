@@ -210,7 +210,7 @@
                                     </tr>`);
 
         }
-        console.log(role_user)
+       
 
 
         $("#datatable").DataTable();

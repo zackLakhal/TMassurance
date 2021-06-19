@@ -223,7 +223,7 @@
                                         <td id="tel${ind}">${jsonData.prospects[ind].tel}</td>
                                         <td id="created_at${ind}">${jsonData.projets[ind].created_at}</td>
                                         <td  id="confirmed_at${ind}"> ${jsonData.prospects[ind].dateConfirmation}</td>
-                                        <td  id="confirmed_at${ind}"> ${jsonData.prospects[ind].user.nom}</td>
+                                        <td  id="confirmed_at${ind}"> ${jsonData.prospects[ind].user != null ? jsonData.prospects[ind].user.nom : 'utilisateur indisponible'}</td>
                                         <td id="provenance${ind}">${jsonData.prospects[ind].provenance.nom}</td>
                                         <td>
                                             <div class="btn-group" role="group" aria-label="Basic example">

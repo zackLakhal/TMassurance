@@ -177,7 +177,7 @@
         //info general
         $('#projet_fiche').val(jsonData.projet.id);
         $('#projet_fournisseur').val(jsonData.fournisseur.nom);
-        $('#projet_commercial').val(jsonData.prospet.user.email);
+        $('#projet_commercial').val(jsonData.prospet.user != null ? jsonData.prospet.user.email : 'utilisateur indisponible');
         $('#projet_provenance').val(jsonData.prospet.provenance.nom);
         $('#projet_statut_gestion').val(jsonData.projet.status_gestion);
         $('#projet_statut_gestion_dup').val(jsonData.projet.status_gestion);
@@ -287,7 +287,7 @@
             // console.log(jsonData1)
             message("fiche", "modifié", jsonData1.check);
             $('#projet_fiche').val(jsonData1.projet.id);
-            $('#projet_commercial').val(jsonData1.prospet.user.email);
+            $('#projet_commercial').val(jsonData1.prospet.user != null ? jsonData1.prospet.user.email : 'utilisateur indisponible');
             $('#projet_provenance').val(jsonData1.prospet.provenance.nom);
             $('#projet_statut_gestion').val(jsonData1.projet.status_gestion);
             $('#projet_statut_gestion_dup').val(jsonData1.projet.status_gestion);
@@ -777,7 +777,8 @@
                                         <td id="date_histo${ind}">${jsonData[ind].created_at}</td>
                                         <td id="action_histo${ind}">${jsonData[ind].action}</td>
                                         <td id="composante_histo${ind}">${jsonData[ind].composante}</td>
-                                        <td id="responsable_histo${ind}">${jsonData[ind].user.prenom}  ${jsonData[ind].user.nom}</td>
+                                        <td id="responsable_histo${ind}">${jsonData[ind].user != null ? jsonData[ind].user.nom : ''}  
+                                        ${ jsonData[ind].user != null ? jsonData[ind].user.prenom : 'utilisateur indisponible'}</td>
                                     </tr>`);
         }
 
@@ -933,7 +934,8 @@
                                                     <div class="media-body">
                                                         <div class="text-muted">
                                                             <h4 id="tach_edit_title${ind}">${jsonData[ind].titre}</h4>
-                                                            <h5 id="tach_edit_user${ind}">${jsonData[ind].user.prenom} ${jsonData[ind].user.nom}</h5>
+                                                            <h5 id="tach_edit_user${ind}">${jsonData[ind].user != null ? jsonData[ind].user.prenom : 'utilisateur indisponible'}
+                                                             ${jsonData[ind].user != null ? jsonData[ind].user.nom : ''}</h5>
                                                             <br><p class="mb-0" id="rappel_edit_description${ind}">${jsonData[ind].description}</p>
                                                         </div>
 
@@ -1024,7 +1026,8 @@
                                                     <div class="media-body">
                                                         <div class="text-muted">
                                                             <h4 id="tach_edit_title${jsonData.count}">${jsonData.tache.titre}</h4>
-                                                            <h5 id="tach_edit_user${jsonData.count}">${jsonData.tache.user.prenom} ${jsonData.tache.user.nom}</h5>
+                                                            <h5 id="tach_edit_user${jsonData.count}">${jsonData.tache.user != null ? jsonData.tache.user.prenom : 'utilisateur indisponible'} 
+                                                            ${jsonData.tache.user != null ? jsonData.tache.user.nom : ''}</h5>
                                                             <br><p class="mb-0" id="rappel_edit_description${jsonData.count}">${jsonData.tache.description}</p>
                                                         </div>
 
@@ -1124,7 +1127,8 @@
                                                     <div class="media-body">
                                                         <div class="text-muted">
                                                             <h4 id="tach_edit_title${ind}">${jsonData.tache.titre}</h4>
-                                                            <h5 id="tach_edit_user${ind}">${jsonData.tache.user.prenom} ${jsonData.tache.user.nom}</h5>
+                                                            <h5 id="tach_edit_user${ind}">${jsonData.tache.user != null ? jsonData.tache.user.prenom : 'utilisateur indisponible'} 
+                                                            ${jsonData.tache.user != null ? jsonData.tache.user.nom : ''}</h5>
                                                             <br><p class="mb-0" id="rappel_edit_description${ind}">${jsonData.tache.description}</p>
                                                         </div>
 
@@ -1214,7 +1218,8 @@
                                                     <div class="media-body">
                                                         <div class="text-muted">
                                                             <h4 id="tach_edit_title${ind}">${jsonData.tache.titre}</h4>
-                                                            <h5 id="tach_edit_user${ind}">${jsonData.tache.user.prenom} ${jsonData.tache.user.nom}</h5>
+                                                            <h5 id="tach_edit_user${ind}">${jsonData.tache.user != null ? jsonData.tache.user.prenom : 'utilisateur indisponible'} 
+                                                            ${jsonData.tache.user != null ? jsonData.tache.user.nom : ''}</h5>
                                                             <br><p class="mb-0" id="rappel_edit_description${ind}">${jsonData.tache.description}</p>
                                                         </div>
 
@@ -1276,7 +1281,8 @@
                                                     <div class="media-body">
                                                         <div class="text-muted">
                                                             <h4 id="tach_edit_title${ind}">${jsonData.tache.titre}</h4>
-                                                            <h5 id="tach_edit_user${ind}">${jsonData.tache.user.prenom} ${jsonData.tache.user.nom}</h5>
+                                                            <h5 id="tach_edit_user${ind}">${jsonData.tache.user != null ? jsonData.tache.user.prenom : 'utilisateur indisponible'} 
+                                                            ${jsonData.tache.user != null ? jsonData.tache.user.nom : ''}</h5>
                                                             <br><p class="mb-0" id="rappel_edit_description${ind}">${jsonData.tache.description}</p>
                                                         </div>
 
@@ -1343,7 +1349,8 @@
                                                 <h5 class="my-0 text-success"><i class="mdi mdi-check-all me-3"></i><span id="note_edit_title${ind}">${jsonData[ind].titre}</span> </h5>
                                             </div>
                                             <div class="card-body">
-                                                <h5 class="card-title mt-0"id="note_edit_user${ind}">${jsonData[ind].user.prenom} ${jsonData[ind].user.nom}</h5>
+                                                <h5 class="card-title mt-0"id="note_edit_user${ind}">${jsonData[ind].user != null ? jsonData[ind].user.prenom : 'utilisateur indisponible'} 
+                                                            ${jsonData[ind].user != null ? jsonData[ind].user.nom : ''}</h5>
                                                 <p class="card-text" id="note_edit_description${ind}">${jsonData[ind].note}</p>
                                                 <div class="btn-group" role="group" aria-label="Basic example">
                                                 <button  class="btn btn-primary" style="margin: 10px" onclick="edit_note(${jsonData[ind].id},${ind})">Modifier</button>
@@ -1397,7 +1404,8 @@
                                                 <h5 class="my-0 text-success"><i class="mdi mdi-check-all me-3"></i><span id="note_edit_title${jsonData.count}">${jsonData.note.titre}</span> </h5>
                                             </div>
                                             <div class="card-body">
-                                                <h5 class="card-title mt-0"id="note_edit_user${jsonData.count}">${jsonData.note.user.prenom} ${jsonData.note.user.nom}</h5>
+                                                <h5 class="card-title mt-0"id="note_edit_user${jsonData.count}">${jsonData.note.user != null ? jsonData.note.user.prenom : 'utilisateur indisponible'} 
+                                                            ${jsonData.note.user != null ? jsonData.note.user.nom : ''}</h5>
                                                 <p class="card-text" id="note_edit_description${jsonData.count}">${jsonData.note.note}</p>
                                                 <div class="btn-group" role="group" aria-label="Basic example">
                                                 <button  class="btn btn-primary" style="margin: 10px" onclick="edit_note(${jsonData.note.id},${ind})">Modifier</button>
@@ -1460,7 +1468,8 @@
                                                 <h5 class="my-0 text-success"><i class="mdi mdi-check-all me-3"></i><span id="note_edit_title${ind}">${jsonData.note.titre}</span> </h5>
                                             </div>
                                             <div class="card-body">
-                                                <h5 class="card-title mt-0"id="note_edit_user${ind}">${jsonData.note.user.prenom} ${jsonData.note.user.nom}</h5>
+                                                <h5 class="card-title mt-0"id="note_edit_user${ind}">${jsonData.note.user != null ? jsonData.note.user.prenom : 'utilisateur indisponible'} 
+                                                            ${jsonData.note.user != null ? jsonData.note.user.nom : ''}</h5>
                                                 <p class="card-text" id="note_edit_description${ind}">${jsonData.note.note}</p>
                                                 <div class="btn-group" role="group" aria-label="Basic example">
                                                 <button  class="btn btn-primary" style="margin: 10px" onclick="edit_note(${jsonData.note.id},${ind})">Modifier</button>
@@ -1535,7 +1544,8 @@
                                                     <div class="media-body">
                                                         <div class="text-muted">
                                                             <h4 id="rappel_edit_title${ind}">${jsonData[ind].titre}</h4>
-                                                            <h5 id="rappel_edit_user${ind}">${jsonData[ind].user.prenom} ${jsonData[ind].user.nom}</h5>
+                                                            <h5 id="rappel_edit_user${ind}">${jsonData[ind].user != null ? jsonData[ind].user.prenom : 'utilisateur indisponible'} 
+                                                            ${jsonData[ind].user != null ? jsonData[ind].user.nom : ''}</h5>
                                                             <p class="mb-0" id="rappel_edit_sujet${ind}">${jsonData[ind].sujet}</p>
                                                         </div>
 
@@ -1620,7 +1630,8 @@
                                                     <div class="media-body">
                                                         <div class="text-muted">
                                                             <h4 id="rappel_edit_title${jsonData.count}">${jsonData.rappel.titre}</h4>
-                                                            <h5 id="rappel_edit_user${jsonData.count}">${jsonData.rappel.user.prenom} ${jsonData.rappel.user.nom}</h5>
+                                                            <h5 id="rappel_edit_user${jsonData.count}">${jsonData.rappel.user != null ? jsonData.rappel.user.prenom : 'utilisateur indisponible'} 
+                                                            ${jsonData.rappel.user != null ? jsonData.rappel.user.nom : ''}</h5>
                                                             <p class="mb-0" id="rappel_edit_sujet${jsonData.count}">${jsonData.rappel.sujet}</p>
                                                         </div>
 
@@ -1716,7 +1727,8 @@
                                                     <div class="media-body">
                                                         <div class="text-muted">
                                                             <h4 id="rappel_edit_title${ind}">${jsonData.rappel.titre}</h4>
-                                                            <h5 id="rappel_edit_user${ind}">${jsonData.rappel.user.prenom} ${jsonData.rappel.user.nom}</h5>
+                                                            <h5 id="rappel_edit_user${ind}">${jsonData.rappel.user != null ? jsonData.rappel.user.prenom : 'utilisateur indisponible'} 
+                                                            ${jsonData.rappel.user != null ? jsonData.rappel.user.nom : ''}</h5>
                                                             <p class="mb-0" id="rappel_edit_sujet${ind}">${jsonData.rappel.sujet}</p>
                                                         </div>
 
